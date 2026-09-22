@@ -1,0 +1,22 @@
+---
+import FooterReact from "./FooterReact";
+import client from "../../../tina/__generated__/client";
+import type { Locale } from "../../i18n/config";
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+
+const result = await client.queries.global({ relativePath: "index.json" });
+---
+
+<!-- Below the fold: hydrate only when it scrolls into view. -->
+<FooterReact
+  query={result.query}
+  variables={result.variables}
+  data={result.data}
+  locale={locale}
+  client:visible
+/>

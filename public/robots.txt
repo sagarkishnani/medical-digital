@@ -1,0 +1,5 @@
+# El panel del CMS es privado: no se indexa.
+User-agent: *
+Disallow: /admin/
+
+Sitemap: https://medicaldigitalperu.com/sitemap-index.xml

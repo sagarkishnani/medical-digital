@@ -1,0 +1,20 @@
+---
+import HeroReact from "./HeroReact";
+import type { Locale } from "../../i18n/config";
+
+/**
+ * The home page resolves the `home` query once and passes it down, so the three
+ * sections share a single CMS round-trip. Components that are used on several
+ * pages (Header, Footer) query for themselves instead.
+ */
+interface Props {
+  query: string;
+  variables: object;
+  data: any;
+  locale: Locale;
+}
+
+const { query, variables, data, locale } = Astro.props;
+---
+
+<HeroReact query={query} variables={variables} data={data} locale={locale} client:load />

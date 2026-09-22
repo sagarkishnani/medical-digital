@@ -1,0 +1,60 @@
+# Estándar de desarrollo web · TWNSTUDIOS
+#
+# Corre en dos momentos, y significan cosas distintas:
+#
+#   pull_request → main : puerta ANTES de mergear. Si falla, el PR no entra.
+#   push         → main : puerta ANTES de desplegar. main quedó como quedó tras
+#                         el merge, y esto dice si ese estado puede ir a prod.
+#
+# Si tienes un workflow de deploy, encadénalo con `needs: estandar` para que no
+# publique nada que no haya pasado por aquí.
+
+name: Estándar de desarrollo
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  estandar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      # El build de producción necesita credenciales de TinaCloud. Un proyecto
+      # en modo local no las tiene, así que se cae a build:local para que el
+      # workflow siga siendo útil — pero se avisa, porque ese build empaqueta
+      # React en modo desarrollo y el presupuesto de JS sale inflado.
+      - name: Build
+        env:
+          TINA_CLIENT_ID: ${{ secrets.TINA_CLIENT_ID }}
+          TINA_TOKEN: ${{ secrets.TINA_TOKEN }}
+          TINA_BRANCH: ${{ github.ref_name }}
+        run: |
+          if [ -n "$TINA_CLIENT_ID" ]; then
+            npm run build
+          else
+            echo "::warning::Sin TINA_CLIENT_ID: se usa build:local. El presupuesto de JS saldrá inflado porque React va en modo desarrollo."
+            npm run build:local
+          fi
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Verificar el estándar
+        run: npm run check:standard
+
+      - name: Auditoría de dependencias
+        run: npm audit --audit-level=high
+        continue-on-error: true
