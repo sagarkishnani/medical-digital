@@ -40,7 +40,9 @@ jobs:
         env:
           TINA_CLIENT_ID: ${{ secrets.TINA_CLIENT_ID }}
           TINA_TOKEN: ${{ secrets.TINA_TOKEN }}
-          TINA_BRANCH: ${{ github.ref_name }}
+          # En un PR, ref_name es "<n>/merge", que no existe en TinaCloud:
+          # ahí la rama real es head_ref. En push, head_ref viene vacío.
+          TINA_BRANCH: ${{ github.head_ref || github.ref_name }}
         run: |
           if [ -n "$TINA_CLIENT_ID" ]; then
             npm run build
