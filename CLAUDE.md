@@ -119,14 +119,16 @@ semánticos, y por eso el tema se puede cambiar sin tocar una sola clase.
 | Token | Para qué | Valor |
 |---|---|---|
 | `surface` | Fondo de la página | `#FFFFFF` |
-| `surface-raised` | Tarjetas, footer | `#F7F8FA` |
-| `content` | Texto principal | `#16181D` |
+| `surface-raised` | Tarjetas, footer | `#F5F5F5` |
+| `content` | Texto principal (azul marino de marca) | `#1F2B5B` |
 | `content-muted` | Texto secundario | `#4B5563` |
 | `content-subtle` | Metadatos | `#6B7280` |
 | `line` / `line-strong` | Bordes | `#E5E7EB` / `#CBD1D9` |
 | `accent` | Marca legible sobre el fondo | `#A32C26` |
 
-Los tonos de texto cumplen 4.5:1 sobre su fondo. Si cambias uno, vuelve a medir.
+Los tonos de texto cumplen 4.5:1 sobre su fondo, **salvo `content-subtle` sobre
+`surface-raised` (4.43:1)**: no lo uses para texto dentro de tarjetas o footer
+hasta oscurecerlo. Si cambias un tono, vuelve a medir.
 
 **Nunca escribas `text-white/65` ni `bg-white/5`**: asumen fondo oscuro y rompen
 el tema. Las únicas excepciones legítimas son los bloques con fondo oscuro fijo
@@ -138,6 +140,11 @@ sobre fondo claro ese tono es ilegible.
 
 **Rampa de marca**: `brand-primary` (`#D93B32`), `brand-primary-dark`
 (`#A32C26`), `brand-primary-darkest` (`#6D1E19`).
+
+**Azul marino**: `brand-secondary` (`#1F2B5B`), `brand-secondary-dark`
+(`#18214A`), `brand-secondary-darkest` (`#111833`), `brand-secondary-light`
+(`#8C95B8`), `brand-secondary-lightest` (`#E6E9F2`). Son hex estimados desde el
+Figma: confírmalos con el diseño.
 
 **Tipografías**: Rubik (títulos), Rubik (cuerpo),
 Space Mono (acentos técnicos). La escala está como utilidades de Tailwind

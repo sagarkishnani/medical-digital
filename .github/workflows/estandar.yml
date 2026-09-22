@@ -40,7 +40,7 @@ jobs:
         env:
           TINA_CLIENT_ID: ${{ secrets.TINA_CLIENT_ID }}
           TINA_TOKEN: ${{ secrets.TINA_TOKEN }}
-          TINA_BRANCH: ${{ github.ref_name }}
+          TINA_BRANCH: ${{ github.head_ref || github.ref_name }}
         run: |
           if [ -n "$TINA_CLIENT_ID" ]; then
             npm run build
