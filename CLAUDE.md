@@ -106,10 +106,13 @@ Colecciones:
 
 ### Estilos
 
-Tailwind CSS 3 con tokens propios en `tailwind.config.mjs`. Las clases
-reutilizables (`btn-primary`, `btn-secondary`, `card`, `section`, `container-xl`,
-`container-lg`) están en `src/styles/global.css`, que **BaseLayout importa** —
-un CSS que nadie importa no se bundlea y no llega al sitio.
+Tailwind CSS 3 con tokens propios en `tailwind.config.mjs`. Los tokens nuevos
+de color y tipografía, y el sistema base de botones, corresponden al **UI Kit
+aprobado**. Se mantienen temporalmente algunos tokens legacy usados por
+componentes existentes. Las clases reutilizables (botones, `card`, `section`,
+`container-xl`, `container-lg`) están en `src/styles/global.css`, que
+**BaseLayout importa** — un CSS que nadie importa no se bundlea y no llega al
+sitio.
 
 Iconos: `react-icons` (Font Awesome 6, `react-icons/fa6`).
 
@@ -119,16 +122,17 @@ semánticos, y por eso el tema se puede cambiar sin tocar una sola clase.
 | Token | Para qué | Valor |
 |---|---|---|
 | `surface` | Fondo de la página | `#FFFFFF` |
-| `surface-raised` | Tarjetas, footer | `#F5F5F5` |
-| `content` | Texto principal (azul marino de marca) | `#1F2B5B` |
-| `content-muted` | Texto secundario | `#4B5563` |
-| `content-subtle` | Metadatos | `#6B7280` |
-| `line` / `line-strong` | Bordes | `#E5E7EB` / `#CBD1D9` |
-| `accent` | Marca legible sobre el fondo | `#A32C26` |
+| `surface-raised` | Tarjetas, footer | `#F7F7F8` |
+| `content` | Texto principal (azul marino de marca) | `#3A4066` |
+| `content-muted` | Texto secundario | `#3F3F3F` |
+| `content-subtle` | Metadatos | `#717274` |
+| `line` | Bordes | `#E5E7EB` |
+| `accent` | Marca legible sobre el fondo | `#B8242A` |
 
-Los tonos de texto cumplen 4.5:1 sobre su fondo, **salvo `content-subtle` sobre
-`surface-raised` (4.43:1)**: no lo uses para texto dentro de tarjetas o footer
-hasta oscurecerlo. Si cambias un tono, vuelve a medir.
+`content`, `content-muted` y `content-subtle` cumplen 4.5:1 sobre `surface` y
+`surface-raised`, **salvo `content-subtle` sobre `surface-raised` (4.4975:1)**:
+no lo uses para texto dentro de tarjetas o footer hasta oscurecerlo. Si cambias
+un tono, vuelve a medir.
 
 **Nunca escribas `text-white/65` ni `bg-white/5`**: asumen fondo oscuro y rompen
 el tema. Las únicas excepciones legítimas son los bloques con fondo oscuro fijo
@@ -138,17 +142,28 @@ sobre `bg-brand-primary`.
 Para "texto en color de marca" usa `text-accent`, **no** `text-brand-primary-light`:
 sobre fondo claro ese tono es ilegible.
 
-**Rampa de marca**: `brand-primary` (`#D93B32`), `brand-primary-dark`
-(`#A32C26`), `brand-primary-darkest` (`#6D1E19`).
+**Paleta**: `brand-primary` (rojo), `brand-secondary` (azul marino),
+`brand-tertiary` (azul), `semantics-success|alert|error` y `greyscale`, cada una
+con los pasos `darkest`, `dark`, `medium`, `light` y `lightest`. `DEFAULT` repite
+`medium`, así que `bg-brand-primary` equivale a `bg-brand-primary-medium`.
+Fondos: `background-white` y `background-soft`. Degradados: `bg-gradient-primary`
+y `bg-gradient-overlay`. Los hex viven solo en `tailwind.config.mjs`.
 
-**Azul marino**: `brand-secondary` (`#1F2B5B`), `brand-secondary-dark`
-(`#18214A`), `brand-secondary-darkest` (`#111833`), `brand-secondary-light`
-(`#8C95B8`), `brand-secondary-lightest` (`#E6E9F2`). Son hex estimados desde el
-Figma: confírmalos con el diseño.
+**Tipografías**: Rubik. Escala aprobada: `display`, `heading-h1` → `heading-h4`,
+`subtitle`, `body-lg|md|sm`, `caption`, `overline`, `link` y `stat`, en px fijos.
+La escala provisional anterior (`heading-xxl` → `caption-sm`) y Space Mono
+(`font-mono`) siguen definidas porque hay componentes que todavía las usan; no
+forman parte del UI Kit.
 
-**Tipografías**: Rubik (títulos), Rubik (cuerpo),
-Space Mono (acentos técnicos). La escala está como utilidades de Tailwind
-(`heading-xxl` → `caption-sm`).
+**Botones**: variantes `btn-primary`, `btn-secondary`, `btn-inverse` (sobre
+fondo oscuro), `btn-link` y `btn-navigation` (el "Contacto" del header,
+rectangular). Tamaños `btn-lg` (48px, por defecto), `btn-md` (40px) y `btn-sm`
+(32px). Cada variante funciona sin `.btn`. Estados: hover, pressed (`:active`),
+disabled (`disabled` o `aria-disabled="true"`) y el focus visible global.
+
+Pendientes de decisión de diseño: el texto blanco sobre `brand-primary-medium`
+(`btn-primary`, `btn-navigation`) y el hover de `btn-link` quedan en 4.08:1, y
+`btn-sm` mide 32px frente al target táctil de 44×44.
 
 
 ### Panel del CMS
