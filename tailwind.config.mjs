@@ -114,7 +114,6 @@ export default {
         },
         line: {
           DEFAULT: '#E5E7EB',
-          strong:  '#CBD1D9',
         },
         accent: '#B8242A',
       },
@@ -123,7 +122,7 @@ export default {
         'gradient-overlay': 'linear-gradient(90deg, rgb(28 33 64 / 0.92) 0%, rgb(28 33 64 / 0) 100%)',
       },
       borderRadius: {
-        sm: '4px', md: '8px', lg: '12px', xl: '16px', '2xl': '24px',
+        sm: '4px', md: '8px', lg: '12px', xl: '16px', '2xl': '24px', pill: '999px',
       },
       keyframes: {
         'fade-up': {
