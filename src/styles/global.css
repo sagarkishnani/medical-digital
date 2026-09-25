@@ -70,9 +70,6 @@
   .btn-lg { @apply h-12 px-7; font-size: theme('fontSize.body-md'); }
   .btn-md { @apply h-10 px-6; font-size: theme('fontSize.body-sm'); }
   .btn-sm { @apply h-8 px-[18px]; font-size: theme('fontSize.caption'); }
-
-  /* `text-white` aquí es correcto y NO es un token del tema: el texto va sobre
-     el color de marca, que es oscuro en ambos temas. */
   .btn-primary,
   .btn-navigation { @apply bg-brand-primary-medium text-white; }
   .btn-primary:hover,
