@@ -29,14 +29,84 @@
      corta la página; en uno oscuro, al revés. */
   .section-alt  { @apply bg-surface-raised; }
 
-  .btn {
-    @apply inline-flex items-center justify-center gap-2 rounded-lg px-6 py-3
-           text-body-md font-medium transition-colors duration-200;
+  .btn,
+  .btn-primary,
+  .btn-secondary,
+  .btn-inverse,
+  .btn-link,
+  .btn-navigation {
+    @apply inline-flex cursor-pointer items-center justify-center gap-2
+           whitespace-nowrap font-sans font-medium leading-none;
+    transition: color 150ms ease, background-color 150ms ease,
+                border-color 150ms ease, text-decoration-color 150ms ease,
+                box-shadow 150ms ease;
   }
-  /* `text-white` aquí es correcto y NO es un token del tema: el texto va sobre
-     el color de marca, que es oscuro en ambos temas. */
-  .btn-primary   { @apply btn bg-brand-primary text-white hover:bg-brand-primary-dark; }
-  .btn-secondary { @apply btn border border-line-strong text-content hover:border-brand-primary hover:bg-surface-raised; }
+
+  .btn,
+  .btn-primary,
+  .btn-secondary,
+  .btn-inverse,
+  .btn-navigation {
+    @apply rounded-pill border border-solid border-transparent;
+  }
+
+  .btn:is(:disabled, [aria-disabled="true"]),
+  .btn-primary:is(:disabled, [aria-disabled="true"]),
+  .btn-secondary:is(:disabled, [aria-disabled="true"]),
+  .btn-inverse:is(:disabled, [aria-disabled="true"]),
+  .btn-link:is(:disabled, [aria-disabled="true"]),
+  .btn-navigation:is(:disabled, [aria-disabled="true"]) {
+    @apply cursor-not-allowed;
+  }
+  [aria-disabled="true"]:is(.btn, .btn-primary, .btn-secondary, .btn-inverse, .btn-link, .btn-navigation) {
+    @apply pointer-events-none;
+  }
+
+  .btn,
+  .btn-primary,
+  .btn-secondary,
+  .btn-inverse,
+  .btn-navigation,
+  .btn-lg { @apply h-12 px-7; font-size: theme('fontSize.body-md'); }
+  .btn-md { @apply h-10 px-6; font-size: theme('fontSize.body-sm'); }
+  .btn-sm { @apply h-8 px-[18px]; font-size: theme('fontSize.caption'); }
+  .btn-primary,
+  .btn-navigation { @apply bg-brand-primary-medium text-white; }
+  .btn-primary:hover,
+  .btn-navigation:hover { @apply bg-brand-primary-dark; }
+  .btn-primary:active,
+  .btn-navigation:active { @apply bg-brand-primary-darkest; }
+  .btn-primary:is(:disabled, [aria-disabled="true"]),
+  .btn-navigation:is(:disabled, [aria-disabled="true"]) {
+    @apply bg-greyscale-light text-greyscale-medium;
+  }
+
+  .btn-navigation { @apply rounded-none; }
+
+  .btn-secondary { @apply border-brand-primary-medium bg-transparent text-brand-primary-dark; }
+  .btn-secondary:hover { @apply bg-brand-primary-lightest; }
+  .btn-secondary:active {
+    @apply border-brand-primary-dark bg-brand-primary-light text-brand-primary-darkest;
+  }
+  .btn-secondary:is(:disabled, [aria-disabled="true"]) {
+    @apply border-greyscale-light bg-transparent text-greyscale-medium;
+  }
+
+  .btn-inverse { @apply border-white bg-transparent text-white; }
+  .btn-inverse:hover { @apply border-white bg-white text-brand-secondary-dark; }
+  .btn-inverse:active {
+    @apply border-brand-tertiary-light bg-brand-tertiary-light text-brand-secondary-darkest;
+  }
+  .btn-inverse:is(:disabled, [aria-disabled="true"]) {
+    @apply border-brand-secondary-medium bg-transparent text-brand-secondary-light;
+  }
+
+  .btn-link {
+    @apply rounded-sm text-link text-brand-secondary-dark underline underline-offset-4;
+  }
+  .btn-link:hover { @apply text-brand-primary-medium; }
+  .btn-link:active { @apply text-brand-primary-dark; }
+  .btn-link:is(:disabled, [aria-disabled="true"]) { @apply text-greyscale-medium; }
 
   .card {
     @apply rounded-xl border border-line bg-surface-raised p-6
