@@ -1,0 +1,116 @@
+---
+import type { GetStaticPaths } from "astro";
+import { Image } from "astro:assets";
+import { FaWhatsapp } from "react-icons/fa6";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import client from "../../../tina/__generated__/client";
+import { getProducts } from "../../lib/woo/store";
+import type { WooProduct } from "../../lib/woo/types";
+import { buildQuoteUrl } from "../../utils/whatsapp";
+
+export const getStaticPaths = (async () => {
+  const products = await getProducts();
+  return products.map((product) => ({ params: { slug: product.slug }, props: { product } }));
+}) satisfies GetStaticPaths;
+
+interface Props {
+  product: WooProduct;
+}
+
+const { product } = Astro.props;
+const base = import.meta.env.BASE_URL || "/";
+
+let whatsappNumber = "";
+try {
+  const result = await client.queries.global({ relativePath: "index.json" });
+  whatsappNumber = result.data?.global?.whatsapp || "";
+} catch {
+  whatsappNumber = "";
+}
+
+const siteUrl = new URL(base, Astro.site || "https://medicaldigitalperu.com").href;
+const quoteUrl = whatsappNumber ? buildQuoteUrl(whatsappNumber, product, siteUrl) : "";
+const [cover, ...gallery] = product.images;
+const seoDescription =
+  product.shortDescription.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim().slice(0, 160) ||
+  `${product.name}. Solicita tu cotización a Medical Digital.`;
+---
+
+<BaseLayout title={`${product.name} — Medical Digital`} description={seoDescription} headerTheme="light">
+  <article class="section pt-[128px]">
+    <div class="container-xl">
+      <nav aria-label="Ruta" class="text-body-sm text-content-muted">
+        <a href={`${base}productos`} class="btn-link">Productos</a>
+        {product.categories[0] && (
+          <>
+            <span aria-hidden="true"> / </span>
+            <a href={`${base}productos/categoria/${product.categories[0].slug}`} class="btn-link">
+              {product.categories[0].name}
+            </a>
+          </>
+        )}
+      </nav>
+
+      <div class="mt-8 grid gap-12 lg:grid-cols-2">
+        <div>
+          {cover && (
+            <div class="flex aspect-square items-center justify-center rounded-xl border border-line bg-surface p-8">
+              <Image src={cover.src} alt={cover.alt} inferSize width={960} loading="eager" class="max-h-full w-auto object-contain" />
+            </div>
+          )}
+          {gallery.length > 0 && (
+            <ul class="mt-4 grid grid-cols-3 gap-4 sm:grid-cols-4">
+              {gallery.map((image) => (
+                <li class="flex aspect-square items-center justify-center rounded-lg border border-line bg-surface p-3">
+                  <Image src={image.src} alt={image.alt} inferSize width={480} class="max-h-full w-auto object-contain" />
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+
+        <div>
+          {product.brand && <p class="text-overline uppercase text-accent">{product.brand}</p>}
+          <h1 class="mt-2 text-heading-h1 text-content">{product.name}</h1>
+
+          <dl class="mt-6 flex flex-wrap gap-x-8 gap-y-2 text-body-sm">
+            {product.sku && (
+              <div class="flex gap-2">
+                <dt class="text-content-muted">SKU</dt>
+                <dd class="text-content">{product.sku}</dd>
+              </div>
+            )}
+            {product.categories.length > 0 && (
+              <div class="flex gap-2">
+                <dt class="text-content-muted">Categoría</dt>
+                <dd class="flex flex-wrap gap-2">
+                  {product.categories.map((category) => (
+                    <a href={`${base}productos/categoria/${category.slug}`} class="btn-link">{category.name}</a>
+                  ))}
+                </dd>
+              </div>
+            )}
+          </dl>
+
+          {product.shortDescription && (
+            <div class="prose mt-6 max-w-none text-body-lg text-content-muted" set:html={product.shortDescription} />
+          )}
+
+          {quoteUrl && (
+            <a href={quoteUrl} target="_blank" rel="noopener noreferrer" class="btn-primary mt-8">
+              <FaWhatsapp aria-hidden="true" />
+              Solicitar cotización
+            </a>
+          )}
+        </div>
+      </div>
+
+      {product.description && (
+        <section class="mt-16 border-t border-line pt-12">
+          <h2 class="text-heading-h2 text-content">Descripción</h2>
+          <div class="prose mt-6 max-w-3xl prose-headings:font-heading prose-a:text-accent" set:html={product.description} />
+        </section>
+      )}
+    </div>
+  </article>
+</BaseLayout>
