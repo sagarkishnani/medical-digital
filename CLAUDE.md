@@ -18,6 +18,13 @@ Copia `.env.example` a `.env`. Deja `TINA_CLIENT_ID`/`TINA_TOKEN` vacíos para
 trabajar en **modo local** (Tina lee y escribe los archivos de `src/content/`
 sin cuenta en la nube).
 
+**`SITE_URL` define el dominio absoluto del build** (canonicals, sitemap,
+`robots.txt`, JSON-LD y enlaces que salen del sitio). Normalmente se deja
+vacía: en Amplify se deriva de sus variables (`pr-<n>.<app>.amplifyapp.com` en
+los previews de PR, `<rama>.<app>.amplifyapp.com` en las ramas, con `/` → `-`)
+y fuera de Amplify cae a `https://medicaldigitalperu.com`. Solo se define para
+un dominio propio. La lógica vive en `resolveSite()` de `astro.config.mjs`.
+
 **`TINA_BRANCH` importa más de lo que parece.** TinaCloud indexa el contenido
 **por rama**, y el valor se hornea dentro de `tina/__generated__/client.ts` al
 correr `tinacms build`: *no* se lee en runtime. Compilar un árbol contra el

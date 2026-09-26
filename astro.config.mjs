@@ -8,16 +8,23 @@ import tinaDirective from './astro-tina-directive/index.mjs';
 
 const base = process.env.DEPLOY_BASE || '/';
 
-const wooStoreUrl =
-  process.env.WOO_STORE_URL || loadEnv(process.env.NODE_ENV || 'production', process.cwd(), '').WOO_STORE_URL || '';
-const wooImageDomains = wooStoreUrl.trim() ? [new URL(wooStoreUrl.trim()).hostname] : [];
+const PRODUCTION_SITE = 'https://medicaldigitalperu.com';
+
+function resolveSite() {
+  const explicit =
+    process.env.SITE_URL || loadEnv(process.env.NODE_ENV || 'production', process.cwd(), '').SITE_URL;
+  if (explicit?.trim()) return explicit.trim().replace(/\/+$/, '');
+
+  const { AWS_APP_ID, AWS_BRANCH, AWS_PULL_REQUEST_ID } = process.env;
+  if (AWS_APP_ID && AWS_PULL_REQUEST_ID) return `https://pr-${AWS_PULL_REQUEST_ID}.${AWS_APP_ID}.amplifyapp.com`;
+  if (AWS_APP_ID && AWS_BRANCH) return `https://${AWS_BRANCH.replace(/\//g, '-')}.${AWS_APP_ID}.amplifyapp.com`;
+
+  return PRODUCTION_SITE;
+}
 
 export default defineConfig({
-  site: 'https://medicaldigitalperu.com',
+  site: resolveSite(),
   base,
-  image: {
-    domains: wooImageDomains,
-  },
   prefetch: {
     prefetchAll: true,
     defaultStrategy: 'hover',
