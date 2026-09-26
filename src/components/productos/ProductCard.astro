@@ -12,7 +12,7 @@ const cover = product.images[0];
 const category = product.categories[0];
 ---
 
-<a href={`${base}productos/${product.slug}`} class="card group flex flex-col overflow-hidden !p-0">
+<a href={`${base}productos/${product.slug}`} class="card group flex w-full flex-col overflow-hidden !p-0">
   <div class="flex aspect-square items-center justify-center bg-surface p-6">
     {cover ? (
       <Image

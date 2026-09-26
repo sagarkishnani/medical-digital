@@ -1,0 +1,48 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import CategoryNav from "./CategoryNav.astro";
+import ProductCard from "./ProductCard.astro";
+import type { WooCategory, WooProduct } from "../../lib/woo/types";
+
+interface Props {
+  title: string;
+  seoTitle: string;
+  seoDescription: string;
+  products: WooProduct[];
+  categories: WooCategory[];
+  activeSlug?: string;
+}
+
+const { title, seoTitle, seoDescription, products, categories, activeSlug } = Astro.props;
+---
+
+<BaseLayout title={seoTitle} description={seoDescription} headerTheme="light">
+  <section class="section pt-[128px]">
+    <div class="container-xl">
+      <p class="text-overline uppercase text-accent">Productos</p>
+      <h1 class="mt-2 text-heading-h1 text-content">{title}</h1>
+
+      {products.length === 0 ? (
+        <div class="mt-12 rounded-xl border border-line bg-surface-raised p-10 text-center">
+          <p class="text-heading-h4 text-content">El catálogo todavía no está disponible</p>
+          <p class="mt-2 text-body-md text-content-muted">
+            Este sitio se generó sin conexión a la tienda (WOO_STORE_URL vacía), así que no hay productos que mostrar.
+          </p>
+        </div>
+      ) : (
+        <>
+          <div class="mt-10">
+            <CategoryNav categories={categories} activeSlug={activeSlug} />
+          </div>
+          <ul class="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+            {products.map((product) => (
+              <li class="flex">
+                <ProductCard product={product} />
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
+    </div>
+  </section>
+</BaseLayout>
