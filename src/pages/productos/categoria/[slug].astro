@@ -1,0 +1,32 @@
+---
+import type { GetStaticPaths } from "astro";
+import ProductListing from "../../../components/productos/ProductListing.astro";
+import { getCategories, getProducts } from "../../../lib/woo/store";
+import type { WooCategory } from "../../../lib/woo/types";
+
+export const getStaticPaths = (async () => {
+  const categories = await getCategories();
+  return categories
+    .filter((category) => category.count > 0)
+    .map((category) => ({ params: { slug: category.slug }, props: { category } }));
+}) satisfies GetStaticPaths;
+
+interface Props {
+  category: WooCategory;
+}
+
+const { category } = Astro.props;
+const [allProducts, categories] = await Promise.all([getProducts(), getCategories()]);
+const products = allProducts.filter((product) =>
+  product.categories.some((productCategory) => productCategory.id === category.id),
+);
+---
+
+<ProductListing
+  title={category.name}
+  seoTitle={`${category.name} — Productos — Medical Digital`}
+  seoDescription={`Equipos médicos de ${category.name} de marcas líderes. Solicita tu cotización a Medical Digital.`}
+  products={products}
+  categories={categories}
+  activeSlug={category.slug}
+/>
