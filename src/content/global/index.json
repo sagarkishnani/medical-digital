@@ -4,6 +4,7 @@
     "links": [
       { "label": "Inicio", "url": "/" },
       { "label": "Nosotros", "url": "/#features" },
+      { "label": "Productos", "url": "/productos" },
       { "label": "Contacto", "url": "/#cta" }
     ],
     "cta": { "label": "Conversemos", "url": "/#cta" }
@@ -22,6 +23,7 @@
     "social": [],
     "legal": "© 2026 Medical Digital. Todos los derechos reservados."
   },
+  "whatsapp": "51983511262",
   "seo": {
     "title": "Medical Digital",
     "description": "Medical Digital cuida la salud del Perú con tecnología médica de marcas líderes en diagnóstico y soporte vital."

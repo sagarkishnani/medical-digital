@@ -99,12 +99,34 @@ Los tipos, las queries y el cliente se generan en `tina/__generated__/`
 
 Colecciones:
 
-- `global` — navegación, footer, SEO por defecto, código inyectado.
+- `global` — navegación, footer, SEO por defecto, código inyectado y el
+  WhatsApp comercial que usa el botón "Solicitar cotización".
 - `home` — contenido de la portada.
 - `post` — artículos del blog en MDX (`src/content/blog/`).
 - `maintenance` — modo mantenimiento del sitio.
 - `cookieConsent` — textos del banner de cookies.
 
+
+### Catálogo de WooCommerce
+
+Los productos viven en el WordPress de `WOO_STORE_URL` y se leen **solo en
+build** desde la Store API pública (`/wp-json/wc/store/v1/`): no hay claves, ni
+proxy, ni fetch a WordPress desde el navegador. Ver `specs/01-catalogo-productos-woo.md`.
+
+- `src/lib/woo/store.ts` descarga, proyecta y sanitiza. Solo sale lo declarado
+  en `src/lib/woo/types.ts`; el HTML de las descripciones pasa por una allowlist.
+- **Nunca importes `src/lib/woo/store.ts` desde un `.tsx`.** Solo desde páginas
+  y componentes `.astro`. El módulo lanza un error si llega al navegador.
+- `WOO_STORE_URL` va sin prefijo `PUBLIC_`. Vacía, el catálogo se genera vacío;
+  si WordPress no responde, **el build falla** a propósito para no publicar un
+  catálogo vacío.
+- Las imágenes pasan por `astro:assets` (`image.domains` se deriva de
+  `WOO_STORE_URL` en `astro.config.mjs`) y se sirven desde `dist/`.
+- Los productos no son componente doble: se editan en Woo, no en Tina.
+- **Un cambio en Woo no aparece hasta el siguiente deploy.** Hay que volver a
+  desplegar (push o "Redeploy" en Amplify).
+
+Rutas: `/productos`, `/productos/categoria/[slug]` y `/productos/[slug]`.
 
 ### Modo mantenimiento
 

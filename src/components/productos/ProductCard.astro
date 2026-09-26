@@ -1,0 +1,34 @@
+---
+import { Image } from "astro:assets";
+import type { WooProduct } from "../../lib/woo/types";
+
+interface Props {
+  product: WooProduct;
+}
+
+const { product } = Astro.props;
+const base = import.meta.env.BASE_URL || "/";
+const cover = product.images[0];
+const category = product.categories[0];
+---
+
+<a href={`${base}productos/${product.slug}`} class="card group flex w-full flex-col overflow-hidden !p-0">
+  <div class="flex aspect-square items-center justify-center bg-surface p-6">
+    {cover ? (
+      <Image
+        src={cover.src}
+        alt={cover.alt}
+        inferSize
+        width={480}
+        class="max-h-full w-auto object-contain transition-transform duration-500 group-hover:scale-[1.03]"
+      />
+    ) : (
+      <span class="text-body-sm text-content-muted">Sin imagen</span>
+    )}
+  </div>
+  <div class="flex flex-1 flex-col gap-2 border-t border-line p-6">
+    {product.brand && <p class="text-overline uppercase text-accent">{product.brand}</p>}
+    <h2 class="text-heading-h4 text-content">{product.name}</h2>
+    {category && <p class="mt-auto text-caption text-content-muted">{category.name}</p>}
+  </div>
+</a>

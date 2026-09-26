@@ -89,6 +89,12 @@ export const globalCollection: Collection = {
       ],
     },
     {
+      name: "whatsapp",
+      label: "WhatsApp comercial (solo dígitos, con código de país)",
+      description: "Lo usa el botón \"Solicitar cotización\" de cada producto. Ej.: 51983511262",
+      type: "string",
+    },
+    {
       type: "object",
       name: "seo",
       label: "SEO por defecto",
