@@ -8,6 +8,10 @@ import tinaDirective from './astro-tina-directive/index.mjs';
 
 const base = process.env.DEPLOY_BASE || '/';
 
+const wooStoreUrl =
+  process.env.WOO_STORE_URL || loadEnv(process.env.NODE_ENV || 'production', process.cwd(), '').WOO_STORE_URL || '';
+const wooImageDomains = wooStoreUrl.trim() ? [new URL(wooStoreUrl.trim()).hostname] : [];
+
 const PRODUCTION_SITE = 'https://medicaldigitalperu.com';
 
 function resolveSite() {
@@ -25,6 +29,9 @@ function resolveSite() {
 export default defineConfig({
   site: resolveSite(),
   base,
+  image: {
+    domains: wooImageDomains,
+  },
   prefetch: {
     prefetchAll: true,
     defaultStrategy: 'hover',
