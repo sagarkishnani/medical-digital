@@ -20,3 +20,10 @@ interface ImportMetaEnv {
 interface ImportMeta {
   readonly env: ImportMetaEnv;
 }
+
+declare namespace NodeJS {
+  interface ProcessEnv {
+    /** WordPress con WooCommerce. Solo se lee en build (src/lib/woo/store.ts). */
+    readonly WOO_STORE_URL?: string;
+  }
+}
