@@ -4,6 +4,7 @@
     "links": [
       { "label": "Inicio", "url": "/" },
       { "label": "Nosotros", "url": "/#features" },
+      { "label": "Productos", "url": "/productos" },
       { "label": "Contacto", "url": "/#cta" }
     ],
     "cta": { "label": "Conversemos", "url": "/#cta" }
