@@ -1,3 +1,4 @@
+import sanitizeHtml from "sanitize-html";
 import { loadEnv } from "vite";
 import type { WooCategory, WooImage, WooProduct } from "./types";
 
@@ -8,6 +9,21 @@ if (!import.meta.env.SSR) {
 const REQUEST_TIMEOUT_MS = 15_000;
 const PAGE_SIZE = 100;
 const SLUG_PATTERN = /^[a-z0-9-]+$/;
+const LEFTOVER_SHORTCODE = /\[\/?[a-z_][^\]]*\]/gi;
+
+const SANITIZE_OPTIONS: sanitizeHtml.IOptions = {
+  allowedTags: ["p", "br", "strong", "em", "b", "i", "u", "ul", "ol", "li", "h3", "h4", "h5", "table", "thead", "tbody", "tr", "th", "td", "a"],
+  allowedAttributes: { a: ["href", "rel", "target"] },
+  allowedSchemes: ["https", "mailto"],
+  allowProtocolRelative: false,
+  transformTags: {
+    a: sanitizeHtml.simpleTransform("a", { rel: "noopener noreferrer", target: "_blank" }),
+  },
+};
+
+function sanitizeDescription(html: string): string {
+  return sanitizeHtml(html, SANITIZE_OPTIONS).replace(LEFTOVER_SHORTCODE, "").trim();
+}
 
 interface StoreApiImage {
   src?: string;
@@ -103,8 +119,8 @@ function projectProduct(raw: StoreApiProduct, storeUrl: string): WooProduct | nu
     slug: raw.slug,
     sku: raw.sku || "",
     brand: raw.brands?.[0]?.name || null,
-    shortDescription: raw.short_description || "",
-    description: raw.description || "",
+    shortDescription: sanitizeDescription(raw.short_description || ""),
+    description: sanitizeDescription(raw.description || ""),
     images,
     categories: (raw.categories || [])
       .filter((category) => SLUG_PATTERN.test(category.slug))
