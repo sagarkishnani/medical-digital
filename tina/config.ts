@@ -1,6 +1,7 @@
 import { defineConfig } from "tinacms";
 import { globalCollection } from "./collections/global";
 import { homeCollection } from "./collections/home";
+import { aboutCollection } from "./collections/about";
 import { postCollection } from "./collections/post";
 import { maintenanceCollection } from "./collections/maintenance";
 import { cookieConsentCollection } from "./collections/cookieConsent";
@@ -35,6 +36,7 @@ export default defineConfig({
     collections: [
       globalCollection,
       homeCollection,
+      aboutCollection,
       postCollection,
       maintenanceCollection,
       cookieConsentCollection,

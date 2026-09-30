@@ -1,0 +1,21 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import AboutHero from "../components/about/AboutHero.astro";
+import AboutIntro from "../components/about/AboutIntro.astro";
+import VisionMission from "../components/about/VisionMission.astro";
+import Values from "../components/about/Values.astro";
+import Policies from "../components/about/Policies.astro";
+import client from "../../tina/__generated__/client";
+
+const { query, variables, data } = await client.queries.about({ relativePath: "nosotros.json" });
+const seo = data.about.seo;
+const section = { query, variables, data };
+---
+
+<BaseLayout title={seo?.title} description={seo?.description}>
+  <AboutHero {...section} />
+  <AboutIntro {...section} />
+  <VisionMission {...section} />
+  <Values {...section} />
+  <Policies {...section} />
+</BaseLayout>

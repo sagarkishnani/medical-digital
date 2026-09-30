@@ -1,0 +1,13 @@
+---
+import AboutHeroReact from "./AboutHeroReact";
+
+interface Props {
+  query: string;
+  variables: object;
+  data: any;
+}
+
+const { query, variables, data } = Astro.props;
+---
+
+<AboutHeroReact query={query} variables={variables} data={data} client:tina />
