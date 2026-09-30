@@ -250,6 +250,8 @@ Cada paso deja el build verde y va en su propio commit.
 
 - `astro build` con `WOO_STORE_URL` real, `tsc --noEmit` y `check:standard`: 0 errores (aviso previo: páginas sin `og:image`). JS de la página más pesada: 88 KB gzip.
 - Capturas en 320, 360, 768 y 1280 px de `/`, `/nosotros` y `/contacto`: sin cortes ni solapes; el mapa real se muestra.
+- Mobile comparado a 360 px contra "Medical Digital Mobile.html" en las tres páginas: carruseles horizontales de destacados y noticias, valores en filas, políticas en píldoras, datos de contacto antes del formulario con "Llamar" y "WhatsApp". Desktop verificado sin cambios.
+- Desviación de tipografía en mobile: títulos de 26 px de la referencia llevados a `heading-h3` (24 px); el UI Kit no tiene 26.
 - Enlaces internos de las tres páginas: 0 rotos.
 - Woo real: 6 destacados y 7 categorías con conteo.
 - Contacto con formulario revisado en 1280 px contra la referencia.
