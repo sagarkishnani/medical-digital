@@ -1,0 +1,21 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import ContactHero from "../components/contact/ContactHero.astro";
+import ContactInfo from "../components/contact/ContactInfo.astro";
+import ContactMap from "../components/contact/ContactMap.astro";
+import client from "../../tina/__generated__/client";
+
+const [contact, global] = await Promise.all([
+  client.queries.contact({ relativePath: "contacto.json" }),
+  client.queries.global({ relativePath: "index.json" }),
+]);
+const seo = contact.data.contact.seo;
+const contactSection = { query: contact.query, variables: contact.variables, data: contact.data };
+const globalSection = { query: global.query, variables: global.variables, data: global.data };
+---
+
+<BaseLayout title={seo?.title} description={seo?.description}>
+  <ContactHero {...contactSection} />
+  <ContactInfo {...globalSection} />
+  <ContactMap {...contactSection} />
+</BaseLayout>

@@ -108,6 +108,13 @@
   .btn-link:active { @apply text-brand-primary-dark; }
   .btn-link:is(:disabled, [aria-disabled="true"]) { @apply text-greyscale-medium; }
 
+  .map-placeholder {
+    background-image:
+      linear-gradient(theme('colors.line.DEFAULT') 1px, transparent 1px),
+      linear-gradient(90deg, theme('colors.line.DEFAULT') 1px, transparent 1px);
+    background-size: 48px 48px;
+  }
+
   .card {
     @apply rounded-xl border border-line bg-surface-raised p-6
            transition-colors duration-200 hover:border-brand-primary/50;

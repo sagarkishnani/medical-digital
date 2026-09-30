@@ -76,7 +76,7 @@
 {
   hero: { title, image },
   map: {
-    embedUrl,      // src de Google Maps › Compartir › Insertar un mapa (https://www.google.com/maps/embed?pb=…)
+    embedUrl,      // código de Google Maps › Compartir › Insertar un mapa, o solo su src; se usa el src si es de google.com/maps/embed
     directionsUrl, // enlace "Cómo llegar" (Google Maps)
     title,         // título accesible del iframe
   },
@@ -149,7 +149,7 @@ Cada paso deja el build verde y va en su propio commit.
 
 - [ ] La página no contiene ningún formulario ni botón "Enviar".
 - [ ] La dirección, el teléfono, los correos y el horario salen de `global.company`, y WhatsApp usa el número de `global`.
-- [ ] El iframe del mapa lleva `title`, `loading="lazy"`, `referrerpolicy="no-referrer-when-downgrade"` y relación de aspecto fija (no mueve el layout al cargar).
+- [ ] El iframe del mapa lleva `title`, `loading="lazy"`, `referrerpolicy="strict-origin-when-cross-origin"` y relación de aspecto fija (no mueve el layout al cargar).
 - [ ] Si `embedUrl` no empieza por `https://www.google.com/maps/embed`, el iframe no se renderiza y queda solo el enlace "Cómo llegar".
 
 **Tina**
