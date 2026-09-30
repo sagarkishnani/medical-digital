@@ -99,9 +99,15 @@ Los tipos, las queries y el cliente se generan en `tina/__generated__/`
 
 Colecciones:
 
-- `global` — navegación, footer, SEO por defecto, código inyectado y el
-  WhatsApp comercial que usa el botón "Solicitar cotización".
-- `home` — contenido de la portada.
+- `global` — navegación, footer, SEO por defecto, código inyectado, el
+  WhatsApp comercial que usa el botón "Solicitar cotización" y los datos de la
+  empresa (`company`: dirección, teléfono, correos y horario).
+- `home` — contenido de la portada: slider, destacados (los marca Woo),
+  especialidades (categorías de Woo), "Conoce más", marcas, testimonios y
+  noticias (los 3 últimos posts).
+- `about` — página `/nosotros`.
+- `contact` — página `/contacto` y el mapa de Google (acepta el código de
+  "Insertar un mapa"; solo se usa si el `src` es de `google.com/maps/embed`).
 - `post` — artículos del blog en MDX (`src/content/blog/`).
 - `maintenance` — modo mantenimiento del sitio.
 - `cookieConsent` — textos del banner de cookies.

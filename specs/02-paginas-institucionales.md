@@ -217,3 +217,27 @@ Cada paso deja el build verde y va en su propio commit.
 | Se agregan dos colecciones y cambia `home`; `TINA_BRANCH` se fija en build y el preview puede compilar contra el índice equivocado. | El preview del PR usa la rama real. Sin red, `build:local` y después restaurar `tina/__generated__/` y `tina-lock.json`. |
 | Contraste heredado: `btn-primary` en 4.08:1 y `content-subtle` sobre `surface-raised` en 4.4975:1. | No usar `content-subtle` para texto dentro de tarjetas. El contraste de `btn-primary` sigue pendiente de diseño y no se corrige aquí. |
 | El Figma mobile llega después de empezar a maquetar. | Maquetar mobile-first con el estándar y ajustar al Figma antes del PR. Adjuntar capturas en 360, 768 y 1280 px. |
+
+## Notas de implementación
+
+- Íconos compartidos: `src/lib/icons.ts` (opciones de Tina) y `src/components/shared/Icon.tsx` (traducción a `react-icons/fa6`).
+- `src/components/shared/PageHero.tsx`: cabecera con breadcrumb de Nosotros y Contacto.
+- `src/components/shared/QuoteModal.tsx`: modal de cotización con `<dialog>` nativo, reutilizable en las fichas de producto.
+- Hidratación: slider con `client:load`; destacados (modal) y testimonios con `client:visible`; Políticas con `client:visible`; el resto con `client:tina` (0 JS en producción).
+- Se agregó `specialties.catalogLabel` al modelo de `home` para editar el texto de la tarjeta "Ver todo el catálogo".
+- Especialidades en 5 columnas: la tarjeta "Ver todo el catálogo" ocupa las columnas que sobran según cuántas categorías tenga Woo.
+- Slides 2 y 3 apuntan a `/contacto` y `/productos`: `/servicio-tecnico` y `/marcas` aún no existen.
+- Contacto sin formulario: los datos van en 4 columnas; con el formulario se pasa a 2 columnas.
+- Botón "Escríbenos por WhatsApp" con `semantics-success-dark`: el verde del diseño con texto blanco queda en 2.5:1.
+- Radios de 48 px del diseño llevados a `2xl` (24 px): el UI Kit no tiene token de 48.
+- Mapa: el campo acepta el código completo de Google; `referrerpolicy="strict-origin-when-cross-origin"`, el que entrega Google hoy.
+- Colecciones nuevas en `tina dev`: hay que reiniciar el servidor para que indexe sus documentos.
+- **Pendiente para la spec del footer:** el enlace "Contacto" del footer sigue en `/#cta`, que dejó de existir al reemplazar la Home. Se decidió no tocar el footer en esta spec.
+
+## QA realizada
+
+- `astro build` con `WOO_STORE_URL` real, `tsc --noEmit` y `check:standard`: 0 errores (aviso previo: páginas sin `og:image`). JS de la página más pesada: 88 KB gzip.
+- Capturas en 320, 360, 768 y 1280 px de `/`, `/nosotros` y `/contacto`: sin cortes ni solapes; el mapa real se muestra.
+- Enlaces internos de las tres páginas: 0 rotos.
+- Woo real: 6 destacados y 7 categorías con conteo.
+- Pendiente de revisión manual en navegador: modal de cotización (abrir, cerrar con X, Esc y clic fuera), pestañas de Políticas con teclado, y `npm run build` completo con el dev server detenido.
