@@ -2,6 +2,15 @@
   "hero": {
     "title": "Contáctanos"
   },
+  "form": {
+    "title": "Envíanos tus comentarios, dudas y consultas",
+    "locations": ["Lima", "Arequipa", "La Libertad", "Piura", "Cusco", "Otra región"],
+    "specialties": ["Cardiología", "Emergencia", "Consultorio clínico", "Hospitalización", "Diagnóstico respiratorio", "Otra"],
+    "consentLabel": "Acepto la",
+    "privacyLabel": "política de datos personales",
+    "privacyUrl": "",
+    "submitLabel": "Enviar"
+  },
   "map": {
     "embedUrl": "<iframe src=\"https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d7802.227451608827!2d-77.02744072461192!3d-12.104366288136955!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9105c86c533e366b%3A0x56fdeb7d23a63baa!2sC.%20Las%20Palomas%20392%2C%20Surquillo%2015047!5e0!3m2!1ses-419!2spe!4v1790748397330!5m2!1ses-419!2spe\" width=\"600\" height=\"450\" style=\"border:0;\" allowfullscreen=\"\" loading=\"lazy\" referrerpolicy=\"strict-origin-when-cross-origin\"></iframe>",
     "directionsUrl": "https://www.google.com/maps/place/C.+Las+Palomas+392,+Surquillo+15047/@-12.1043663,-77.0274407,16z/data=!3m1!4b1!4m6!3m5!1s0x9105c86c533e366b:0x56fdeb7d23a63baa!8m2!3d-12.1043663!4d-77.0248658!16s%2Fg%2F11h_463l5t",

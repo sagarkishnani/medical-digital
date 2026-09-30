@@ -3,7 +3,7 @@
 > **Status:** Aprobado
 > **Depends on:** SPEC 01
 > **Date:** 2026-09-29
-> **Objective:** Maquetar Home, Nosotros y Contacto según la referencia "Medical Digital Desktop.html", con su contenido editable desde Tina y sin formulario de contacto.
+> **Objective:** Maquetar Home, Nosotros y Contacto según la referencia "Medical Digital Desktop.html", con su contenido editable desde Tina y los formularios maquetados sin envío.
 
 ## Scope
 
@@ -12,14 +12,14 @@
 - Rutas `/` (reemplaza la Home actual), `/nosotros` y `/contacto`, fieles a la referencia en desktop y responsive en 360 / 768 / 1280+ (y 320 px por el estándar). El mobile sigue el Figma cuando llegue.
 - **Home:** hero en slider (Embla + `useSlider`, sin autoplay), "Equipos más solicitados" (productos destacados de Woo), "Encuentra el equipo según tu especialidad" (categorías de Woo con conteo), bloque "Conoce más" con estadísticas estáticas, franja de logos de marcas estática, testimonios en slider con calificación de Google editable, y los últimos 3 artículos del blog. "Solicitar cotización" abre el modal de la referencia (campos, "Hablar con un asesor" por WhatsApp) maquetado sin envío.
 - **Nosotros:** hero con breadcrumb, quiénes somos, visión y misión, valores, y políticas en pestañas accesibles con enlace a un PDF opcional.
-- **Contacto:** hero con breadcrumb, datos de sede, teléfono, correos, horario y botón de WhatsApp, y mapa de Google embebido con enlace "Cómo llegar". La maquetación permite sumar el formulario después sin rehacer la página.
+- **Contacto:** hero con breadcrumb, formulario de la referencia maquetado sin envío (10 campos con `<label>`, selects de ubicación y especialidad, casilla de consentimiento), datos de sede, teléfono, correos, horario y botón de WhatsApp, y mapa de Google embebido con enlace "Cómo llegar".
 - **Tina:** schema de `home` reescrito, colecciones nuevas `about` y `contact`, cada una en su archivo de `tina/collections/`, con el patrón de componente doble y una consulta por página.
 - Contenido inicial solo con los textos de la referencia. Cada componente funciona sin imagen: el hero y los slides muestran el degradado de marca, las fotos un bloque neutro con la misma proporción y las marcas su nombre.
 - Se eliminan `Hero`, `Features` y `CTA` de la Home actual.
 
 **Out of scope (for future specs):**
 
-- Formulario de contacto completo (campos, validación, Turnstile y envío al correo corporativo): se implementa junto con la infraestructura de formularios de la tarea "Página de servicio técnico con formulario".
+- Envío del formulario de contacto (validación, Turnstile, correo corporativo) y su estado "¡Mensaje enviado!": llegan con la infraestructura de formularios de la tarea "Página de servicio técnico con formulario".
 - Header y botón flotante de WhatsApp de la referencia: spec propia del header.
 - Footer de la referencia: spec propia, dentro de la tarea "Links legales en el footer".
 - Envío del modal de cotización y su estado "¡Solicitud enviada!": llegan con la infraestructura de formularios de la tarea de servicio técnico.
@@ -75,6 +75,12 @@
 // tina/collections/contact.ts → src/content/contact/contacto.json
 {
   hero: { title, image },
+  form: {
+    title, submitLabel,
+    locations: string[],   // opciones de "Ubicación"
+    specialties: string[], // opciones de "Especialidad"
+    consentLabel, privacyLabel, privacyUrl, // sin URL, el texto va sin enlace
+  },
   map: {
     embedUrl,      // código de Google Maps › Compartir › Insertar un mapa, o solo su src; se usa el src si es de google.com/maps/embed
     directionsUrl, // enlace "Cómo llegar" (Google Maps)
@@ -147,7 +153,9 @@ Cada paso deja el build verde y va en su propio commit.
 
 **Contacto (`/contacto`)**
 
-- [ ] La página no contiene ningún formulario ni botón "Enviar".
+- [ ] El formulario tiene los 10 campos de la referencia con `<label>` visible; los obligatorios llevan `required` y el asterisco.
+- [ ] "Enviar" no envía datos ni muestra un mensaje de éxito.
+- [ ] Sin `privacyUrl`, el texto de la política se muestra sin enlace.
 - [ ] La dirección, el teléfono, los correos y el horario salen de `global.company`, y WhatsApp usa el número de `global`.
 - [ ] El iframe del mapa lleva `title`, `loading="lazy"`, `referrerpolicy="strict-origin-when-cross-origin"` y relación de aspecto fija (no mueve el layout al cargar).
 - [ ] Si `embedUrl` no empieza por `https://www.google.com/maps/embed`, el iframe no se renderiza y queda solo el enlace "Cómo llegar".
@@ -173,7 +181,7 @@ Cada paso deja el build verde y va en su propio commit.
 | Decisión | Por qué |
 |---|---|
 | Una sola spec para las tres páginas | Es una tarea de maquetación; los formularios tienen su tarea propia ("Página de servicio técnico con formulario"). |
-| Contacto sale sin formulario | Un formulario que no envía se publica roto y el go-live exige "formularios probados con correo recibido". Maquetarlo ahora duplicaría trabajo: sus campos, validación y estados dependen de los componentes que defina la tarea de servicio técnico. Mientras tanto, la página ya cumple su función con teléfono, correos y WhatsApp. |
+| El formulario de Contacto se maqueta ahora, sin envío | Mismo criterio que el modal de cotización: es parte del diseño aprobado. El estado "¡Mensaje enviado!" no se muestra hasta que el envío sea real. Decisión revisada el 2026-09-30 (antes: Contacto sin formulario). |
 | Header y footer quedan fuera, en dos specs separadas | Afectan a todas las páginas, incluido el catálogo publicado. El footer tiene tarea propia y depende de los documentos legales del cliente; el header es interactivo y no debe esperar esos documentos. Mismo criterio que Fiberlux (spec 07 del footer; specs 09, 16 y 33 del header). Ambas tocan `global`, así que van en secuencia. |
 | El modal de cotización se maqueta ahora, sin envío | Es parte del diseño aprobado de la tarjeta. "Hablar con un asesor" ya funciona por WhatsApp. El estado "¡Solicitud enviada!" no se muestra hasta que el envío sea real: confirmar un envío que no ocurrió engañaría al cliente. |
 | Los destacados salen de la marca "Destacado" de Woo | El cliente los elige donde ya edita los productos, sin enlaces que se rompan al renombrar un producto. |
@@ -195,7 +203,7 @@ Cada paso deja el build verde y va en su propio commit.
 | Alternativa | Por qué no |
 |---|---|
 | Dividir en Home + Nosotros y Contacto aparte | Sin formulario, Contacto es solo maquetación. |
-| Maquetar el formulario visible con el botón sin acción | Publica un formulario roto en staging y arriesga llegar a `main` sin envío. Decisión revisada el 2026-09-29. |
+| Contacto sin formulario hasta tener el envío | Inconsistente con el modal de cotización, que ya se maquetó sin envío. |
 | Commitear las fotos de la referencia | Licencia sin definir con el cliente. |
 | Imágenes genéricas de relleno en el repo | Archivos que después hay que acordarse de borrar. |
 | Header y footer en una sola spec | Tareas, dependencias y riesgos distintos; un PR más grande y con más rondas de revisión. |
@@ -211,7 +219,7 @@ Cada paso deja el build verde y va en su propio commit.
 | Riesgo | Mitigación |
 |---|---|
 | Nadie marcó productos como destacados en Woo, o `featured=true` no filtra como se espera en la Store API. | La sección no se renderiza si viene vacía. Se verifica en el paso 3 contra el WordPress real; si no hay destacados, se pide al cliente que los marque. |
-| El modal de cotización llega a `main` con "Enviar solicitud" sin envío. El go-live exige "formularios probados con correo recibido". | El PR lo indica: `staging` no se promueve a `main` hasta que la tarea de formularios conecte el envío. |
+| El modal de cotización y el formulario de Contacto llegan a `main` sin envío. El go-live exige "formularios probados con correo recibido". | El PR lo indica: `staging` no se promueve a `main` hasta que la tarea de formularios conecte el envío. |
 | Los testimonios y la calificación "4.9 · 120 reseñas en Google" son de ejemplo del diseño. Publicarlos como reales sería engañoso para los clientes. | Se maquetan tal como están en el diseño. El PR lo indica y el cliente debe reemplazarlos por testimonios y cifras reales desde Tina antes de pasar a `main`. |
 | El cliente tarda en entregar las imágenes y el sitio se ve sin fotos. | El respaldo mantiene el layout. Mientras tanto se pueden subir fotos de licencia libre desde Tina. |
 | Se agregan dos colecciones y cambia `home`; `TINA_BRANCH` se fija en build y el preview puede compilar contra el índice equivocado. | El preview del PR usa la rama real. Sin red, `build:local` y después restaurar `tina/__generated__/` y `tina-lock.json`. |
@@ -227,7 +235,7 @@ Cada paso deja el build verde y va en su propio commit.
 - Se agregó `specialties.catalogLabel` al modelo de `home` para editar el texto de la tarjeta "Ver todo el catálogo".
 - Especialidades en 5 columnas: la tarjeta "Ver todo el catálogo" ocupa las columnas que sobran según cuántas categorías tenga Woo.
 - Slides 2 y 3 apuntan a `/contacto` y `/productos`: `/servicio-tecnico` y `/marcas` aún no existen.
-- Contacto sin formulario: los datos van en 4 columnas; con el formulario se pasa a 2 columnas.
+- Contacto en la grilla del diseño: formulario (7fr) y datos de la empresa (4fr). El formulario no necesita JS (`client:tina`).
 - Botón "Escríbenos por WhatsApp" con `semantics-success-dark`: el verde del diseño con texto blanco queda en 2.5:1.
 - Radios de 48 px del diseño llevados a `2xl` (24 px): el UI Kit no tiene token de 48.
 - Mapa: el campo acepta el código completo de Google; `referrerpolicy="strict-origin-when-cross-origin"`, el que entrega Google hoy.
@@ -240,4 +248,5 @@ Cada paso deja el build verde y va en su propio commit.
 - Capturas en 320, 360, 768 y 1280 px de `/`, `/nosotros` y `/contacto`: sin cortes ni solapes; el mapa real se muestra.
 - Enlaces internos de las tres páginas: 0 rotos.
 - Woo real: 6 destacados y 7 categorías con conteo.
+- Contacto con formulario revisado en 1280 px contra la referencia.
 - Pendiente de revisión manual en navegador: modal de cotización (abrir, cerrar con X, Esc y clic fuera), pestañas de Políticas con teclado, y `npm run build` completo con el dev server detenido.
