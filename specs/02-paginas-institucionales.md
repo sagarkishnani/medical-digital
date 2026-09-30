@@ -10,7 +10,7 @@
 **In:**
 
 - Rutas `/` (reemplaza la Home actual), `/nosotros` y `/contacto`, fieles a la referencia en desktop y responsive en 360 / 768 / 1280+ (y 320 px por el estándar). El mobile sigue el Figma cuando llegue.
-- **Home:** hero en slider (Embla + `useSlider`, sin autoplay), "Equipos más solicitados" (productos destacados de Woo), "Encuentra el equipo según tu especialidad" (categorías de Woo con conteo), bloque "Conoce más" con estadísticas estáticas, franja de logos de marcas estática, testimonios en slider con calificación de Google editable, y los últimos 3 artículos del blog.
+- **Home:** hero en slider (Embla + `useSlider`, sin autoplay), "Equipos más solicitados" (productos destacados de Woo), "Encuentra el equipo según tu especialidad" (categorías de Woo con conteo), bloque "Conoce más" con estadísticas estáticas, franja de logos de marcas estática, testimonios en slider con calificación de Google editable, y los últimos 3 artículos del blog. "Solicitar cotización" abre el modal de la referencia (campos, "Hablar con un asesor" por WhatsApp) maquetado sin envío.
 - **Nosotros:** hero con breadcrumb, quiénes somos, visión y misión, valores, y políticas en pestañas accesibles con enlace a un PDF opcional.
 - **Contacto:** hero con breadcrumb, datos de sede, teléfono, correos, horario y botón de WhatsApp, y mapa de Google embebido con enlace "Cómo llegar". La maquetación permite sumar el formulario después sin rehacer la página.
 - **Tina:** schema de `home` reescrito, colecciones nuevas `about` y `contact`, cada una en su archivo de `tina/collections/`, con el patrón de componente doble y una consulta por página.
@@ -22,7 +22,7 @@
 - Formulario de contacto completo (campos, validación, Turnstile y envío al correo corporativo): se implementa junto con la infraestructura de formularios de la tarea "Página de servicio técnico con formulario".
 - Header y botón flotante de WhatsApp de la referencia: spec propia del header.
 - Footer de la referencia: spec propia, dentro de la tarea "Links legales en el footer".
-- Modal "Solicitar cotización" con formulario.
+- Envío del modal de cotización y su estado "¡Solicitud enviada!": llegan con la infraestructura de formularios de la tarea de servicio técnico.
 - Resto de páginas de la referencia: Productos y Detalle rediseñados, Marcas, Servicio técnico, Blog y Post.
 - Reseñas de Google en vivo: la calificación y los testimonios se editan a mano en Tina.
 - Imágenes finales: las entrega el cliente y se cargan desde Tina.
@@ -134,6 +134,10 @@ Cada paso deja el build verde y va en su propio commit.
 - [ ] Las especialidades muestran las categorías de Woo con su conteo real y enlazan a `/productos/categoria/[slug]`.
 - [ ] Las estadísticas, las marcas y los testimonios salen de Tina, y los números aparecen sin animación.
 - [ ] Noticias muestra los 3 posts más recientes. Con 0 posts, la sección no se renderiza.
+- [ ] "Solicitar cotización" abre un `<dialog>` modal con el nombre del producto; se cierra con el botón, con Esc y al pulsar fuera.
+- [ ] Los campos del modal tienen `<label>` (visualmente oculto) y los obligatorios llevan `required`.
+- [ ] "Enviar solicitud" no envía datos ni muestra un mensaje de éxito. "Hablar con un asesor" abre WhatsApp con el producto.
+- [ ] La flecha diagonal de cada tarjeta lleva a la ficha del producto.
 
 **Nosotros (`/nosotros`)**
 
@@ -171,6 +175,7 @@ Cada paso deja el build verde y va en su propio commit.
 | Una sola spec para las tres páginas | Es una tarea de maquetación; los formularios tienen su tarea propia ("Página de servicio técnico con formulario"). |
 | Contacto sale sin formulario | Un formulario que no envía se publica roto y el go-live exige "formularios probados con correo recibido". Maquetarlo ahora duplicaría trabajo: sus campos, validación y estados dependen de los componentes que defina la tarea de servicio técnico. Mientras tanto, la página ya cumple su función con teléfono, correos y WhatsApp. |
 | Header y footer quedan fuera, en dos specs separadas | Afectan a todas las páginas, incluido el catálogo publicado. El footer tiene tarea propia y depende de los documentos legales del cliente; el header es interactivo y no debe esperar esos documentos. Mismo criterio que Fiberlux (spec 07 del footer; specs 09, 16 y 33 del header). Ambas tocan `global`, así que van en secuencia. |
+| El modal de cotización se maqueta ahora, sin envío | Es parte del diseño aprobado de la tarjeta. "Hablar con un asesor" ya funciona por WhatsApp. El estado "¡Solicitud enviada!" no se muestra hasta que el envío sea real: confirmar un envío que no ocurrió engañaría al cliente. |
 | Los destacados salen de la marca "Destacado" de Woo | El cliente los elige donde ya edita los productos, sin enlaces que se rompan al renombrar un producto. |
 | Embla con `useSlider` | Patrón probado en Fiberlux (spec 68). Pesa unos 7 KB gzip. |
 | Mapa con el iframe oficial "Insertar un mapa" de Google Maps, URL editable en Tina | No necesita clave de API ni facturación. `loading="lazy"` evita cargarlo hasta que se acerca al viewport. Solo se aceptan URLs de `google.com/maps/embed` para que el panel no pueda inyectar un iframe arbitrario. |
@@ -206,6 +211,8 @@ Cada paso deja el build verde y va en su propio commit.
 | Riesgo | Mitigación |
 |---|---|
 | Nadie marcó productos como destacados en Woo, o `featured=true` no filtra como se espera en la Store API. | La sección no se renderiza si viene vacía. Se verifica en el paso 3 contra el WordPress real; si no hay destacados, se pide al cliente que los marque. |
+| El modal de cotización llega a `main` con "Enviar solicitud" sin envío. El go-live exige "formularios probados con correo recibido". | El PR lo indica: `staging` no se promueve a `main` hasta que la tarea de formularios conecte el envío. |
+| Los testimonios y la calificación "4.9 · 120 reseñas en Google" son de ejemplo del diseño. Publicarlos como reales sería engañoso para los clientes. | Se maquetan tal como están en el diseño. El PR lo indica y el cliente debe reemplazarlos por testimonios y cifras reales desde Tina antes de pasar a `main`. |
 | El cliente tarda en entregar las imágenes y el sitio se ve sin fotos. | El respaldo mantiene el layout. Mientras tanto se pueden subir fotos de licencia libre desde Tina. |
 | Se agregan dos colecciones y cambia `home`; `TINA_BRANCH` se fija en build y el preview puede compilar contra el índice equivocado. | El preview del PR usa la rama real. Sin red, `build:local` y después restaurar `tina/__generated__/` y `tina-lock.json`. |
 | Contraste heredado: `btn-primary` en 4.08:1 y `content-subtle` sobre `surface-raised` en 4.4975:1. | No usar `content-subtle` para texto dentro de tarjetas. El contraste de `btn-primary` sigue pendiente de diseño y no se corrige aquí. |

@@ -1,27 +1,99 @@
 {
-  "hero": {
-    "eyebrow": "Medical Digital",
-    "title": "Un título que explica qué haces en una línea",
-    "subtitle": "Medical Digital cuida la salud del Perú con tecnología médica de marcas líderes en diagnóstico y soporte vital.",
-    "buttons": [
-      { "text": "Conversemos", "url": "/#cta", "variant": "primary" },
-      { "text": "Ver más", "url": "/#features", "variant": "secondary" }
+  "slides": [
+    {
+      "eyebrow": "Bienvenido a Medical Digital",
+      "title": "Tecnología e innovación en diagnóstico médico",
+      "text": "Más de 18 años equipando clínicas y hospitales del Perú con marcas líderes a nivel mundial.",
+      "ctaLabel": "Ver productos",
+      "ctaUrl": "/productos"
+    },
+    {
+      "eyebrow": "Servicio técnico certificado",
+      "title": "Tus equipos siempre operativos",
+      "text": "Mantenimiento preventivo y correctivo, repuestos originales y capacitación para tu equipo médico.",
+      "ctaLabel": "Solicitar servicio",
+      "ctaUrl": "/contacto"
+    },
+    {
+      "eyebrow": "Nuestros aliados",
+      "title": "Aliados que confían en nosotros",
+      "text": "Clínicas, hospitales y marcas líderes del mundo nos eligen como su socio en tecnología médica.",
+      "ctaLabel": "Ver productos",
+      "ctaUrl": "/productos"
+    }
+  ],
+  "featured": {
+    "title": "Equipos más solicitados",
+    "linkLabel": "Ver todos",
+    "limit": 4
+  },
+  "specialties": {
+    "title": "Encuentra el equipo según tu especialidad",
+    "linkLabel": "Ver catálogo completo",
+    "catalogLabel": "Ver todo el catálogo",
+    "icons": [
+      { "categorySlug": "cardiologia", "icon": "heart" },
+      { "categorySlug": "emergencia", "icon": "ambulance" },
+      { "categorySlug": "consultorio-clinico", "icon": "stethoscope" },
+      { "categorySlug": "hospitalizacion", "icon": "hospital" },
+      { "categorySlug": "sala-de-operaciones", "icon": "kit-medical" },
+      { "categorySlug": "sistemas-clinicos", "icon": "monitor" },
+      { "categorySlug": "diagnostico-respiratorio", "icon": "lungs" }
     ]
   },
-  "features": {
-    "title": "Por qué trabajar con nosotros",
-    "description": "Reemplaza estos textos desde el panel en /admin.",
+  "about": {
+    "imageAlt": "Médico atendiendo a un paciente",
+    "text": "Medical Digital cuida la salud del Perú, con tecnología médica de marcas líderes y un equipo experto que te acompaña en todo momento.",
+    "buttonLabel": "Conoce más",
+    "buttonUrl": "/nosotros",
+    "stats": [
+      { "icon": "hospital", "prefix": "+", "value": "18", "label": "Años de experiencia en el sector" },
+      { "icon": "handshake", "prefix": "+", "value": "1800", "label": "Equipos médicos solicitados" },
+      { "icon": "certificate", "prefix": "+", "value": "15", "label": "Certificaciones internacionales" },
+      { "icon": "shield", "prefix": "+", "value": "10", "label": "Representaciones de marcas de prestigio" }
+    ]
+  },
+  "brands": [
+    { "name": "Schiller" },
+    { "name": "Welch Allyn" },
+    { "name": "Bovie" },
+    { "name": "Merivaara" },
+    { "name": "Health o meter" },
+    { "name": "Ganshorn" },
+    { "name": "Midmark" },
+    { "name": "Edan" },
+    { "name": "Suntech" }
+  ],
+  "testimonials": {
+    "title": "La confianza de más de 18 años con profesionales de la salud",
+    "rating": 4.9,
+    "reviewsCount": 120,
     "items": [
-      { "icon": "bolt", "title": "Rápido", "description": "Sitio estático: entrega en milisegundos desde cualquier CDN." },
-      { "icon": "shield", "title": "Seguro", "description": "Sin base de datos ni servidor de aplicaciones que mantener." },
-      { "icon": "chart", "title": "Medible", "description": "Analítica y píxeles se inyectan desde el CMS, sin tocar el código." }
+      {
+        "text": "El acompañamiento técnico después de la compra es lo que marca la diferencia. Nuestros electrocardiógrafos Schiller funcionan sin interrupciones desde hace seis años.",
+        "name": "Dra. Carla Mendoza",
+        "role": "Jefa de Cardiología · Clínica San Gabriel"
+      },
+      {
+        "text": "Cotizamos, recibimos asesoría y la instalación se hizo en la fecha acordada. Un proveedor serio para compras institucionales.",
+        "name": "Lic. Jorge Ramírez",
+        "role": "Administrador · Policlínico Santa Rosa"
+      },
+      {
+        "text": "La capacitación en espirometría fue clara y práctica. El equipo quedó operativo desde el primer día.",
+        "name": "Dr. Luis Paredes",
+        "role": "Neumólogo · Centro Respiratorio Lima"
+      },
+      {
+        "text": "Respuesta rápida en repuestos originales y mantenimiento preventivo. Recomendamos a Medical Digital sin dudar.",
+        "name": "Mg. Ana Torres",
+        "role": "Jefa de Logística · Clínica del Sur"
+      }
     ]
   },
-  "cta": {
-    "title": "¿Empezamos?",
-    "description": "Cuéntanos qué necesitas y te respondemos el mismo día.",
-    "buttonText": "Escríbenos",
-    "buttonUrl": "/contacto"
+  "news": {
+    "title": "Noticias y capacitaciones",
+    "linkLabel": "Ver todas las noticias"
   },
   "seo": {
     "title": "Medical Digital",

@@ -1,0 +1,40 @@
+---
+import { getImage } from "astro:assets";
+import FeaturedProductsReact from "./FeaturedProductsReact";
+import type { FeaturedCard } from "./FeaturedProductsReact";
+import type { WooProduct } from "../../lib/woo/types";
+import { buildQuoteUrl } from "../../utils/whatsapp";
+
+interface Props {
+  query: string;
+  variables: object;
+  data: any;
+  products: WooProduct[];
+  whatsappNumber: string;
+  salesEmail: string;
+}
+
+const { query, variables, data, products, whatsappNumber, salesEmail } = Astro.props;
+const base = import.meta.env.BASE_URL || "/";
+const siteUrl = new URL(base, Astro.site || "https://medicaldigitalperu.com").href;
+
+const cards: FeaturedCard[] = await Promise.all(
+  products.map(async (product) => {
+    const cover = product.images[0];
+    const image = cover
+      ? await getImage({ src: cover.src, inferSize: true, width: 480, format: "webp" })
+      : null;
+    return {
+      href: `${base}productos/${product.slug}`,
+      name: product.name,
+      brand: product.brand,
+      quoteUrl: whatsappNumber ? buildQuoteUrl(whatsappNumber, product, siteUrl) : "",
+      image: image
+        ? { src: image.src, alt: cover.alt, width: Number(image.attributes.width), height: Number(image.attributes.height) }
+        : null,
+    };
+  }),
+);
+---
+
+<FeaturedProductsReact query={query} variables={variables} data={data} cards={cards} salesEmail={salesEmail} client:visible />
