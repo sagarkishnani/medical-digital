@@ -25,7 +25,7 @@ export default function ContactMapReact({ query, variables, data: initialData }:
   const title = map.title || "Mapa de Google";
 
   return (
-    <section className="relative h-[360px] bg-greyscale-lightest md:h-[420px]">
+    <section className="relative h-[260px] bg-greyscale-lightest md:h-[420px]">
       {canEmbed ? (
         <iframe
           src={embedUrl}

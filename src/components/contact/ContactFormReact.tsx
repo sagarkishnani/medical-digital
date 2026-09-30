@@ -32,14 +32,14 @@ export default function ContactFormReact({ query, variables, data: initialData }
   const specialties = (form.specialties || []).filter(Boolean);
 
   return (
-    <form className="flex flex-col gap-6 rounded-2xl bg-surface p-6 md:p-11" noValidate>
+    <form className="flex flex-col gap-3.5 rounded-2xl bg-surface p-[22px] md:gap-6 md:p-11" noValidate>
       {form.title && (
         <h2 className="text-heading-h3 text-brand-secondary-dark md:text-heading-h2" data-tina-field={tinaField(form, "title")}>
           {form.title}
         </h2>
       )}
 
-      <div className="grid gap-[18px] sm:grid-cols-2">
+      <div className="grid gap-3.5 sm:grid-cols-2 md:gap-[18px]">
         {TEXT_FIELDS.map((field) => (
           <label key={field.name} className={labelClass}>
             <span>
@@ -93,8 +93,8 @@ export default function ContactFormReact({ query, variables, data: initialData }
         </label>
       </div>
 
-      <div className="flex flex-col gap-6 border-t border-line pt-5 sm:flex-row sm:items-center sm:justify-between">
-        <label className="flex cursor-pointer items-center gap-3 text-body-sm text-content-muted">
+      <div className="flex flex-col gap-4 sm:gap-6 sm:border-t sm:border-line sm:pt-5 sm:flex-row sm:items-center sm:justify-between">
+        <label className="flex cursor-pointer items-start gap-2.5 text-body-sm text-content-muted sm:items-center sm:gap-3">
           <input type="checkbox" name="consent" required className="h-5 w-5 shrink-0 accent-brand-secondary-dark" />
           <span data-tina-field={tinaField(form, "consentLabel")}>
             {form.consentLabel}{" "}
@@ -107,7 +107,7 @@ export default function ContactFormReact({ query, variables, data: initialData }
             )}
           </span>
         </label>
-        <button type="button" className="btn-primary px-11" data-tina-field={tinaField(form, "submitLabel")}>
+        <button type="button" className="btn-primary h-[54px] px-11" data-tina-field={tinaField(form, "submitLabel")}>
           {form.submitLabel || "Enviar"}
         </button>
       </div>

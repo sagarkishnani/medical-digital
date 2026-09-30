@@ -1,5 +1,5 @@
 import { useTina, tinaField } from "tinacms/dist/react";
-import { FaWhatsapp } from "react-icons/fa6";
+import { FaPhone, FaWhatsapp } from "react-icons/fa6";
 
 interface Props {
   query: string;
@@ -16,22 +16,44 @@ export default function ContactInfoReact({ query, variables, data: initialData }
   const emails = (company.emails || []).filter(Boolean);
   const phoneDigits = (company.phone || "").replace(/\D/g, "");
   const whatsappDigits = (global.whatsapp || "").replace(/\D/g, "");
+  const whatsappUrl = whatsappDigits ? `https://wa.me/${whatsappDigits}` : "";
 
   return (
-    <div className="flex flex-col gap-8 lg:pt-3">
-      <dl className="flex flex-col gap-8">
+    <div className="order-first flex flex-col gap-5 lg:order-none lg:gap-8 lg:pt-3">
+      <dl className="flex flex-col gap-5 lg:gap-8">
         {company.address && (
           <div className="flex flex-col gap-2">
-            <dt className="text-body-sm text-content-subtle">Nuestra sede</dt>
-            <dd className="whitespace-pre-line text-heading-h3 text-brand-secondary-dark" data-tina-field={tinaField(company, "address")}>
+            <dt className="text-caption text-content-subtle lg:text-body-sm">Nuestra sede</dt>
+            <dd className="whitespace-pre-line text-body-lg font-medium text-brand-secondary-dark lg:text-heading-h3" data-tina-field={tinaField(company, "address")}>
               {company.address}
             </dd>
           </div>
         )}
+        {(phoneDigits || whatsappUrl) && (
+          <div className="grid grid-cols-2 gap-2.5 lg:hidden">
+            {phoneDigits && (
+              <a href={`tel:+${phoneDigits}`} className="btn h-[52px] border-brand-secondary-dark px-4 text-body-md text-brand-secondary-dark">
+                <FaPhone aria-hidden="true" className="h-4 w-4" />
+                Llamar
+              </a>
+            )}
+            {whatsappUrl && (
+              <a
+                href={whatsappUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn h-[52px] bg-semantics-success-dark px-4 text-body-md text-white"
+              >
+                <FaWhatsapp aria-hidden="true" className="h-5 w-5" />
+                WhatsApp
+              </a>
+            )}
+          </div>
+        )}
         {company.phone && (
           <div className="flex flex-col gap-2">
-            <dt className="text-body-sm text-content-subtle">Teléfono</dt>
-            <dd className="text-heading-h3 text-brand-secondary-dark" data-tina-field={tinaField(company, "phone")}>
+            <dt className="text-caption text-content-subtle lg:text-body-sm">Teléfono</dt>
+            <dd className="text-body-lg font-medium text-brand-secondary-dark lg:text-heading-h3" data-tina-field={tinaField(company, "phone")}>
               <a href={`tel:+${phoneDigits}`} className="hover:underline">
                 {company.phone}
               </a>
@@ -40,9 +62,9 @@ export default function ContactInfoReact({ query, variables, data: initialData }
         )}
         {emails.length > 0 && (
           <div className="flex flex-col gap-2">
-            <dt className="text-body-sm text-content-subtle">Correo electrónico</dt>
+            <dt className="text-caption text-content-subtle lg:text-body-sm">Correo electrónico</dt>
             {emails.map((email: string, index: number) => (
-              <dd key={email} className="break-all text-body-lg font-medium text-brand-secondary-dark" data-tina-field={tinaField(company, "emails", index)}>
+              <dd key={email} className="break-all text-body-md font-medium text-brand-secondary-dark lg:text-body-lg" data-tina-field={tinaField(company, "emails", index)}>
                 <a href={`mailto:${email}`} className="hover:underline">
                   {email}
                 </a>
@@ -52,19 +74,19 @@ export default function ContactInfoReact({ query, variables, data: initialData }
         )}
         {company.hours && (
           <div className="flex flex-col gap-2">
-            <dt className="text-body-sm text-content-subtle">Horario</dt>
-            <dd className="text-body-lg font-medium text-brand-secondary-dark" data-tina-field={tinaField(company, "hours")}>
+            <dt className="text-caption text-content-subtle lg:text-body-sm">Horario</dt>
+            <dd className="text-body-md font-medium text-brand-secondary-dark lg:text-body-lg" data-tina-field={tinaField(company, "hours")}>
               {company.hours}
             </dd>
           </div>
         )}
       </dl>
-      {whatsappDigits && (
+      {whatsappUrl && (
         <a
-          href={`https://wa.me/${whatsappDigits}`}
+          href={whatsappUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="btn self-start bg-semantics-success-dark text-white hover:bg-semantics-success-darkest"
+          className="btn hidden self-start bg-semantics-success-dark text-white hover:bg-semantics-success-darkest lg:inline-flex"
         >
           <FaWhatsapp aria-hidden="true" className="h-6 w-6" />
           Escríbenos por WhatsApp
