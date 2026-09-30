@@ -47,11 +47,11 @@ export default function TestimonialsReact({ query, variables, data: initialData 
 
   return (
     <section className="bg-surface-raised" aria-roledescription="carrusel" aria-label="Testimonios de clientes">
-      <div className="container-xl flex flex-col gap-10 py-16 md:py-24">
+      <div className="container-xl flex flex-col gap-6 py-12 md:gap-10 md:py-24">
         <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           <div className="flex max-w-[640px] flex-col gap-3">
             {testimonials.title && (
-              <h2 className="text-heading-h2 text-brand-secondary-dark lg:text-heading-h1" data-tina-field={tinaField(testimonials, "title")}>
+              <h2 className="text-heading-h3 text-brand-secondary-dark md:text-heading-h2 lg:text-heading-h1" data-tina-field={tinaField(testimonials, "title")}>
                 {testimonials.title}
               </h2>
             )}
@@ -63,7 +63,7 @@ export default function TestimonialsReact({ query, variables, data: initialData 
               rating
             )}
           </div>
-          <div className="flex gap-2.5">
+          <div className="hidden gap-2.5 md:flex">
             <button
               type="button"
               onClick={slider.prev}
@@ -95,7 +95,7 @@ export default function TestimonialsReact({ query, variables, data: initialData 
                 aria-roledescription="slide"
                 aria-label={`${index + 1} de ${items.length}`}
               >
-                <figure className="flex h-full min-h-[300px] flex-col justify-between gap-7 rounded-2xl bg-surface p-8">
+                <figure className="flex h-full flex-col justify-between gap-5 rounded-2xl bg-surface p-6 md:min-h-[300px] md:gap-7 md:p-8">
                   <div className="flex flex-col gap-4">
                     <FaQuoteLeft aria-hidden="true" className="h-8 w-8 text-brand-tertiary-light" />
                     <blockquote className="text-body-lg text-brand-secondary-dark text-pretty" data-tina-field={tinaField(item, "text")}>
@@ -124,6 +124,47 @@ export default function TestimonialsReact({ query, variables, data: initialData 
               </li>
             ))}
           </ul>
+        </div>
+
+        <div className="flex items-center justify-between md:hidden">
+          <div className="flex gap-1.5">
+            {slider.scrollSnaps.map((_, index) => (
+              <button
+                key={index}
+                type="button"
+                onClick={() => slider.goTo(index)}
+                aria-label={`Ir al testimonio ${index + 1}`}
+                aria-current={index === slider.activeIndex}
+                className="flex h-11 items-center"
+              >
+                <span
+                  className={`block h-2 rounded-pill transition-all duration-300 ${
+                    index === slider.activeIndex ? "w-6 bg-brand-secondary-dark" : "w-2 bg-brand-secondary-light"
+                  }`}
+                />
+              </button>
+            ))}
+          </div>
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={slider.prev}
+              disabled={!slider.canPrev}
+              aria-label="Testimonio anterior"
+              className={`${arrowClass} border-line bg-surface text-brand-secondary-dark`}
+            >
+              <FaChevronLeft aria-hidden="true" />
+            </button>
+            <button
+              type="button"
+              onClick={slider.next}
+              disabled={!slider.canNext}
+              aria-label="Testimonio siguiente"
+              className={`${arrowClass} border-brand-secondary-dark bg-brand-secondary-dark text-white`}
+            >
+              <FaChevronRight aria-hidden="true" />
+            </button>
+          </div>
         </div>
       </div>
     </section>

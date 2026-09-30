@@ -47,19 +47,19 @@ export default function HomeSliderReact({ query, variables, data: initialData }:
                   <div className="absolute inset-0 bg-gradient-overlay" />
                 </>
               )}
-              <div className="container-xl relative py-24 md:px-20 lg:px-28">
-                <div className="flex max-w-[620px] flex-col gap-5 text-white">
+              <div className="container-xl relative px-10 pb-20 pt-24 md:px-20 md:py-24 lg:px-28">
+                <div className="flex max-w-[320px] flex-col gap-3.5 text-white md:max-w-[620px] md:gap-5">
                   {slide.eyebrow && (
-                    <p className="text-body-md text-brand-tertiary-lightest md:text-body-lg" data-tina-field={tinaField(slide, "eyebrow")}>
+                    <p className="text-body-sm text-brand-tertiary-lightest md:text-body-lg" data-tina-field={tinaField(slide, "eyebrow")}>
                       {slide.eyebrow}
                     </p>
                   )}
                   {index === 0 ? (
-                    <h1 className="text-heading-h1 text-balance md:text-display" data-tina-field={tinaField(slide, "title")}>
+                    <h1 className="text-heading-h2 text-balance md:text-display" data-tina-field={tinaField(slide, "title")}>
                       {slide.title}
                     </h1>
                   ) : (
-                    <h2 className="text-heading-h1 text-balance md:text-display" data-tina-field={tinaField(slide, "title")}>
+                    <h2 className="text-heading-h2 text-balance md:text-display" data-tina-field={tinaField(slide, "title")}>
                       {slide.title}
                     </h2>
                   )}
@@ -93,7 +93,7 @@ export default function HomeSliderReact({ query, variables, data: initialData }:
             type="button"
             onClick={slider.prev}
             aria-label="Slide anterior"
-            className="absolute left-4 top-1/2 hidden h-14 w-14 -translate-y-1/2 items-center justify-center rounded-pill border border-white/40 bg-white/10 text-white backdrop-blur transition-colors hover:bg-white hover:text-brand-secondary-dark md:flex lg:left-7"
+            className="absolute left-0 top-[calc(50%-50px)] flex h-11 w-11 items-center justify-center text-white md:left-4 md:top-1/2 md:h-14 md:w-14 md:-translate-y-1/2 md:rounded-pill md:border md:border-white/40 md:bg-white/10 md:backdrop-blur md:transition-colors md:hover:bg-white md:hover:text-brand-secondary-dark lg:left-7"
           >
             <FaChevronLeft aria-hidden="true" />
           </button>
@@ -101,11 +101,11 @@ export default function HomeSliderReact({ query, variables, data: initialData }:
             type="button"
             onClick={slider.next}
             aria-label="Slide siguiente"
-            className="absolute right-4 top-1/2 hidden h-14 w-14 -translate-y-1/2 items-center justify-center rounded-pill border border-white/40 bg-white/10 text-white backdrop-blur transition-colors hover:bg-white hover:text-brand-secondary-dark md:flex lg:right-7"
+            className="absolute right-0 top-[calc(50%-50px)] flex h-11 w-11 items-center justify-center text-white md:right-4 md:top-1/2 md:h-14 md:w-14 md:-translate-y-1/2 md:rounded-pill md:border md:border-white/40 md:bg-white/10 md:backdrop-blur md:transition-colors md:hover:bg-white md:hover:text-brand-secondary-dark lg:right-7"
           >
             <FaChevronRight aria-hidden="true" />
           </button>
-          <div className="absolute inset-x-0 bottom-8 flex justify-center gap-1">
+          <div className="absolute inset-x-0 bottom-4 flex justify-center gap-1 md:bottom-8">
             {slider.scrollSnaps.map((_, index) => (
               <button
                 key={index}

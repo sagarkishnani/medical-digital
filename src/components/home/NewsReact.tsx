@@ -24,12 +24,12 @@ export default function NewsReact({ query, variables, data: initialData, posts }
   if (!news || posts.length === 0) return <div hidden />;
 
   return (
-    <section className="container-xl flex flex-col gap-9 py-16 md:py-24">
+    <section className="container-xl flex flex-col gap-5 py-12 md:gap-9 md:py-24">
       <SectionHeader block={news} href="/blog" />
-      <ul className="grid gap-7 md:grid-cols-2 lg:grid-cols-3">
+      <ul className="-mx-5 flex snap-x snap-mandatory scroll-px-5 overflow-x-auto px-5 pb-2 [scrollbar-width:none] sm:mx-0 sm:grid sm:overflow-visible sm:px-0 sm:pb-0 gap-3.5 sm:grid-cols-2 sm:gap-7 lg:grid-cols-3">
         {posts.map((post) => (
-          <li key={post.href}>
-            <a href={post.href} className="group flex flex-col gap-4">
+          <li key={post.href} className="w-[78%] shrink-0 snap-start sm:w-auto">
+            <a href={post.href} className="group flex flex-col gap-3 md:gap-4">
               <div className="aspect-[16/10] overflow-hidden rounded-2xl bg-surface-raised">
                 {post.image && (
                   <img
@@ -46,10 +46,11 @@ export default function NewsReact({ query, variables, data: initialData, posts }
                 {post.tag && (
                   <span className="rounded-pill bg-brand-tertiary-lightest px-3 py-1 font-medium text-brand-tertiary-dark">{post.tag}</span>
                 )}
-                {[post.date, post.readTime].filter(Boolean).join(" · ")}
+                {post.date}
+                {post.readTime && <span className="hidden md:inline">· {post.readTime}</span>}
               </p>
-              <h3 className="text-heading-h4 text-brand-secondary-dark text-pretty group-hover:underline">{post.title}</h3>
-              {post.excerpt && <p className="text-body-md text-content-subtle">{post.excerpt}</p>}
+              <h3 className="text-body-lg font-medium text-brand-secondary-dark md:text-heading-h4 text-pretty group-hover:underline">{post.title}</h3>
+              {post.excerpt && <p className="hidden text-body-md text-content-subtle md:block">{post.excerpt}</p>}
             </a>
           </li>
         ))}

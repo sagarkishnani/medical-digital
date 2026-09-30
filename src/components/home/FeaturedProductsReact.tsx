@@ -28,15 +28,15 @@ export default function FeaturedProductsReact({ query, variables, data: initialD
   if (!featured || cards.length === 0) return <div hidden />;
 
   return (
-    <section className="container-xl flex flex-col gap-9 pb-12 pt-16 md:pt-24">
+    <section className="container-xl flex flex-col gap-5 pb-10 pt-12 md:gap-9 md:pb-12 md:pt-24">
       <SectionHeader block={featured} href="/productos" />
-      <ul className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+      <ul className="-mx-5 flex snap-x snap-mandatory scroll-px-5 overflow-x-auto px-5 pb-2 [scrollbar-width:none] sm:mx-0 sm:grid sm:overflow-visible sm:px-0 sm:pb-0 gap-3 sm:grid-cols-2 sm:gap-5 lg:grid-cols-4">
         {cards.map((card) => (
           <li
             key={card.href}
-            className="group relative flex flex-col rounded-2xl border border-line bg-surface p-2.5 transition-[box-shadow,transform,border-color] duration-300 hover:-translate-y-1 hover:border-greyscale-light hover:shadow-lg"
+            className="group relative flex w-[72%] shrink-0 snap-start flex-col rounded-2xl border border-line bg-surface p-2 sm:w-auto md:p-2.5 transition-[box-shadow,transform,border-color] duration-300 hover:-translate-y-1 hover:border-greyscale-light hover:shadow-lg"
           >
-            <div className="flex aspect-[10/9] items-center justify-center overflow-hidden rounded-xl bg-surface-raised">
+            <div className="flex aspect-[20/17] items-center md:aspect-[10/9] justify-center overflow-hidden rounded-xl bg-surface-raised">
               {card.image && (
                 <img
                   src={card.image.src}
