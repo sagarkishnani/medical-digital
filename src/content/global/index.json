@@ -3,11 +3,11 @@
     "logoAlt": "Medical Digital",
     "links": [
       { "label": "Inicio", "url": "/" },
-      { "label": "Nosotros", "url": "/#features" },
+      { "label": "Nosotros", "url": "/nosotros" },
       { "label": "Productos", "url": "/productos" },
-      { "label": "Contacto", "url": "/#cta" }
+      { "label": "Contacto", "url": "/contacto" }
     ],
-    "cta": { "label": "Conversemos", "url": "/#cta" }
+    "cta": { "label": "Conversemos", "url": "/contacto" }
   },
   "footer": {
     "tagline": "Medical Digital cuida la salud del Perú con tecnología médica de marcas líderes en diagnóstico y soporte vital.",
