@@ -9,10 +9,10 @@
 
 **In:**
 
-- Rutas `/` (reemplaza la Home actual), `/nosotros` y `/contacto`, fieles a la referencia en desktop y responsive en 360 / 768 / 1280+ (y 320 px por el estándar). El mobile sigue el Figma cuando llegue.
+- Rutas `/` (reemplaza la Home actual), `/nosotros` y `/contacto`, fieles a la referencia en desktop y responsive en 360 / 768 / 1280+ (y 320 px por el estándar). El mobile sigue la referencia "Medical Digital Mobile.html": cambia el layout, no el contenido.
 - **Home:** hero en slider (Embla + `useSlider`, sin autoplay), "Equipos más solicitados" (productos destacados de Woo), "Encuentra el equipo según tu especialidad" (categorías de Woo con conteo), bloque "Conoce más" con estadísticas estáticas, franja de logos de marcas estática, testimonios en slider con calificación de Google editable, y los últimos 3 artículos del blog. "Solicitar cotización" abre el modal de la referencia (campos, "Hablar con un asesor" por WhatsApp) maquetado sin envío.
 - **Nosotros:** hero con breadcrumb, quiénes somos, visión y misión, valores, y políticas en pestañas accesibles con enlace a un PDF opcional.
-- **Contacto:** hero con breadcrumb, formulario de la referencia maquetado sin envío (10 campos con `<label>`, selects de ubicación y especialidad, casilla de consentimiento), datos de sede, teléfono, correos, horario y botón de WhatsApp, y mapa de Google embebido con enlace "Cómo llegar".
+- **Contacto:** hero con breadcrumb, formulario de la referencia maquetado sin envío (10 campos con `<label>`, selects de ubicación y especialidad, casilla de consentimiento), datos de sede, teléfono, correos, horario y botón de WhatsApp (en mobile, botones "Llamar" y "WhatsApp" lado a lado y los datos antes del formulario), y mapa de Google embebido con enlace "Cómo llegar".
 - **Tina:** schema de `home` reescrito, colecciones nuevas `about` y `contact`, cada una en su archivo de `tina/collections/`, con el patrón de componente doble y una consulta por página.
 - Contenido inicial solo con los textos de la referencia. Cada componente funciona sin imagen: el hero y los slides muestran el degradado de marca, las fotos un bloque neutro con la misma proporción y las marcas su nombre.
 - Se eliminan `Hero`, `Features` y `CTA` de la Home actual.
@@ -121,7 +121,7 @@ Cada paso deja el build verde y va en su propio commit.
 5. **Nosotros.** Crear `tina/collections/about.ts` y registrarlo en `tina/config.ts`; `src/content/about/nosotros.json`; secciones en `src/components/about/`; `src/pages/nosotros.astro`.
 6. **Contacto.** Crear `tina/collections/contact.ts` y registrarlo; `src/content/contact/contacto.json`; secciones en `src/components/contact/`; `src/pages/contacto.astro`. Incluye los datos de `global.company`, WhatsApp con `src/utils/whatsapp.ts` y el mapa embebido.
 7. **Navegación.** Comprobar que el menú de `global` enlace a `/nosotros` y `/contacto`, y ajustar solo el contenido si hace falta.
-8. **Cierre.** `npm run build` y, si existe, `npm run check:standard`; ajustar mobile al Figma; QA responsive en 320, 360, 768 y 1280 px con contenido real; actualizar la lista de colecciones del `CLAUDE.md`; agregar a esta spec "Notas de implementación" y "QA realizada".
+8. **Cierre.** `npm run build` y, si existe, `npm run check:standard`; ajustar mobile a "Medical Digital Mobile.html"; QA responsive en 320, 360, 768 y 1280 px con contenido real; actualizar la lista de colecciones del `CLAUDE.md`; agregar a esta spec "Notas de implementación" y "QA realizada".
 
 ## Criterios de aceptación
 
@@ -168,7 +168,8 @@ Cada paso deja el build verde y va en su propio commit.
 **Responsive y accesibilidad**
 
 - [ ] No hay scroll horizontal ni textos cortados o superpuestos en 320, 360, 768 y 1280 px.
-- [ ] En mobile coincide con el Figma aprobado.
+- [ ] En mobile el layout coincide con "Medical Digital Mobile.html" y el contenido es el mismo que en desktop.
+- [ ] En mobile, destacados y noticias son carruseles horizontales con scroll nativo (sin JS) y las pestañas de Políticas son píldoras con scroll horizontal.
 - [ ] Todas las imágenes tienen `width`, `height` y `alt`; las decorativas llevan `alt=""`.
 - [ ] Sin imagen cargada en Tina, cada sección conserva su layout y muestra su respaldo (degradado de marca, bloque neutro o nombre de la marca).
 - [ ] Con `prefers-reduced-motion`, los sliders cambian sin transición.
@@ -196,6 +197,8 @@ Cada paso deja el build verde y va en su propio commit.
 | La tarjeta de destacados sigue la referencia; `ProductCard` del catálogo no se toca | El rediseño del catálogo queda fuera de alcance. |
 | Calificación de Google (4.9 · 120) editada a mano en Tina | La API de Places pide clave y facturación: sería un servicio nuevo. |
 | Sin imágenes iniciales; respaldo por componente | La licencia de las fotos de la referencia está por definir con el cliente. Mismo criterio que Fiberlux (spec 24: respaldo cuando falta la imagen). Para ver el aspecto final se pueden subir fotos de licencia libre desde Tina, sin tocar código. |
+| Mismo contenido en todos los tamaños; solo cambia el layout | El cliente edita un solo texto en Tina. Mismo criterio que Fiberlux (spec 07). Donde la referencia mobile recorta textos (Quiénes somos, opciones de los selects) se mantiene el de desktop; el extracto de las noticias se oculta en mobile por presentación. |
+| Botón "Llamar" en mobile | Aparece en la referencia mobile y usa el teléfono de `global.company`: no es contenido nuevo. |
 | Solo español | `LOCALES = ["es"]`: no hacen falta rutas `/en`. |
 
 **Descartadas:**
@@ -206,6 +209,7 @@ Cada paso deja el build verde y va en su propio commit.
 | Contacto sin formulario hasta tener el envío | Inconsistente con el modal de cotización, que ya se maquetó sin envío. |
 | Commitear las fotos de la referencia | Licencia sin definir con el cliente. |
 | Imágenes genéricas de relleno en el repo | Archivos que después hay que acordarse de borrar. |
+| Textos separados para mobile en Tina | Duplica el contenido que el cliente mantiene y se desincroniza. |
 | Header y footer en una sola spec | Tareas, dependencias y riesgos distintos; un PR más grande y con más rondas de revisión. |
 | Destacados elegidos en Tina con una lista de slugs | Se rompen si alguien renombra un producto en Woo. |
 | Scroll horizontal nativo con `scroll-snap` | Los dots y la accesibilidad habría que hacerlos a mano. |
@@ -224,7 +228,7 @@ Cada paso deja el build verde y va en su propio commit.
 | El cliente tarda en entregar las imágenes y el sitio se ve sin fotos. | El respaldo mantiene el layout. Mientras tanto se pueden subir fotos de licencia libre desde Tina. |
 | Se agregan dos colecciones y cambia `home`; `TINA_BRANCH` se fija en build y el preview puede compilar contra el índice equivocado. | El preview del PR usa la rama real. Sin red, `build:local` y después restaurar `tina/__generated__/` y `tina-lock.json`. |
 | Contraste heredado: `btn-primary` en 4.08:1 y `content-subtle` sobre `surface-raised` en 4.4975:1. | No usar `content-subtle` para texto dentro de tarjetas. El contraste de `btn-primary` sigue pendiente de diseño y no se corrige aquí. |
-| El Figma mobile llega después de empezar a maquetar. | Maquetar mobile-first con el estándar y ajustar al Figma antes del PR. Adjuntar capturas en 360, 768 y 1280 px. |
+| La referencia mobile llegó después de maquetar desktop. | Se ajusta página por página antes del PR, con capturas en 360 px contra la referencia. |
 
 ## Notas de implementación
 
