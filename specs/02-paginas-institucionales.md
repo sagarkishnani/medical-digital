@@ -62,7 +62,7 @@
 {
   hero: { title, image },
   intro: { eyebrow, title, paragraphs: string[], image, imageAlt },
-  visionMission: { image, imageAlt, vision, mission },
+  visionMission: { image, imageAlt, visionTitle, vision, missionTitle, mission },
   values: { title, items: [{ icon, name, text }] },
   policies: { title, items: [{ title, intro, points: string[], document /* PDF subido, opcional */ }] },
   seo: { title, description },
@@ -78,9 +78,9 @@
   form: {
     title, submitLabel,
     locations: string[],   // opciones de "Ubicación"
-    specialties: string[], // opciones de "Especialidad"
     consentLabel, privacyLabel, privacyUrl, // sin URL, el texto va sin enlace
   },
+  // Las opciones de "Especialidad" salen de las categorías de Woo, más "Otra".
   map: {
     embedUrl,      // código de Google Maps › Compartir › Insertar un mapa, o solo su src; se usa el src si es de google.com/maps/embed
     directionsUrl, // enlace "Cómo llegar" (Google Maps)
@@ -162,7 +162,7 @@ Cada paso deja el build verde y va en su propio commit.
 
 **Tina**
 
-- [ ] Todos los textos e imágenes de las tres páginas se editan desde `/admin` con vista previa en vivo.
+- [ ] Todo el contenido editorial (títulos, textos, listas, enlaces e imágenes) de las tres páginas se edita desde `/admin` con vista previa en vivo. Las etiquetas de interfaz (campos de formulario, botones y rótulos de datos) viven en el código.
 - [ ] `about` y `contact` no permiten crear ni borrar documentos.
 
 **Responsive y accesibilidad**
@@ -197,6 +197,8 @@ Cada paso deja el build verde y va en su propio commit.
 | La tarjeta de destacados sigue la referencia; `ProductCard` del catálogo no se toca | El rediseño del catálogo queda fuera de alcance. |
 | Calificación de Google (4.9 · 120) editada a mano en Tina | La API de Places pide clave y facturación: sería un servicio nuevo. |
 | Sin imágenes iniciales; respaldo por componente | La licencia de las fotos de la referencia está por definir con el cliente. Mismo criterio que Fiberlux (spec 24: respaldo cuando falta la imagen). Para ver el aspecto final se pueden subir fotos de licencia libre desde Tina, sin tocar código. |
+| Opciones de "Especialidad" desde las categorías de Woo | Una lista propia en Tina se desincroniza cuando el cliente agrega o renombra categorías. |
+| Etiquetas de interfaz en el código | Campos de formulario, botones y rótulos de datos no son contenido editorial; mismo criterio que la ficha de producto (SPEC 01) y Fiberlux. |
 | Mismo contenido en todos los tamaños; solo cambia el layout | El cliente edita un solo texto en Tina. Mismo criterio que Fiberlux (spec 07). Donde la referencia mobile recorta textos (Quiénes somos, opciones de los selects) se mantiene el de desktop; el extracto de las noticias se oculta en mobile por presentación. |
 | Botón "Llamar" en mobile | Aparece en la referencia mobile y usa el teléfono de `global.company`: no es contenido nuevo. |
 | Solo español | `LOCALES = ["es"]`: no hacen falta rutas `/en`. |
@@ -205,7 +207,7 @@ Cada paso deja el build verde y va en su propio commit.
 
 | Alternativa | Por qué no |
 |---|---|
-| Dividir en Home + Nosotros y Contacto aparte | Sin formulario, Contacto es solo maquetación. |
+| Dividir en Home + Nosotros y Contacto aparte | Sin el envío de formularios, Contacto es solo maquetación. |
 | Contacto sin formulario hasta tener el envío | Inconsistente con el modal de cotización, que ya se maquetó sin envío. |
 | Commitear las fotos de la referencia | Licencia sin definir con el cliente. |
 | Imágenes genéricas de relleno en el repo | Archivos que después hay que acordarse de borrar. |
@@ -234,7 +236,7 @@ Cada paso deja el build verde y va en su propio commit.
 
 - Íconos compartidos: `src/lib/icons.ts` (opciones de Tina) y `src/components/shared/Icon.tsx` (traducción a `react-icons/fa6`).
 - `src/components/shared/PageHero.tsx`: cabecera con breadcrumb de Nosotros y Contacto.
-- `src/components/shared/QuoteModal.tsx`: modal de cotización con `<dialog>` nativo, reutilizable en las fichas de producto.
+- `src/components/shared/QuoteModal.tsx`: modal de cotización con `<dialog>` nativo, reutilizable en las fichas de producto. La línea "Tu solicitud llegará a ventas@…" de la referencia se agrega con el envío real, para no prometer un envío que aún no existe.
 - Hidratación: slider con `client:load`; destacados (modal) y testimonios con `client:visible`; Políticas con `client:visible`; el resto con `client:tina` (0 JS en producción).
 - Se agregó `specialties.catalogLabel` al modelo de `home` para editar el texto de la tarjeta "Ver todo el catálogo".
 - Especialidades en 5 columnas: la tarjeta "Ver todo el catálogo" ocupa las columnas que sobran según cuántas categorías tenga Woo.
@@ -243,7 +245,11 @@ Cada paso deja el build verde y va en su propio commit.
 - Botón "Escríbenos por WhatsApp" con `semantics-success-dark`: el verde del diseño con texto blanco queda en 2.5:1.
 - Radios de 48 px del diseño llevados a `2xl` (24 px): el UI Kit no tiene token de 48.
 - Mapa: el campo acepta el código completo de Google; `referrerpolicy="strict-origin-when-cross-origin"`, el que entrega Google hoy.
+- Rutas internas fijas con `withBase()` (`src/utils/url.ts`) para respetar `BASE_URL`; las URLs que vienen de Tina se usan tal cual, como en el header.
+- Estándar aplicado en la revisión final: `duration: 12` en Embla (~210 ms medidos con Playwright) y transiciones de 300 ms como máximo, tarjetas de especialidades con altura mínima (no fija), viewports de los sliders con nombre accesible, áreas táctiles de 44 px en los dots, `width` y `height` en todas las imágenes, y títulos y descripciones SEO de 50–60 y 140–160 caracteres.
 - Colecciones nuevas en `tina dev`: hay que reiniciar el servidor para que indexe sus documentos.
+- **Pendiente para la tarea "Catálogo y detalle de producto":** en la Home "Solicitar cotización" abre el modal; en la ficha de producto (SPEC 01) abre WhatsApp directo. Unificar reutilizando `QuoteModal`.
+- **Pendiente para la tarea "SEO técnico":** el sitio no tiene JSON-LD `Organization` ni `LocalBusiness` (estándar 6.2); los datos ya están en `global.company`.
 - **Pendiente para la spec del footer:** el enlace "Contacto" del footer sigue en `/#cta`, que dejó de existir al reemplazar la Home. Se decidió no tocar el footer en esta spec.
 
 ## QA realizada

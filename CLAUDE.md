@@ -149,7 +149,19 @@ componentes existentes. Las clases reutilizables (botones, `card`, `section`,
 **BaseLayout importa** — un CSS que nadie importa no se bundlea y no llega al
 sitio.
 
-Iconos: `react-icons` (Font Awesome 6, `react-icons/fa6`).
+Iconos: `react-icons` (Font Awesome 6, `react-icons/fa6`). Cuando el editor
+elige el ícono en Tina, las opciones están en `src/lib/icons.ts` y se dibujan
+con `src/components/shared/Icon.tsx`.
+
+Componentes reutilizables (úsalos antes de escribir uno nuevo):
+
+- `src/hooks/useSlider.ts` — todo slider va con Embla y este hook: sin
+  autoplay, con teclado y `prefers-reduced-motion`. No escribas un motor de
+  arrastre propio.
+- `src/components/shared/PageHero.tsx` — cabecera de página interna con
+  breadcrumb.
+- `src/components/shared/QuoteModal.tsx` — modal "Solicitar cotización".
+- `src/utils/url.ts` (`withBase`) — rutas internas escritas en el código.
 
 **Tema: light.** Los componentes NO escriben colores: piden tokens
 semánticos, y por eso el tema se puede cambiar sin tocar una sola clase.
