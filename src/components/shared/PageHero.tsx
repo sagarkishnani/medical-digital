@@ -11,7 +11,7 @@ export default function PageHero({ hero, breadcrumb, compact = false }: Props) {
   return (
     <section
       className={`relative flex items-center overflow-hidden bg-gradient-primary pt-[72px] ${
-        compact ? "min-h-[260px] md:min-h-[309px]" : "min-h-[320px] md:min-h-[420px]"
+        compact ? "min-h-[220px] md:min-h-[340px]" : "min-h-[260px] md:min-h-[420px]"
       }`}
     >
       {hero.image && (
@@ -27,9 +27,9 @@ export default function PageHero({ hero, breadcrumb, compact = false }: Props) {
           <div className="absolute inset-0 bg-gradient-overlay" />
         </>
       )}
-      <div className="container-xl relative flex flex-col gap-4 text-white">
+      <div className="container-xl relative flex flex-col gap-2 text-white md:gap-4">
         <nav aria-label="Ruta de navegación">
-          <ol className="flex gap-2 text-body-sm text-brand-tertiary-light">
+          <ol className="flex gap-2 text-caption text-brand-tertiary-light md:text-body-sm">
             <li>
               <a href="/" className="hover:text-white hover:underline">
                 Inicio
@@ -41,7 +41,7 @@ export default function PageHero({ hero, breadcrumb, compact = false }: Props) {
             </li>
           </ol>
         </nav>
-        <h1 className="text-heading-h1 md:text-display" data-tina-field={tinaField(hero, "title")}>
+        <h1 className="text-heading-h2 md:text-display" data-tina-field={tinaField(hero, "title")}>
           {hero.title}
         </h1>
       </div>

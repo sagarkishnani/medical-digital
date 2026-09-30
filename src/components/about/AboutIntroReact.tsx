@@ -14,20 +14,20 @@ export default function AboutIntroReact({ query, variables, data: initialData }:
   const paragraphs = (intro.paragraphs || []).filter(Boolean);
 
   return (
-    <section id="quienes" className="container-xl grid items-center gap-12 py-16 md:py-24 lg:grid-cols-2 lg:gap-[72px]">
-      <div className="flex flex-col gap-5">
+    <section id="quienes" className="container-xl grid items-center gap-6 py-10 md:gap-12 md:py-24 lg:grid-cols-2 lg:gap-[72px]">
+      <div className="flex flex-col gap-4 md:gap-5">
         {intro.eyebrow && (
-          <p className="text-body-md text-content-subtle" data-tina-field={tinaField(intro, "eyebrow")}>
+          <p className="text-body-sm text-content-subtle md:text-body-md" data-tina-field={tinaField(intro, "eyebrow")}>
             {intro.eyebrow}
           </p>
         )}
         {intro.title && (
-          <h2 className="text-heading-h2 text-balance text-brand-secondary-dark lg:text-heading-h1" data-tina-field={tinaField(intro, "title")}>
+          <h2 className="text-heading-h3 text-balance text-brand-secondary-dark md:text-heading-h2 lg:text-heading-h1" data-tina-field={tinaField(intro, "title")}>
             {intro.title}
           </h2>
         )}
         {paragraphs.map((paragraph: string, index: number) => (
-          <p key={index} className="text-body-lg text-content-muted" data-tina-field={tinaField(intro, "paragraphs", index)}>
+          <p key={index} className="text-body-md text-content-muted md:text-body-lg" data-tina-field={tinaField(intro, "paragraphs", index)}>
             {paragraph}
           </p>
         ))}

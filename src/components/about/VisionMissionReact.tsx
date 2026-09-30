@@ -19,7 +19,7 @@ export default function VisionMissionReact({ query, variables, data: initialData
 
   return (
     <section id="mision" className="grid md:grid-cols-2 md:min-h-[560px]">
-      <div className="relative aspect-[4/3] bg-brand-tertiary-lightest md:aspect-auto">
+      <div className="relative h-[300px] bg-brand-tertiary-lightest md:h-auto">
         {block.image && (
           <img
             src={mediaUrl(block.image)}
@@ -32,11 +32,11 @@ export default function VisionMissionReact({ query, variables, data: initialData
           />
         )}
       </div>
-      <div className="flex flex-col justify-center gap-14 bg-brand-secondary-dark px-6 py-16 text-white md:px-[clamp(40px,7vw,120px)] md:py-20">
+      <div className="flex flex-col justify-center gap-8 bg-brand-secondary-dark px-5 py-10 text-white md:gap-14 md:px-[clamp(40px,7vw,120px)] md:py-20">
         {statements.map((statement) => (
-          <div key={statement.key} className="flex max-w-[520px] flex-col gap-4">
+          <div key={statement.key} className="flex max-w-[520px] flex-col gap-3 md:gap-4">
             <h2 className="text-heading-h2 lg:text-heading-h1">{statement.title}</h2>
-            <p className="text-body-lg text-brand-tertiary-lightest" data-tina-field={tinaField(block, statement.key)}>
+            <p className="text-body-md text-brand-tertiary-lightest md:text-body-lg" data-tina-field={tinaField(block, statement.key)}>
               {statement.text}
             </p>
           </div>
