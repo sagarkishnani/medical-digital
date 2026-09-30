@@ -13,7 +13,9 @@
   },
   "visionMission": {
     "imageAlt": "Especialista de Medical Digital",
+    "visionTitle": "Visión",
     "vision": "Ser una organización líder en brindar soluciones integrales a las instituciones del sector salud, buscando la satisfacción total de nuestros clientes, siendo flexibles y adaptables a las exigencias de un mercado cambiante.",
+    "missionTitle": "Misión",
     "mission": "Estamos orientados a la satisfacción de nuestros clientes, estableciendo con ellos alianzas de largo plazo. Contamos con personal de alto desempeño y los mejores proveedores a nivel mundial, ofreciendo productos de alta tecnología soportados por un servicio técnico de primer nivel."
   },
   "values": {
@@ -72,7 +74,7 @@
     ]
   },
   "seo": {
-    "title": "Nosotros — Medical Digital",
-    "description": "Más de 18 años llevando tecnología médica de clase mundial al Perú: quiénes somos, visión, misión, valores y políticas de Medical Digital."
+    "title": "Nosotros | Medical Digital, tecnología médica en Perú",
+    "description": "Más de 18 años llevando tecnología médica de clase mundial al Perú. Conoce quiénes somos, nuestra visión, misión, valores y políticas de calidad."
   }
 }

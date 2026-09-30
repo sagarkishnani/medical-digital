@@ -1,5 +1,6 @@
 import { tinaField } from "tinacms/dist/react";
 import { mediaUrl } from "../../utils/mediaUrl";
+import { withBase } from "../../utils/url";
 
 interface Props {
   hero: Record<string, any>;
@@ -31,7 +32,7 @@ export default function PageHero({ hero, breadcrumb, compact = false }: Props) {
         <nav aria-label="Ruta de navegación">
           <ol className="flex gap-2 text-caption text-brand-tertiary-light md:text-body-sm">
             <li>
-              <a href="/" className="hover:text-white hover:underline">
+              <a href={withBase("/")} className="hover:text-white hover:underline">
                 Inicio
               </a>
             </li>

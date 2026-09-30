@@ -2,6 +2,9 @@ import { useCallback, useEffect, useState } from "react";
 import type { KeyboardEvent } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 
+// Embla mide la velocidad en unidades propias: 12 da ~210 ms (medido), dentro de los 150–300 ms del estándar.
+const SCROLL_DURATION = 12;
+
 export interface UseSliderOptions {
   loop?: boolean;
   align?: "start" | "center";
@@ -39,7 +42,7 @@ export function useSlider(options: UseSliderOptions = {}): Slider {
   const { loop = true, align = "start", slidesToScroll = 1, active = true } = options;
 
   const reducedMotion = usePrefersReducedMotion();
-  const [viewportRef, embla] = useEmblaCarousel({ loop, align, slidesToScroll, active });
+  const [viewportRef, embla] = useEmblaCarousel({ loop, align, slidesToScroll, active, duration: SCROLL_DURATION });
 
   const [activeIndex, setActiveIndex] = useState(0);
   const [scrollSnaps, setScrollSnaps] = useState<number[]>([]);

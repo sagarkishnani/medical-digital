@@ -4,6 +4,7 @@ import FeaturedProductsReact from "./FeaturedProductsReact";
 import type { FeaturedCard } from "./FeaturedProductsReact";
 import type { WooProduct } from "../../lib/woo/types";
 import { buildQuoteUrl } from "../../utils/whatsapp";
+import { withBase } from "../../utils/url";
 
 interface Props {
   query: string;
@@ -11,10 +12,9 @@ interface Props {
   data: any;
   products: WooProduct[];
   whatsappNumber: string;
-  salesEmail: string;
 }
 
-const { query, variables, data, products, whatsappNumber, salesEmail } = Astro.props;
+const { query, variables, data, products, whatsappNumber } = Astro.props;
 const base = import.meta.env.BASE_URL || "/";
 const siteUrl = new URL(base, Astro.site || "https://medicaldigitalperu.com").href;
 
@@ -25,7 +25,7 @@ const cards: FeaturedCard[] = await Promise.all(
       ? await getImage({ src: cover.src, inferSize: true, width: 480, format: "webp" })
       : null;
     return {
-      href: `${base}productos/${product.slug}`,
+      href: withBase(`/productos/${product.slug}`),
       name: product.name,
       brand: product.brand,
       quoteUrl: whatsappNumber ? buildQuoteUrl(whatsappNumber, product, siteUrl) : "",
@@ -37,4 +37,4 @@ const cards: FeaturedCard[] = await Promise.all(
 );
 ---
 
-<FeaturedProductsReact query={query} variables={variables} data={data} cards={cards} salesEmail={salesEmail} client:visible />
+<FeaturedProductsReact query={query} variables={variables} data={data} cards={cards} client:visible />

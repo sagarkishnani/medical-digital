@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useTina } from "tinacms/dist/react";
 import { FaArrowRight } from "react-icons/fa6";
 import SectionHeader from "./SectionHeader";
+import { withBase } from "../../utils/url";
 import QuoteModal from "../shared/QuoteModal";
 import type { QuoteProduct } from "../shared/QuoteModal";
 
@@ -18,10 +19,9 @@ interface Props {
   variables: object;
   data: any;
   cards: FeaturedCard[];
-  salesEmail: string;
 }
 
-export default function FeaturedProductsReact({ query, variables, data: initialData, cards, salesEmail }: Props) {
+export default function FeaturedProductsReact({ query, variables, data: initialData, cards }: Props) {
   const { data } = useTina({ query, variables, data: initialData });
   const [quoteProduct, setQuoteProduct] = useState<QuoteProduct | null>(null);
   const featured = data?.home?.featured;
@@ -29,7 +29,7 @@ export default function FeaturedProductsReact({ query, variables, data: initialD
 
   return (
     <section className="container-xl flex flex-col gap-5 pb-10 pt-12 md:gap-9 md:pb-12 md:pt-24">
-      <SectionHeader block={featured} href="/productos" />
+      <SectionHeader block={featured} href={withBase("/productos")} />
       <ul className="-mx-5 flex snap-x snap-mandatory scroll-px-5 overflow-x-auto px-5 pb-2 [scrollbar-width:none] sm:mx-0 sm:grid sm:overflow-visible sm:px-0 sm:pb-0 gap-3 sm:grid-cols-2 sm:gap-5 lg:grid-cols-4">
         {cards.map((card) => (
           <li
@@ -44,7 +44,7 @@ export default function FeaturedProductsReact({ query, variables, data: initialD
                   width={card.image.width}
                   height={card.image.height}
                   loading="lazy"
-                  className="h-3/4 w-3/4 object-contain mix-blend-multiply transition-transform duration-500 group-hover:scale-105"
+                  className="h-3/4 w-3/4 object-contain mix-blend-multiply transition-transform duration-300 group-hover:scale-105"
                 />
               )}
             </div>
@@ -76,7 +76,7 @@ export default function FeaturedProductsReact({ query, variables, data: initialD
           </li>
         ))}
       </ul>
-      <QuoteModal product={quoteProduct} salesEmail={salesEmail} onClose={() => setQuoteProduct(null)} />
+      <QuoteModal product={quoteProduct} onClose={() => setQuoteProduct(null)} />
     </section>
   );
 }

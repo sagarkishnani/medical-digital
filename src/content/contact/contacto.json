@@ -5,7 +5,6 @@
   "form": {
     "title": "Envíanos tus comentarios, dudas y consultas",
     "locations": ["Lima", "Arequipa", "La Libertad", "Piura", "Cusco", "Otra región"],
-    "specialties": ["Cardiología", "Emergencia", "Consultorio clínico", "Hospitalización", "Diagnóstico respiratorio", "Otra"],
     "consentLabel": "Acepto la",
     "privacyLabel": "política de datos personales",
     "privacyUrl": "",
@@ -17,7 +16,7 @@
     "title": "Mapa de Google · Las Palomas 392, Surquillo"
   },
   "seo": {
-    "title": "Contacto — Medical Digital",
-    "description": "Contáctanos: Las Palomas 392 #86, Surquillo, Lima. Teléfono (+51) 1 222-0571, correo y WhatsApp de ventas."
+    "title": "Contacto | Medical Digital, equipos médicos en Lima",
+    "description": "Contáctanos en Las Palomas 392, Surquillo, Lima. Llámanos al (+51) 1 222-0571 o escríbenos por correo o WhatsApp para cotizar equipos médicos."
   }
 }

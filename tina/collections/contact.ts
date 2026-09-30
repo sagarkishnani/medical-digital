@@ -23,7 +23,6 @@ export const contactCollection: Collection = {
       fields: [
         { name: "title", label: "Título", type: "string" },
         { name: "locations", label: "Opciones de \"Ubicación\"", type: "string", list: true },
-        { name: "specialties", label: "Opciones de \"Especialidad\"", type: "string", list: true },
         { name: "consentLabel", label: "Texto del consentimiento", description: "Ej.: Acepto la", type: "string" },
         { name: "privacyLabel", label: "Texto del enlace a la política", description: "Ej.: política de datos personales", type: "string" },
         { name: "privacyUrl", label: "URL de la política de datos personales", description: "Sin URL, el texto se muestra sin enlace.", type: "string" },

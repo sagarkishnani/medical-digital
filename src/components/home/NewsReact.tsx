@@ -1,5 +1,6 @@
 import { useTina } from "tinacms/dist/react";
 import SectionHeader from "./SectionHeader";
+import { withBase } from "../../utils/url";
 
 export interface NewsPost {
   href: string;
@@ -25,7 +26,7 @@ export default function NewsReact({ query, variables, data: initialData, posts }
 
   return (
     <section className="container-xl flex flex-col gap-5 py-12 md:gap-9 md:py-24">
-      <SectionHeader block={news} href="/blog" />
+      <SectionHeader block={news} href={withBase("/blog")} />
       <ul className="-mx-5 flex snap-x snap-mandatory scroll-px-5 overflow-x-auto px-5 pb-2 [scrollbar-width:none] sm:mx-0 sm:grid sm:overflow-visible sm:px-0 sm:pb-0 gap-3.5 sm:grid-cols-2 sm:gap-7 lg:grid-cols-3">
         {posts.map((post) => (
           <li key={post.href} className="w-[78%] shrink-0 snap-start sm:w-auto">
@@ -38,7 +39,7 @@ export default function NewsReact({ query, variables, data: initialData, posts }
                     width={640}
                     height={400}
                     loading="lazy"
-                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
                   />
                 )}
               </div>

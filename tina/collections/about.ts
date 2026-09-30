@@ -36,7 +36,9 @@ export const aboutCollection: Collection = {
       fields: [
         { name: "image", label: "Imagen", type: "image" },
         { name: "imageAlt", label: "Texto alternativo de la imagen", type: "string" },
+        { name: "visionTitle", label: "Título de la visión", type: "string" },
         { name: "vision", label: "Visión", type: "string", ui: { component: "textarea" } },
+        { name: "missionTitle", label: "Título de la misión", type: "string" },
         { name: "mission", label: "Misión", type: "string", ui: { component: "textarea" } },
       ],
     },

@@ -85,7 +85,13 @@ export default function TestimonialsReact({ query, variables, data: initialData 
           </div>
         </div>
 
-        <div ref={slider.viewportRef} className="overflow-hidden" tabIndex={0} onKeyDown={slider.onKeyDown}>
+        <div
+          ref={slider.viewportRef}
+          className="overflow-hidden"
+          tabIndex={0}
+          aria-label="Testimonios: usa las flechas del teclado para cambiar"
+          onKeyDown={slider.onKeyDown}
+        >
           <ul className="-ml-6 flex">
             {items.map((item: any, index: number) => (
               <li
@@ -127,7 +133,7 @@ export default function TestimonialsReact({ query, variables, data: initialData 
         </div>
 
         <div className="flex items-center justify-between md:hidden">
-          <div className="flex gap-1.5">
+          <div className="-ml-3 flex">
             {slider.scrollSnaps.map((_, index) => (
               <button
                 key={index}
@@ -135,7 +141,7 @@ export default function TestimonialsReact({ query, variables, data: initialData 
                 onClick={() => slider.goTo(index)}
                 aria-label={`Ir al testimonio ${index + 1}`}
                 aria-current={index === slider.activeIndex}
-                className="flex h-11 items-center"
+                className="flex h-11 w-7 items-center justify-center"
               >
                 <span
                   className={`block h-2 rounded-pill transition-all duration-300 ${

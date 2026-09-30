@@ -3,6 +3,7 @@ import NewsReact from "./NewsReact";
 import type { NewsPost } from "./NewsReact";
 import type { PostConnectionQuery } from "../../../tina/__generated__/types";
 import { mediaUrl } from "../../utils/mediaUrl";
+import { withBase } from "../../utils/url";
 
 interface Props {
   query: string;
@@ -12,7 +13,6 @@ interface Props {
 }
 
 const { query, variables, data } = Astro.props;
-const base = import.meta.env.BASE_URL || "/";
 const dateFormat = new Intl.DateTimeFormat("es-PE", { day: "numeric", month: "short", year: "numeric" });
 
 const posts: NewsPost[] = (Astro.props.posts.postConnection?.edges || [])
@@ -21,7 +21,7 @@ const posts: NewsPost[] = (Astro.props.posts.postConnection?.edges || [])
   .sort((a, b) => new Date(b.date || 0).getTime() - new Date(a.date || 0).getTime())
   .slice(0, 3)
   .map((post) => ({
-    href: `${base}blog/${post._sys.filename}`,
+    href: withBase(`/blog/${post._sys.filename}`),
     title: post.title,
     excerpt: post.excerpt || "",
     image: post.coverImage ? mediaUrl(post.coverImage) : "",

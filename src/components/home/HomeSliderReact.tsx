@@ -22,7 +22,13 @@ export default function HomeSliderReact({ query, variables, data: initialData }:
       aria-roledescription="carrusel"
       aria-label="Destacados de Medical Digital"
     >
-      <div ref={slider.viewportRef} className="overflow-hidden" tabIndex={0} onKeyDown={slider.onKeyDown}>
+      <div
+        ref={slider.viewportRef}
+        className="overflow-hidden"
+        tabIndex={0}
+        aria-label="Slides: usa las flechas del teclado para cambiar"
+        onKeyDown={slider.onKeyDown}
+      >
         <div className="flex">
           {slides.map((slide: any, index: number) => (
             <div
@@ -105,7 +111,7 @@ export default function HomeSliderReact({ query, variables, data: initialData }:
           >
             <FaChevronRight aria-hidden="true" />
           </button>
-          <div className="absolute inset-x-0 bottom-4 flex justify-center gap-1 md:bottom-8">
+          <div className="absolute inset-x-0 bottom-4 flex justify-center md:bottom-8">
             {slider.scrollSnaps.map((_, index) => (
               <button
                 key={index}
@@ -113,7 +119,7 @@ export default function HomeSliderReact({ query, variables, data: initialData }:
                 onClick={() => slider.goTo(index)}
                 aria-label={`Ir al slide ${index + 1}`}
                 aria-current={index === slider.activeIndex}
-                className="flex h-11 items-center px-1"
+                className="flex h-11 w-11 items-center justify-center"
               >
                 <span
                   className={`block h-1.5 rounded-pill transition-all duration-300 ${

@@ -4,6 +4,7 @@ interface Props {
   query: string;
   variables: object;
   data: any;
+  specialties: string[];
 }
 
 const labelClass = "flex flex-col gap-2 text-body-sm text-content-muted";
@@ -23,13 +24,12 @@ function RequiredMark({ required }: { required: boolean }) {
   return required ? <span aria-hidden="true">*</span> : null;
 }
 
-export default function ContactFormReact({ query, variables, data: initialData }: Props) {
+export default function ContactFormReact({ query, variables, data: initialData, specialties }: Props) {
   const { data } = useTina({ query, variables, data: initialData });
   const form = data?.contact?.form;
   if (!form) return <div hidden />;
 
   const locations = (form.locations || []).filter(Boolean);
-  const specialties = (form.specialties || []).filter(Boolean);
 
   return (
     <form className="flex flex-col gap-3.5 rounded-2xl bg-surface p-[22px] md:gap-6 md:p-11" noValidate>
@@ -74,15 +74,16 @@ export default function ContactFormReact({ query, variables, data: initialData }
         )}
 
         {specialties.length > 0 && (
-          <label className={labelClass} data-tina-field={tinaField(form, "specialties")}>
+          <label className={labelClass}>
             <span>Especialidad</span>
             <select name="specialty" defaultValue="" className={controlClass}>
               <option value="" disabled>
                 Selecciona
               </option>
-              {specialties.map((specialty: string) => (
+              {specialties.map((specialty) => (
                 <option key={specialty}>{specialty}</option>
               ))}
+              <option>Otra</option>
             </select>
           </label>
         )}

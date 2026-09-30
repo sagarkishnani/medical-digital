@@ -1,5 +1,5 @@
 import { useEffect, useId, useRef } from "react";
-import { FaEnvelope, FaWhatsapp, FaXmark } from "react-icons/fa6";
+import { FaWhatsapp, FaXmark } from "react-icons/fa6";
 
 export interface QuoteProduct {
   name: string;
@@ -8,14 +8,13 @@ export interface QuoteProduct {
 
 interface Props {
   product: QuoteProduct | null;
-  salesEmail?: string;
   onClose: () => void;
 }
 
 const fieldClass =
   "h-[50px] w-full rounded-lg border border-line bg-surface px-4 text-body-sm text-brand-secondary-dark placeholder:text-content-subtle focus:border-brand-secondary-dark focus:outline-none";
 
-export default function QuoteModal({ product, salesEmail, onClose }: Props) {
+export default function QuoteModal({ product, onClose }: Props) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const id = useId();
 
@@ -90,13 +89,6 @@ export default function QuoteModal({ product, salesEmail, onClose }: Props) {
               />
             </div>
           </div>
-
-          {salesEmail && (
-            <p className="flex items-center gap-2 text-body-sm text-content-subtle">
-              <FaEnvelope aria-hidden="true" />
-              Tu solicitud llegará a {salesEmail}
-            </p>
-          )}
 
           <div className="flex flex-col gap-3 sm:flex-row">
             <button type="button" className="btn-primary flex-1">

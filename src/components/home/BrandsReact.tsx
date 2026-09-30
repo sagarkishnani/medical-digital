@@ -20,6 +20,7 @@ export default function BrandsReact({ query, variables, data: initialData }: Pro
             <img
               src={mediaUrl(brand.logo)}
               alt={brand.name}
+              width={180}
               height={48}
               loading="lazy"
               className="max-h-9 w-auto max-w-[130px] md:max-h-12 md:max-w-[180px] object-contain mix-blend-multiply"
