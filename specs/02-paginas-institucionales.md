@@ -266,5 +266,5 @@ Cada paso deja el build verde y va en su propio commit.
 - Pruebas end-to-end con Playwright en 360 y 1280 px (fuera del repo): overflow, `h1`, imágenes, áreas táctiles, consola, slider (~210 ms y con `prefers-reduced-motion`), modal completo, pestañas con teclado, formulario, mapa y orden mobile. Todas pasan.
 - Build sin Woo (`WOO_STORE_URL` vacía): compila, `check:standard` sin errores y 77/77 pruebas; destacados y especialidades no se renderizan.
 - Hero con las fotos de la referencia, solo en local y sin commit: desktop igual a la referencia; en mobile se ajustaron encuadre (`object-center`) y degradado (90 % → 60 % → 35 %) para igualarla. La diferencia restante es el header (transparente sobre el hero; en la referencia es sólido): lo resuelve la spec del header.
-- WordPress respondió de forma intermitente (timeouts de conexión) en varios builds del 2026-09-30; con Imunify en el servidor, se sospecha limitación de peticiones. Reportado para revisar fuera de esta spec.
+- WordPress respondió con timeouts intermitentes en varios builds del 2026-09-30. Reportado para revisarlo fuera de esta spec.
 - Sin verificar desde local: arrastre del slider en touch real, sección de noticias con 0 posts, botón de PDF de políticas, mapa con URL inválida, edición en vivo desde `/admin`, `npm run build` con TinaCloud (lo valida el preview de Amplify).
