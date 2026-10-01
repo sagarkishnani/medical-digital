@@ -22,13 +22,8 @@ export default function HomeSliderReact({ query, variables, data: initialData }:
       aria-roledescription="carrusel"
       aria-label="Destacados de Medical Digital"
     >
-      <div
-        ref={slider.viewportRef}
-        className="overflow-hidden"
-        tabIndex={0}
-        aria-label="Slides: usa las flechas del teclado para cambiar"
-        onKeyDown={slider.onKeyDown}
-      >
+      {data?.home?.seo?.title && <h1 className="sr-only">{data.home.seo.title}</h1>}
+      <div ref={slider.viewportRef} className="overflow-hidden">
         <div className="flex">
           {slides.map((slide: any, index: number) => (
             <div
@@ -60,15 +55,9 @@ export default function HomeSliderReact({ query, variables, data: initialData }:
                       {slide.eyebrow}
                     </p>
                   )}
-                  {index === 0 ? (
-                    <h1 className="text-heading-h2 text-balance md:text-display" data-tina-field={tinaField(slide, "title")}>
-                      {slide.title}
-                    </h1>
-                  ) : (
-                    <h2 className="text-heading-h2 text-balance md:text-display" data-tina-field={tinaField(slide, "title")}>
-                      {slide.title}
-                    </h2>
-                  )}
+                  <h2 className="text-heading-h2 text-balance md:text-display" data-tina-field={tinaField(slide, "title")}>
+                    {slide.title}
+                  </h2>
                   {slide.text && (
                     <p className="max-w-[500px] text-body-md text-brand-tertiary-lightest md:text-body-lg" data-tina-field={tinaField(slide, "text")}>
                       {slide.text}

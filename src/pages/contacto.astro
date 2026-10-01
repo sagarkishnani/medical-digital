@@ -21,8 +21,8 @@ const globalSection = { query: global.query, variables: global.variables, data: 
   <ContactHero {...contactSection} />
   <section class="bg-surface-raised">
     <div class="container-xl grid items-start gap-6 pb-10 pt-7 md:gap-12 md:pb-24 md:pt-20 lg:grid-cols-[minmax(0,7fr)_minmax(0,4fr)] lg:gap-16">
-      <ContactForm {...contactSection} categories={categories} />
       <ContactInfo {...globalSection} />
+      <ContactForm {...contactSection} categories={categories} />
     </div>
   </section>
   <ContactMap {...contactSection} />

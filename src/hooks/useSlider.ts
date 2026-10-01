@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useState } from "react";
-import type { KeyboardEvent } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 
 // Embla mide la velocidad en unidades propias: 12 da ~210 ms (medido), dentro de los 150–300 ms del estándar.
@@ -22,7 +21,6 @@ export interface Slider {
   next: () => void;
   prev: () => void;
   goTo: (index: number) => void;
-  onKeyDown: (event: KeyboardEvent<HTMLElement>) => void;
 }
 
 function usePrefersReducedMotion(): boolean {
@@ -42,7 +40,13 @@ export function useSlider(options: UseSliderOptions = {}): Slider {
   const { loop = true, align = "start", slidesToScroll = 1, active = true } = options;
 
   const reducedMotion = usePrefersReducedMotion();
-  const [viewportRef, embla] = useEmblaCarousel({ loop, align, slidesToScroll, active, duration: SCROLL_DURATION });
+  const [viewportRef, embla] = useEmblaCarousel({
+    loop,
+    align,
+    slidesToScroll,
+    active,
+    duration: reducedMotion ? 1 : SCROLL_DURATION,
+  });
 
   const [activeIndex, setActiveIndex] = useState(0);
   const [scrollSnaps, setScrollSnaps] = useState<number[]>([]);
@@ -78,19 +82,6 @@ export function useSlider(options: UseSliderOptions = {}): Slider {
     [embla, reducedMotion]
   );
 
-  const onKeyDown = useCallback(
-    (event: KeyboardEvent<HTMLElement>) => {
-      if (event.key === "ArrowRight") {
-        event.preventDefault();
-        next();
-      } else if (event.key === "ArrowLeft") {
-        event.preventDefault();
-        prev();
-      }
-    },
-    [next, prev]
-  );
-
   return {
     viewportRef,
     activeIndex,
@@ -101,6 +92,5 @@ export function useSlider(options: UseSliderOptions = {}): Slider {
     next,
     prev,
     goTo,
-    onKeyDown,
   };
 }

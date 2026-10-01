@@ -85,13 +85,7 @@ export default function TestimonialsReact({ query, variables, data: initialData 
           </div>
         </div>
 
-        <div
-          ref={slider.viewportRef}
-          className="overflow-hidden"
-          tabIndex={0}
-          aria-label="Testimonios: usa las flechas del teclado para cambiar"
-          onKeyDown={slider.onKeyDown}
-        >
+        <div ref={slider.viewportRef} className="overflow-hidden">
           <ul className="-ml-6 flex">
             {items.map((item: any, index: number) => (
               <li

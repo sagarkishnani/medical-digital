@@ -92,6 +92,7 @@ export default function PoliciesReact({ query, variables, data: initialData }: P
           role="tabpanel"
           id={`${id}-panel`}
           aria-labelledby={`${id}-tab-${activeIndex}`}
+          tabIndex={0}
           className="flex flex-col gap-3.5 rounded-2xl bg-surface p-6 md:gap-6 md:p-12"
         >
           <h3 className="text-heading-h4 text-brand-secondary-dark md:text-heading-h3" data-tina-field={tinaField(active, "title")}>

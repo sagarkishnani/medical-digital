@@ -19,7 +19,7 @@ export default function ContactInfoReact({ query, variables, data: initialData }
   const whatsappUrl = whatsappDigits ? `https://wa.me/${whatsappDigits}` : "";
 
   return (
-    <div className="order-first flex flex-col gap-5 lg:order-none lg:gap-8 lg:pt-3">
+    <div className="flex flex-col gap-5 lg:order-last lg:gap-8 lg:pt-3">
       <dl className="flex flex-col gap-5 lg:gap-8">
         {company.address && (
           <div className="flex flex-col gap-2">
@@ -29,27 +29,29 @@ export default function ContactInfoReact({ query, variables, data: initialData }
             </dd>
           </div>
         )}
-        {(phoneDigits || whatsappUrl) && (
-          <div className="grid grid-cols-2 gap-2.5 lg:hidden">
-            {phoneDigits && (
-              <a href={`tel:+${phoneDigits}`} className="btn h-[52px] border-brand-secondary-dark px-4 text-body-md text-brand-secondary-dark">
-                <FaPhone aria-hidden="true" className="h-4 w-4" />
-                Llamar
-              </a>
-            )}
-            {whatsappUrl && (
-              <a
-                href={whatsappUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="btn h-[52px] bg-semantics-success-dark px-4 text-body-md text-white"
-              >
-                <FaWhatsapp aria-hidden="true" className="h-5 w-5" />
-                WhatsApp
-              </a>
-            )}
-          </div>
-        )}
+      </dl>
+      {(phoneDigits || whatsappUrl) && (
+        <div className="grid grid-cols-2 gap-2.5 lg:hidden">
+          {phoneDigits && (
+            <a href={`tel:+${phoneDigits}`} className="btn h-[52px] border-brand-secondary-dark px-4 text-body-md text-brand-secondary-dark">
+              <FaPhone aria-hidden="true" className="h-4 w-4" />
+              Llamar
+            </a>
+          )}
+          {whatsappUrl && (
+            <a
+              href={whatsappUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn h-[52px] bg-semantics-success-dark px-4 text-body-md text-white"
+            >
+              <FaWhatsapp aria-hidden="true" className="h-5 w-5" />
+              WhatsApp
+            </a>
+          )}
+        </div>
+      )}
+      <dl className="flex flex-col gap-5 lg:gap-8">
         {company.phone && (
           <div className="flex flex-col gap-2">
             <dt className="text-caption text-content-subtle lg:text-body-sm">Teléfono</dt>
