@@ -1,4 +1,3 @@
-import type { CSSProperties } from "react";
 import { useTina, tinaField } from "tinacms/dist/react";
 import { PiSquaresFourLight } from "react-icons/pi";
 import SectionHeader from "./SectionHeader";
@@ -18,12 +17,6 @@ interface Props {
   categories: Category[];
 }
 
-const COLUMNS = { base: 2, md: 3, lg: 5 };
-
-function remainingSpan(items: number, columns: number): number {
-  return columns - (items % columns);
-}
-
 const cardClass =
   "flex h-full min-h-[120px] flex-col justify-between gap-3 rounded-2xl p-4 transition-[transform,box-shadow,border-color,background-color] duration-300 hover:-translate-y-1 md:min-h-44 md:p-6";
 
@@ -34,12 +27,6 @@ export default function SpecialtiesReact({ query, variables, data: initialData, 
 
   const iconFor = (slug: string) =>
     (specialties.icons || []).find((entry: any) => entry?.categorySlug === slug)?.icon;
-
-  const catalogSpan = {
-    "--span-base": remainingSpan(categories.length, COLUMNS.base),
-    "--span-md": remainingSpan(categories.length, COLUMNS.md),
-    "--span-lg": remainingSpan(categories.length, COLUMNS.lg),
-  } as CSSProperties;
 
   return (
     <section className="container-xl flex flex-col gap-6 pb-12 pt-2 md:gap-10 md:pb-24 md:pt-12">
@@ -62,10 +49,7 @@ export default function SpecialtiesReact({ query, variables, data: initialData, 
           </li>
         ))}
         {specialties.catalogLabel && (
-          <li
-            style={catalogSpan}
-            className="[grid-column:span_var(--span-base)] md:[grid-column:span_var(--span-md)] lg:[grid-column:span_var(--span-lg)]"
-          >
+          <li className="col-start-2 md:col-start-3 lg:col-start-5">
             <a href={withBase("/productos")} className={`${cardClass} bg-brand-secondary-dark text-white hover:bg-brand-tertiary-dark`}>
               <PiSquaresFourLight aria-hidden="true" className="h-9 w-9 md:h-12 md:w-12" />
               <span className="text-subtitle" data-tina-field={tinaField(specialties, "catalogLabel")}>

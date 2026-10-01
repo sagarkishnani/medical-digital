@@ -239,7 +239,7 @@ Cada paso deja el build verde y va en su propio commit.
 - `src/components/shared/QuoteModal.tsx`: modal de cotización con `<dialog>` nativo, reutilizable en las fichas de producto. La línea "Tu solicitud llegará a ventas@…" de la referencia se agrega con el envío real, para no prometer un envío que aún no existe.
 - Hidratación: slider con `client:load`; destacados (modal) y testimonios con `client:visible`; Políticas con `client:visible`; el resto con `client:tina` (0 JS en producción).
 - Se agregó `specialties.catalogLabel` al modelo de `home` para editar el texto de la tarjeta "Ver todo el catálogo".
-- Especialidades en 5 columnas: la tarjeta "Ver todo el catálogo" ocupa las columnas que sobran según cuántas categorías tenga Woo.
+- Especialidades en 5 columnas: la tarjeta "Ver todo el catálogo" ocupa una celda y siempre va en la última columna; las celdas sobrantes quedan vacías hasta que Woo tenga más categorías.
 - Slides 2 y 3 apuntan a `/contacto` y `/productos`: `/servicio-tecnico` y `/marcas` aún no existen.
 - Contacto en la grilla del diseño: formulario (7fr) y datos de la empresa (4fr). El formulario no necesita JS (`client:tina`).
 - Botón "Escríbenos por WhatsApp" con `semantics-success-dark`: el verde del diseño con texto blanco queda en 2.5:1.
