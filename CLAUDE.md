@@ -217,3 +217,17 @@ Pendientes de decisión de diseño: el texto blanco sobre `brand-primary-medium`
 ### Panel del CMS
 
 Disponible en `/admin` con `npm run dev`. Las imágenes se suben a `public/`.
+
+### Imágenes del contenido
+
+- Van en `public/uploads/<sección>/` (`home/`, `nosotros/`, `contacto/`…) y en
+  el contenido se escriben como `/uploads/<sección>/<archivo>`.
+- WebP para fotos y SVG para logos; ancho máximo 1440 px y menos de 300 KB
+  por imagen (estándar §5.2).
+- Nombres descriptivos en minúsculas con guiones
+  (`slide-servicio-tecnico.webp`, no `IMG_2034.jpg`).
+- Toda imagen del CMS pasa por `mediaUrl()` (`src/utils/mediaUrl.ts`): con
+  TinaCloud llegan con el prefijo `assets.tina.io` y la función las devuelve a
+  la ruta local.
+- Cada componente funciona sin imagen (degradado de marca o bloque neutro), así
+  que quitar una foto en Tina nunca rompe el layout.

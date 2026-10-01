@@ -14,7 +14,7 @@
 - **Nosotros:** hero con breadcrumb, quiénes somos, visión y misión, valores, y políticas en pestañas accesibles con enlace a un PDF opcional.
 - **Contacto:** hero con breadcrumb, formulario de la referencia maquetado sin envío (10 campos con `<label>`, selects de ubicación y especialidad, casilla de consentimiento), datos de sede, teléfono, correos, horario y botón de WhatsApp (en mobile, botones "Llamar" y "WhatsApp" lado a lado y los datos antes del formulario), y mapa de Google embebido con enlace "Cómo llegar".
 - **Tina:** schema de `home` reescrito, colecciones nuevas `about` y `contact`, cada una en su archivo de `tina/collections/`, con el patrón de componente doble y una consulta por página.
-- Contenido inicial solo con los textos de la referencia. Cada componente funciona sin imagen: el hero y los slides muestran el degradado de marca, las fotos un bloque neutro con la misma proporción y las marcas su nombre.
+- Contenido inicial con los textos y las fotos de la referencia como imágenes provisionales (licencia del diseñador, confirmada el 2026-09-30), en `public/uploads/<sección>/`. Cada componente sigue funcionando sin imagen: el hero y los slides muestran el degradado de marca, las fotos un bloque neutro con la misma proporción y las marcas su nombre.
 - Se eliminan `Hero`, `Features` y `CTA` de la Home actual.
 
 **Out of scope (for future specs):**
@@ -25,7 +25,7 @@
 - Envío del modal de cotización y su estado "¡Solicitud enviada!": llegan con la infraestructura de formularios de la tarea de servicio técnico.
 - Resto de páginas de la referencia: Productos y Detalle rediseñados, Marcas, Servicio técnico, Blog y Post.
 - Reseñas de Google en vivo: la calificación y los testimonios se editan a mano en Tina.
-- Imágenes finales: las entrega el cliente y se cargan desde Tina.
+- Imágenes finales y logos de marcas: los entrega el cliente y se cargan desde Tina.
 - Lenis (ver Decisiones).
 
 ## Modelo de datos
@@ -118,8 +118,8 @@ Cada paso deja el build verde y va en su propio commit.
 2. **Datos de empresa.** Agregar `company` al schema de `global` y cargar dirección, teléfono, correos y horario en `src/content/global/`.
 3. **Destacados de Woo.** Agregar `getFeaturedProducts(limit)` a `store.ts` y comprobar la respuesta contra el WordPress real.
 4. **Home.** Reescribir `tina/collections/home.ts` y `src/content/home/index.json`; crear las secciones con el patrón de componente doble en `src/components/home/` (slider, destacados, especialidades, conoce más, marcas, testimonios, noticias); resolver en `src/pages/index.astro` una sola consulta de Tina más Woo y los posts; borrar `Hero`, `Features` y `CTA` antiguos.
-5. **Nosotros.** Crear `tina/collections/about.ts` y registrarlo en `tina/config.ts`; `src/content/about/nosotros.json`; secciones en `src/components/nosotros/`; `src/pages/nosotros.astro`.
-6. **Contacto.** Crear `tina/collections/contact.ts` y registrarlo; `src/content/contact/contacto.json`; secciones en `src/components/contacto/`; `src/pages/contacto.astro`. Incluye los datos de `global.company`, WhatsApp con `src/utils/whatsapp.ts` y el mapa embebido.
+5. **Nosotros.** Crear `tina/collections/about.ts` y registrarlo en `tina/config.ts`; `src/content/about/nosotros.json`; secciones en `src/components/about/`; `src/pages/nosotros.astro`.
+6. **Contacto.** Crear `tina/collections/contact.ts` y registrarlo; `src/content/contact/contacto.json`; secciones en `src/components/contact/`; `src/pages/contacto.astro`. Incluye los datos de `global.company`, WhatsApp con `src/utils/whatsapp.ts` y el mapa embebido.
 7. **Navegación.** Comprobar que el menú de `global` enlace a `/nosotros` y `/contacto`, y ajustar solo el contenido si hace falta.
 8. **Cierre.** `npm run build` y, si existe, `npm run check:standard`; ajustar mobile a "Medical Digital Mobile.html"; QA responsive en 320, 360, 768 y 1280 px con contenido real; actualizar la lista de colecciones del `CLAUDE.md`; agregar a esta spec "Notas de implementación" y "QA realizada".
 
@@ -196,7 +196,7 @@ Cada paso deja el build verde y va en su propio commit.
 | Tarjetas de destacados sin garantía ni especificación | Esos datos no existen en `WooProduct`. Se agregan cuando Woo los exponga. |
 | La tarjeta de destacados sigue la referencia; `ProductCard` del catálogo no se toca | El rediseño del catálogo queda fuera de alcance. |
 | Calificación de Google (4.9 · 120) editada a mano en Tina | La API de Places pide clave y facturación: sería un servicio nuevo. |
-| Sin imágenes iniciales; respaldo por componente | La licencia de las fotos de la referencia está por definir con el cliente. Mismo criterio que Fiberlux (spec 24: respaldo cuando falta la imagen). Para ver el aspecto final se pueden subir fotos de licencia libre desde Tina, sin tocar código. |
+| Imágenes provisionales del diseño, con respaldo por componente | El diseñador confirmó que las fotos están bajo su licencia y se pueden publicar como provisionales. Así el preview refleja el diseño aprobado; el cliente las reemplaza desde Tina sin tocar código. Si se quita una imagen, la sección conserva su layout (mismo criterio que Fiberlux, spec 24). |
 | Opciones de "Especialidad" desde las categorías de Woo | Una lista propia en Tina se desincroniza cuando el cliente agrega o renombra categorías. |
 | Etiquetas de interfaz en el código | Campos de formulario, botones y rótulos de datos no son contenido editorial; mismo criterio que la ficha de producto (SPEC 01) y Fiberlux. |
 | Mismo contenido en todos los tamaños; solo cambia el layout | El cliente edita un solo texto en Tina. Mismo criterio que Fiberlux (spec 07). Donde la referencia mobile recorta textos (Quiénes somos, opciones de los selects) se mantiene el de desktop; el extracto de las noticias se oculta en mobile por presentación. |
@@ -209,7 +209,7 @@ Cada paso deja el build verde y va en su propio commit.
 |---|---|
 | Dividir en Home + Nosotros y Contacto aparte | Sin el envío de formularios, Contacto es solo maquetación. |
 | Contacto sin formulario hasta tener el envío | Inconsistente con el modal de cotización, que ya se maquetó sin envío. |
-| Commitear las fotos de la referencia | Licencia sin definir con el cliente. |
+| Imágenes en `public/images/` con rutas relativas (como Fiberlux) | El repo de referencia más reciente del equipo usa `public/uploads/<sección>/` con rutas `/uploads/…`; se sigue esa convención. |
 | Imágenes genéricas de relleno en el repo | Archivos que después hay que acordarse de borrar. |
 | Textos separados para mobile en Tina | Duplica el contenido que el cliente mantiene y se desincroniza. |
 | Header y footer en una sola spec | Tareas, dependencias y riesgos distintos; un PR más grande y con más rondas de revisión. |
@@ -227,7 +227,7 @@ Cada paso deja el build verde y va en su propio commit.
 | Nadie marcó productos como destacados en Woo, o `featured=true` no filtra como se espera en la Store API. | La sección no se renderiza si viene vacía. Se verifica en el paso 3 contra el WordPress real; si no hay destacados, se pide al cliente que los marque. |
 | El modal de cotización y el formulario de Contacto llegan a `main` sin envío. El go-live exige "formularios probados con correo recibido". | El PR lo indica: `staging` no se promueve a `main` hasta que la tarea de formularios conecte el envío. |
 | Los testimonios y la calificación "4.9 · 120 reseñas en Google" son de ejemplo del diseño. Publicarlos como reales sería engañoso para los clientes. | Se maquetan tal como están en el diseño. El PR lo indica y el cliente debe reemplazarlos por testimonios y cifras reales desde Tina antes de pasar a `main`. |
-| El cliente tarda en entregar las imágenes y el sitio se ve sin fotos. | El respaldo mantiene el layout. Mientras tanto se pueden subir fotos de licencia libre desde Tina. |
+| Las imágenes provisionales quedan publicadas en un repo público. | Licencia del diseñador confirmada antes de subirlas. Son WebP de 16–68 KB y se reemplazan por las del cliente desde Tina. |
 | Se agregan dos colecciones y cambia `home`; `TINA_BRANCH` se fija en build y el preview puede compilar contra el índice equivocado. | El preview del PR usa la rama real. Sin red, `build:local` y después restaurar `tina/__generated__/` y `tina-lock.json`. |
 | Contraste heredado: `btn-primary` en 4.08:1 y `content-subtle` sobre `surface-raised` en 4.4975:1. | No usar `content-subtle` para texto dentro de tarjetas. El contraste de `btn-primary` sigue pendiente de diseño y no se corrige aquí. |
 | La referencia mobile llegó después de maquetar desktop. | Se ajusta página por página antes del PR, con capturas en 360 px contra la referencia. |
@@ -247,6 +247,8 @@ Cada paso deja el build verde y va en su propio commit.
 - Mapa: el campo acepta el código completo de Google; `referrerpolicy="strict-origin-when-cross-origin"`, el que entrega Google hoy.
 - Rutas internas fijas con `withBase()` (`src/utils/url.ts`) para respetar `BASE_URL`; las URLs que vienen de Tina se usan tal cual, como en el header.
 - Estándar aplicado en la revisión final: `duration: 12` en Embla (~210 ms medidos con Playwright) y transiciones de 300 ms como máximo, tarjetas de especialidades con altura mínima (no fija), sliders operables con sus botones (el viewport no recibe foco, como en el patrón de carrusel de WAI-ARIA), `duration` mínimo de Embla también al arrastrar con `prefers-reduced-motion`, `h1` de la Home fijo (`sr-only`, desde el título SEO) en lugar de dentro de un slide que se oculta, datos de Contacto antes del formulario en el DOM, panel de Políticas enfocable, áreas táctiles de 44 px en los dots, `width` y `height` en todas las imágenes, y títulos y descripciones SEO de 50–60 y 140–160 caracteres.
+- Imágenes provisionales en `public/uploads/home/`, `uploads/nosotros/` y `uploads/contacto/`: WebP de 1440 px como máximo y 16–68 KB, con nombres descriptivos; en el contenido, rutas `/uploads/…`. La primera diapositiva lleva `fetchPriority="high"` (LCP) y las demás `"low"`.
+- Carpetas de componentes en inglés (`about/`, `contact/`), como las colecciones de Tina y el repo de referencia más reciente del equipo.
 - Colecciones nuevas en `tina dev`: hay que reiniciar el servidor para que indexe sus documentos.
 - **Pendiente para la tarea "Catálogo y detalle de producto":** en la Home "Solicitar cotización" abre el modal; en la ficha de producto (SPEC 01) abre WhatsApp directo. Unificar reutilizando `QuoteModal`.
 - **Pendiente de decisión de diseño (UI Kit):** el navy de títulos `#1C2140` se usa como `brand-secondary-dark` porque no hay token semántico para él; y el contraste no textual de los dots inactivos (2.47:1) y de los bordes de campos (`line`, 1.24:1) queda bajo el 3:1 de WCAG 1.4.11. Cambiarlo se aparta del diseño aprobado, igual que el contraste de `btn-primary` que ya figura en `CLAUDE.md`.
@@ -265,6 +267,6 @@ Cada paso deja el build verde y va en su propio commit.
 - `npm run build:local` (equivalente local de `npm run build`, que necesita TinaCloud): 59 páginas sin errores.
 - Pruebas end-to-end con Playwright en 360 y 1280 px (fuera del repo): overflow, `h1`, imágenes, áreas táctiles, consola, slider (~210 ms y con `prefers-reduced-motion`), modal completo, pestañas con teclado, formulario, mapa y orden mobile. Todas pasan.
 - Build sin Woo (`WOO_STORE_URL` vacía): compila, `check:standard` sin errores y 77/77 pruebas; destacados y especialidades no se renderizan.
-- Hero con las fotos de la referencia, solo en local y sin commit: desktop igual a la referencia; en mobile se ajustaron encuadre (`object-center`) y degradado (90 % → 60 % → 35 %) para igualarla. La diferencia restante es el header (transparente sobre el hero; en la referencia es sólido): lo resuelve la spec del header.
+- Hero con las fotos de la referencia: desktop igual a la referencia; en mobile se ajustaron encuadre (`object-center`) y degradado (90 % → 60 % → 35 %) para igualarla. La diferencia restante es el header (transparente sobre el hero; en la referencia es sólido): lo resuelve la spec del header.
 - WordPress respondió con timeouts intermitentes en varios builds del 2026-09-30. Reportado para revisarlo fuera de esta spec.
 - Sin verificar desde local: arrastre del slider en touch real, sección de noticias con 0 posts, botón de PDF de políticas, mapa con URL inválida, edición en vivo desde `/admin`, `npm run build` con TinaCloud (lo valida el preview de Amplify).
