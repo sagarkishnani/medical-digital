@@ -128,52 +128,52 @@ Cada paso deja el build verde y va en su propio commit.
 **Build y estándar**
 
 - [ ] `npm run build` termina sin errores.
-- [ ] `npm run check:standard` pasa, si existe.
-- [ ] Ningún `.tsx` importa `src/lib/woo/store.ts`.
-- [ ] Ningún componente nuevo usa hex, `text-[NNpx]` ni `text-white/…` fuera de las excepciones del `CLAUDE.md`.
+- [x] `npm run check:standard` pasa, si existe.
+- [x] Ningún `.tsx` importa `src/lib/woo/store.ts`.
+- [x] Ningún componente nuevo usa hex, `text-[NNpx]` ni `text-white/…` fuera de las excepciones del `CLAUDE.md`.
 
 **Home (`/`)**
 
 - [ ] El slider se mueve con flechas, dots, teclado y arrastre, no tiene autoplay y cada slide enlaza a su CTA.
-- [ ] "Equipos más solicitados" muestra solo productos con `featured` en Woo, hasta `limit`, y cada tarjeta enlaza a `/productos/[slug]`.
+- [x] "Equipos más solicitados" muestra solo productos con `featured` en Woo, hasta `limit`, y cada tarjeta enlaza a `/productos/[slug]`.
 - [ ] Sin destacados en Woo, la sección no se renderiza y el build no falla.
-- [ ] Las especialidades muestran las categorías de Woo con su conteo real y enlazan a `/productos/categoria/[slug]`.
-- [ ] Las estadísticas, las marcas y los testimonios salen de Tina, y los números aparecen sin animación.
+- [x] Las especialidades muestran las categorías de Woo con su conteo real y enlazan a `/productos/categoria/[slug]`.
+- [x] Las estadísticas, las marcas y los testimonios salen de Tina, y los números aparecen sin animación.
 - [ ] Noticias muestra los 3 posts más recientes. Con 0 posts, la sección no se renderiza.
-- [ ] "Solicitar cotización" abre un `<dialog>` modal con el nombre del producto; se cierra con el botón, con Esc y al pulsar fuera.
-- [ ] Los campos del modal tienen `<label>` (visualmente oculto) y los obligatorios llevan `required`.
-- [ ] "Enviar solicitud" no envía datos ni muestra un mensaje de éxito. "Hablar con un asesor" abre WhatsApp con el producto.
-- [ ] La flecha diagonal de cada tarjeta lleva a la ficha del producto.
+- [x] "Solicitar cotización" abre un `<dialog>` modal con el nombre del producto; se cierra con el botón, con Esc y al pulsar fuera.
+- [x] Los campos del modal tienen `<label>` (visualmente oculto) y los obligatorios llevan `required`.
+- [x] "Enviar solicitud" no envía datos ni muestra un mensaje de éxito. "Hablar con un asesor" abre WhatsApp con el producto.
+- [x] La flecha diagonal de cada tarjeta lleva a la ficha del producto.
 
 **Nosotros (`/nosotros`)**
 
-- [ ] Muestra todas las secciones de la referencia.
-- [ ] Las pestañas de políticas funcionan con teclado y tienen roles ARIA de tabs.
+- [x] Muestra todas las secciones de la referencia.
+- [x] Las pestañas de políticas funcionan con teclado y tienen roles ARIA de tabs.
 - [ ] El botón "Descargar documento" solo aparece si la política tiene un PDF cargado.
 
 **Contacto (`/contacto`)**
 
-- [ ] El formulario tiene los 10 campos de la referencia con `<label>` visible; los obligatorios llevan `required` y el asterisco.
-- [ ] "Enviar" no envía datos ni muestra un mensaje de éxito.
-- [ ] Sin `privacyUrl`, el texto de la política se muestra sin enlace.
-- [ ] La dirección, el teléfono, los correos y el horario salen de `global.company`, y WhatsApp usa el número de `global`.
-- [ ] El iframe del mapa lleva `title`, `loading="lazy"`, `referrerpolicy="strict-origin-when-cross-origin"` y relación de aspecto fija (no mueve el layout al cargar).
+- [x] El formulario tiene los 10 campos de la referencia con `<label>` visible; los campos de datos obligatorios llevan `required` y el asterisco, y la casilla de consentimiento lleva `required`.
+- [x] "Enviar" no envía datos ni muestra un mensaje de éxito.
+- [x] Sin `privacyUrl`, el texto de la política se muestra sin enlace.
+- [x] La dirección, el teléfono, los correos y el horario salen de `global.company`, y WhatsApp usa el número de `global`.
+- [x] El iframe del mapa lleva `title`, `loading="lazy"`, `referrerpolicy="strict-origin-when-cross-origin"` y relación de aspecto fija (no mueve el layout al cargar).
 - [ ] Si `embedUrl` no empieza por `https://www.google.com/maps/embed`, el iframe no se renderiza y queda solo el enlace "Cómo llegar".
 
 **Tina**
 
 - [ ] Todo el contenido editorial (títulos, textos, listas, enlaces e imágenes) de las tres páginas se edita desde `/admin` con vista previa en vivo. Las etiquetas de interfaz (campos de formulario, botones y rótulos de datos) viven en el código.
-- [ ] `about` y `contact` no permiten crear ni borrar documentos.
+- [x] `about` y `contact` no permiten crear ni borrar documentos.
 
 **Responsive y accesibilidad**
 
-- [ ] No hay scroll horizontal ni textos cortados o superpuestos en 320, 360, 768 y 1280 px.
-- [ ] En mobile el layout coincide con "Medical Digital Mobile.html" y el contenido es el mismo que en desktop.
-- [ ] En mobile, destacados y noticias son carruseles horizontales con scroll nativo (sin JS) y las pestañas de Políticas son píldoras con scroll horizontal.
-- [ ] Todas las imágenes tienen `width`, `height` y `alt`; las decorativas llevan `alt=""`.
-- [ ] Sin imagen cargada en Tina, cada sección conserva su layout y muestra su respaldo (degradado de marca, bloque neutro o nombre de la marca).
-- [ ] Con `prefers-reduced-motion`, los sliders cambian sin transición.
-- [ ] Hay un solo `h1` por página y los encabezados siguen su orden.
+- [x] No hay scroll horizontal ni textos cortados o superpuestos en 320, 360, 768 y 1280 px.
+- [x] En mobile el layout coincide con "Medical Digital Mobile.html" y el contenido es el mismo que en desktop.
+- [x] En mobile, destacados y noticias son carruseles horizontales con scroll nativo (sin JS) y las pestañas de Políticas son píldoras con scroll horizontal.
+- [x] Todas las imágenes tienen `width`, `height` y `alt`; las decorativas llevan `alt=""`.
+- [x] Sin imagen cargada en Tina, cada sección conserva su layout y muestra su respaldo (degradado de marca, bloque neutro o nombre de la marca).
+- [x] Con `prefers-reduced-motion`, los sliders cambian sin transición.
+- [x] Hay un solo `h1` por página y los encabezados siguen su orden.
 
 ## Decisiones
 
@@ -246,9 +246,10 @@ Cada paso deja el build verde y va en su propio commit.
 - Radios de 48 px del diseño llevados a `2xl` (24 px): el UI Kit no tiene token de 48.
 - Mapa: el campo acepta el código completo de Google; `referrerpolicy="strict-origin-when-cross-origin"`, el que entrega Google hoy.
 - Rutas internas fijas con `withBase()` (`src/utils/url.ts`) para respetar `BASE_URL`; las URLs que vienen de Tina se usan tal cual, como en el header.
-- Estándar aplicado en la revisión final: `duration: 12` en Embla (~210 ms medidos con Playwright) y transiciones de 300 ms como máximo, tarjetas de especialidades con altura mínima (no fija), viewports de los sliders con nombre accesible, áreas táctiles de 44 px en los dots, `width` y `height` en todas las imágenes, y títulos y descripciones SEO de 50–60 y 140–160 caracteres.
+- Estándar aplicado en la revisión final: `duration: 12` en Embla (~210 ms medidos con Playwright) y transiciones de 300 ms como máximo, tarjetas de especialidades con altura mínima (no fija), sliders operables con sus botones (el viewport no recibe foco, como en el patrón de carrusel de WAI-ARIA), `duration` mínimo de Embla también al arrastrar con `prefers-reduced-motion`, `h1` de la Home fijo (`sr-only`, desde el título SEO) en lugar de dentro de un slide que se oculta, datos de Contacto antes del formulario en el DOM, panel de Políticas enfocable, áreas táctiles de 44 px en los dots, `width` y `height` en todas las imágenes, y títulos y descripciones SEO de 50–60 y 140–160 caracteres.
 - Colecciones nuevas en `tina dev`: hay que reiniciar el servidor para que indexe sus documentos.
 - **Pendiente para la tarea "Catálogo y detalle de producto":** en la Home "Solicitar cotización" abre el modal; en la ficha de producto (SPEC 01) abre WhatsApp directo. Unificar reutilizando `QuoteModal`.
+- **Pendiente de decisión de diseño (UI Kit):** el navy de títulos `#1C2140` se usa como `brand-secondary-dark` porque no hay token semántico para él; y el contraste no textual de los dots inactivos (2.47:1) y de los bordes de campos (`line`, 1.24:1) queda bajo el 3:1 de WCAG 1.4.11. Cambiarlo se aparta del diseño aprobado, igual que el contraste de `btn-primary` que ya figura en `CLAUDE.md`.
 - **Pendiente para la tarea "SEO técnico":** el sitio no tiene JSON-LD `Organization` ni `LocalBusiness` (estándar 6.2); los datos ya están en `global.company`.
 - **Pendiente para la spec del footer:** el enlace "Contacto" del footer sigue en `/#cta`, que dejó de existir al reemplazar la Home. Se decidió no tocar el footer en esta spec.
 
@@ -261,4 +262,6 @@ Cada paso deja el build verde y va en su propio commit.
 - Enlaces internos de las tres páginas: 0 rotos.
 - Woo real: 6 destacados y 7 categorías con conteo.
 - Contacto con formulario revisado en 1280 px contra la referencia.
-- Pendiente de revisión manual en navegador: modal de cotización (abrir, cerrar con X, Esc y clic fuera), pestañas de Políticas con teclado, y `npm run build` completo con el dev server detenido.
+- `npm run build:local` (equivalente local de `npm run build`, que necesita TinaCloud): 59 páginas sin errores.
+- Pruebas end-to-end con Playwright en 360 y 1280 px (fuera del repo): overflow, `h1`, imágenes, áreas táctiles, consola, slider (~210 ms y con `prefers-reduced-motion`), modal completo, pestañas con teclado, formulario, mapa y orden mobile. Todas pasan.
+- Sin verificar desde local: arrastre del slider en touch real, secciones con 0 destacados o 0 posts, botón de PDF de políticas, mapa con URL inválida, edición en vivo desde `/admin`, `npm run build` con TinaCloud (lo valida el preview de Amplify).
