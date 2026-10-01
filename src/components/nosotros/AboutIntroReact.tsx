@@ -22,7 +22,7 @@ export default function AboutIntroReact({ query, variables, data: initialData }:
           </p>
         )}
         {intro.title && (
-          <h2 className="text-heading-h3 text-balance text-brand-secondary-dark md:text-heading-h2 lg:text-heading-h1" data-tina-field={tinaField(intro, "title")}>
+          <h2 className="section-title text-balance" data-tina-field={tinaField(intro, "title")}>
             {intro.title}
           </h2>
         )}

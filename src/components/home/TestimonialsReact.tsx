@@ -51,7 +51,7 @@ export default function TestimonialsReact({ query, variables, data: initialData 
         <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
           <div className="flex max-w-[640px] flex-col gap-3">
             {testimonials.title && (
-              <h2 className="text-heading-h3 text-brand-secondary-dark md:text-heading-h2 lg:text-heading-h1" data-tina-field={tinaField(testimonials, "title")}>
+              <h2 className="section-title" data-tina-field={tinaField(testimonials, "title")}>
                 {testimonials.title}
               </h2>
             )}

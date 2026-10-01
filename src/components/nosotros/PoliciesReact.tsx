@@ -50,7 +50,7 @@ export default function PoliciesReact({ query, variables, data: initialData }: P
       <div className="container-xl grid items-start gap-5 py-10 md:gap-10 md:py-24 lg:grid-cols-[340px_minmax(0,1fr)] lg:gap-14">
         <div className="flex min-w-0 flex-col gap-5 md:gap-6 lg:sticky lg:top-[120px]">
           {policies.title && (
-            <h2 className="text-heading-h3 text-brand-secondary-dark md:text-heading-h2 lg:text-heading-h1" data-tina-field={tinaField(policies, "title")}>
+            <h2 className="section-title" data-tina-field={tinaField(policies, "title")}>
               {policies.title}
             </h2>
           )}

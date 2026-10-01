@@ -118,8 +118,8 @@ Cada paso deja el build verde y va en su propio commit.
 2. **Datos de empresa.** Agregar `company` al schema de `global` y cargar dirección, teléfono, correos y horario en `src/content/global/`.
 3. **Destacados de Woo.** Agregar `getFeaturedProducts(limit)` a `store.ts` y comprobar la respuesta contra el WordPress real.
 4. **Home.** Reescribir `tina/collections/home.ts` y `src/content/home/index.json`; crear las secciones con el patrón de componente doble en `src/components/home/` (slider, destacados, especialidades, conoce más, marcas, testimonios, noticias); resolver en `src/pages/index.astro` una sola consulta de Tina más Woo y los posts; borrar `Hero`, `Features` y `CTA` antiguos.
-5. **Nosotros.** Crear `tina/collections/about.ts` y registrarlo en `tina/config.ts`; `src/content/about/nosotros.json`; secciones en `src/components/about/`; `src/pages/nosotros.astro`.
-6. **Contacto.** Crear `tina/collections/contact.ts` y registrarlo; `src/content/contact/contacto.json`; secciones en `src/components/contact/`; `src/pages/contacto.astro`. Incluye los datos de `global.company`, WhatsApp con `src/utils/whatsapp.ts` y el mapa embebido.
+5. **Nosotros.** Crear `tina/collections/about.ts` y registrarlo en `tina/config.ts`; `src/content/about/nosotros.json`; secciones en `src/components/nosotros/`; `src/pages/nosotros.astro`.
+6. **Contacto.** Crear `tina/collections/contact.ts` y registrarlo; `src/content/contact/contacto.json`; secciones en `src/components/contacto/`; `src/pages/contacto.astro`. Incluye los datos de `global.company`, WhatsApp con `src/utils/whatsapp.ts` y el mapa embebido.
 7. **Navegación.** Comprobar que el menú de `global` enlace a `/nosotros` y `/contacto`, y ajustar solo el contenido si hace falta.
 8. **Cierre.** `npm run build` y, si existe, `npm run check:standard`; ajustar mobile a "Medical Digital Mobile.html"; QA responsive en 320, 360, 768 y 1280 px con contenido real; actualizar la lista de colecciones del `CLAUDE.md`; agregar a esta spec "Notas de implementación" y "QA realizada".
 

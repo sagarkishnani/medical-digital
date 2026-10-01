@@ -15,6 +15,13 @@ interface Props {
 const fieldClass =
   "h-[50px] w-full rounded-lg border border-line bg-surface px-4 text-body-sm text-brand-secondary-dark placeholder:text-content-subtle focus:border-brand-secondary-dark focus:outline-none";
 
+const FIELDS = [
+  { name: "name", label: "Nombre y apellido", type: "text", autoComplete: "name" },
+  { name: "institution", label: "Institución", type: "text", autoComplete: "organization" },
+  { name: "email", label: "Correo electrónico", type: "email", autoComplete: "email" },
+  { name: "phone", label: "Teléfono", type: "tel", autoComplete: "tel" },
+];
+
 export default function QuoteModal({ product, onClose }: Props) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const id = useId();
@@ -25,13 +32,6 @@ export default function QuoteModal({ product, onClose }: Props) {
     if (product && !dialog.open) dialog.showModal();
     if (!product && dialog.open) dialog.close();
   }, [product]);
-
-  const fields = [
-    { name: "name", label: "Nombre y apellido", type: "text", autoComplete: "name" },
-    { name: "institution", label: "Institución", type: "text", autoComplete: "organization" },
-    { name: "email", label: "Correo electrónico", type: "email", autoComplete: "email" },
-    { name: "phone", label: "Teléfono", type: "tel", autoComplete: "tel" },
-  ];
 
   return (
     <dialog
@@ -61,7 +61,7 @@ export default function QuoteModal({ product, onClose }: Props) {
           </div>
 
           <div className="grid gap-3.5 sm:grid-cols-2">
-            {fields.map((field) => (
+            {FIELDS.map((field) => (
               <div key={field.name}>
                 <label htmlFor={`${id}-${field.name}`} className="sr-only">
                   {field.label} (obligatorio)

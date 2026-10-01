@@ -30,7 +30,7 @@ export default function HomeAboutReact({ query, variables, data: initialData }: 
             />
           )}
         </div>
-        <div className="flex flex-col justify-center gap-5 px-[22px] pb-7 pt-6 text-white md:gap-8 md:px-6 md:py-10 md:py-12 md:pl-9 md:pr-10 lg:pr-16">
+        <div className="flex flex-col justify-center gap-5 px-[22px] pb-7 pt-6 text-white md:gap-8 md:py-12 md:pl-9 md:pr-10 lg:pr-16">
           {about.text && (
             <p className="text-heading-h4 text-pretty lg:text-heading-h3" data-tina-field={tinaField(about, "text")}>
               {about.text}

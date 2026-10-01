@@ -7,7 +7,6 @@ const SCROLL_DURATION = 12;
 export interface UseSliderOptions {
   loop?: boolean;
   align?: "start" | "center";
-  slidesToScroll?: number | "auto";
   active?: boolean;
 }
 
@@ -17,7 +16,6 @@ export interface Slider {
   scrollSnaps: number[];
   canPrev: boolean;
   canNext: boolean;
-  reducedMotion: boolean;
   next: () => void;
   prev: () => void;
   goTo: (index: number) => void;
@@ -26,7 +24,6 @@ export interface Slider {
 function usePrefersReducedMotion(): boolean {
   const [reduced, setReduced] = useState(false);
   useEffect(() => {
-    if (typeof window === "undefined" || !window.matchMedia) return;
     const query = window.matchMedia("(prefers-reduced-motion: reduce)");
     const update = () => setReduced(query.matches);
     update();
@@ -37,13 +34,12 @@ function usePrefersReducedMotion(): boolean {
 }
 
 export function useSlider(options: UseSliderOptions = {}): Slider {
-  const { loop = true, align = "start", slidesToScroll = 1, active = true } = options;
+  const { loop = true, align = "start", active = true } = options;
 
   const reducedMotion = usePrefersReducedMotion();
   const [viewportRef, embla] = useEmblaCarousel({
     loop,
     align,
-    slidesToScroll,
     active,
     duration: reducedMotion ? 1 : SCROLL_DURATION,
   });
@@ -88,7 +84,6 @@ export function useSlider(options: UseSliderOptions = {}): Slider {
     scrollSnaps,
     canPrev,
     canNext,
-    reducedMotion,
     next,
     prev,
     goTo,

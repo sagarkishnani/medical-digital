@@ -16,7 +16,7 @@ export default function ValuesReact({ query, variables, data: initialData }: Pro
   return (
     <section id="valores" className="container-xl flex flex-col gap-2 py-10 md:gap-10 md:py-24">
       {values.title && (
-        <h2 className="mb-2 text-heading-h3 text-brand-secondary-dark md:mb-0 md:text-heading-h2 lg:text-heading-h1" data-tina-field={tinaField(values, "title")}>
+        <h2 className="section-title mb-2 md:mb-0" data-tina-field={tinaField(values, "title")}>
           {values.title}
         </h2>
       )}

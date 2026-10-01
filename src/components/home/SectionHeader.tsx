@@ -10,7 +10,7 @@ export default function SectionHeader({ block, href, hideLinkOnMobile = false }:
   return (
     <div className="flex items-end justify-between gap-4 md:gap-6">
       {block.title && (
-        <h2 className="text-heading-h3 text-brand-secondary-dark md:text-heading-h2 lg:text-heading-h1" data-tina-field={tinaField(block, "title")}>
+        <h2 className="section-title" data-tina-field={tinaField(block, "title")}>
           {block.title}
         </h2>
       )}
