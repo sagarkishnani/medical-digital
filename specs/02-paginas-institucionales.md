@@ -136,7 +136,7 @@ Cada paso deja el build verde y va en su propio commit.
 
 - [ ] El slider se mueve con flechas, dots, teclado y arrastre, no tiene autoplay y cada slide enlaza a su CTA.
 - [x] "Equipos más solicitados" muestra solo productos con `featured` en Woo, hasta `limit`, y cada tarjeta enlaza a `/productos/[slug]`.
-- [ ] Sin destacados en Woo, la sección no se renderiza y el build no falla.
+- [x] Sin destacados en Woo, la sección no se renderiza y el build no falla.
 - [x] Las especialidades muestran las categorías de Woo con su conteo real y enlazan a `/productos/categoria/[slug]`.
 - [x] Las estadísticas, las marcas y los testimonios salen de Tina, y los números aparecen sin animación.
 - [ ] Noticias muestra los 3 posts más recientes. Con 0 posts, la sección no se renderiza.
@@ -264,4 +264,7 @@ Cada paso deja el build verde y va en su propio commit.
 - Contacto con formulario revisado en 1280 px contra la referencia.
 - `npm run build:local` (equivalente local de `npm run build`, que necesita TinaCloud): 59 páginas sin errores.
 - Pruebas end-to-end con Playwright en 360 y 1280 px (fuera del repo): overflow, `h1`, imágenes, áreas táctiles, consola, slider (~210 ms y con `prefers-reduced-motion`), modal completo, pestañas con teclado, formulario, mapa y orden mobile. Todas pasan.
-- Sin verificar desde local: arrastre del slider en touch real, secciones con 0 destacados o 0 posts, botón de PDF de políticas, mapa con URL inválida, edición en vivo desde `/admin`, `npm run build` con TinaCloud (lo valida el preview de Amplify).
+- Build sin Woo (`WOO_STORE_URL` vacía): compila, `check:standard` sin errores y 77/77 pruebas; destacados y especialidades no se renderizan.
+- Hero con las fotos de la referencia, solo en local y sin commit: desktop igual a la referencia; en mobile se ajustaron encuadre (`object-center`) y degradado (90 % → 60 % → 35 %) para igualarla. La diferencia restante es el header (transparente sobre el hero; en la referencia es sólido): lo resuelve la spec del header.
+- WordPress respondió de forma intermitente (timeouts de conexión) en varios builds del 2026-09-30; con Imunify en el servidor, se sospecha limitación de peticiones. Reportado para revisar fuera de esta spec.
+- Sin verificar desde local: arrastre del slider en touch real, sección de noticias con 0 posts, botón de PDF de políticas, mapa con URL inválida, edición en vivo desde `/admin`, `npm run build` con TinaCloud (lo valida el preview de Amplify).
