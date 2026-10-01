@@ -42,10 +42,10 @@ export default function HomeSliderReact({ query, variables, data: initialData }:
                     width={1440}
                     height={640}
                     loading={index === 0 ? "eager" : "lazy"}
-                    className="absolute inset-0 h-full w-full object-cover object-right"
+                    className="absolute inset-0 h-full w-full object-cover object-center md:object-right"
                     data-tina-field={tinaField(slide, "image")}
                   />
-                  <div className="absolute inset-0 bg-gradient-overlay" />
+                  <div className="absolute inset-0 bg-gradient-to-r from-brand-secondary-dark/90 via-brand-secondary-dark/60 to-brand-secondary-dark/35 md:bg-gradient-overlay" />
                 </>
               )}
               <div className="container-xl relative px-10 pb-20 pt-24 md:px-20 md:py-24 lg:px-28">
