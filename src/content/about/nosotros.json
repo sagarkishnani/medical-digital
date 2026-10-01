@@ -1,6 +1,7 @@
 {
   "hero": {
-    "title": "Sobre nosotros"
+    "title": "Sobre nosotros",
+    "image": "/uploads/nosotros/cabecera-equipo.webp"
   },
   "intro": {
     "eyebrow": "Quiénes somos",
@@ -9,9 +10,11 @@
       "Desde 2008 somos distribuidores oficiales de marcas líderes como Schiller, Welch Allyn, Bovie y Merivaara. Acompañamos a clínicas, hospitales y centros médicos con asesoría comercial, instalación, capacitación y un servicio técnico certificado por fábrica.",
       "Hoy contamos con más de 1800 equipos instalados en todo el país y un sistema de gestión de calidad certificado."
     ],
+    "image": "/uploads/nosotros/quienes-somos-especialista.webp",
     "imageAlt": "Especialista de Medical Digital"
   },
   "visionMission": {
+    "image": "/uploads/nosotros/vision-mision-especialista.webp",
     "imageAlt": "Especialista de Medical Digital",
     "visionTitle": "Visión",
     "vision": "Ser una organización líder en brindar soluciones integrales a las instituciones del sector salud, buscando la satisfacción total de nuestros clientes, siendo flexibles y adaptables a las exigencias de un mercado cambiante.",

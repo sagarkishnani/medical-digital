@@ -4,6 +4,7 @@
       "eyebrow": "Bienvenido a Medical Digital",
       "title": "Tecnología e innovación en diagnóstico médico",
       "text": "Más de 18 años equipando clínicas y hospitales del Perú con marcas líderes a nivel mundial.",
+      "image": "/uploads/home/slide-tecnologia-diagnostico.webp",
       "ctaLabel": "Ver productos",
       "ctaUrl": "/productos"
     },
@@ -11,6 +12,7 @@
       "eyebrow": "Servicio técnico certificado",
       "title": "Tus equipos siempre operativos",
       "text": "Mantenimiento preventivo y correctivo, repuestos originales y capacitación para tu equipo médico.",
+      "image": "/uploads/home/slide-servicio-tecnico.webp",
       "ctaLabel": "Solicitar servicio",
       "ctaUrl": "/contacto"
     },
@@ -18,6 +20,7 @@
       "eyebrow": "Nuestros aliados",
       "title": "Aliados que confían en nosotros",
       "text": "Clínicas, hospitales y marcas líderes del mundo nos eligen como su socio en tecnología médica.",
+      "image": "/uploads/home/slide-aliados.webp",
       "ctaLabel": "Ver productos",
       "ctaUrl": "/productos"
     }
@@ -42,6 +45,7 @@
     ]
   },
   "about": {
+    "image": "/uploads/home/conoce-mas-medico-paciente.webp",
     "imageAlt": "Médico atendiendo a un paciente",
     "text": "Medical Digital cuida la salud del Perú, con tecnología médica de marcas líderes y un equipo experto que te acompaña en todo momento.",
     "buttonLabel": "Conoce más",

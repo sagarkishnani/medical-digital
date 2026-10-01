@@ -1,6 +1,7 @@
 {
   "hero": {
-    "title": "Contáctanos"
+    "title": "Contáctanos",
+    "image": "/uploads/contacto/cabecera-contacto.webp"
   },
   "form": {
     "title": "Envíanos tus comentarios, dudas y consultas",

@@ -42,6 +42,7 @@ export default function HomeSliderReact({ query, variables, data: initialData }:
                     width={1440}
                     height={640}
                     loading={index === 0 ? "eager" : "lazy"}
+                    fetchPriority={index === 0 ? "high" : "low"}
                     className="absolute inset-0 h-full w-full object-cover object-center md:object-right"
                     data-tina-field={tinaField(slide, "image")}
                   />
