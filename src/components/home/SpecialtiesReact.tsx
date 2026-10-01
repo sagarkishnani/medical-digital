@@ -49,7 +49,7 @@ export default function SpecialtiesReact({ query, variables, data: initialData, 
           </li>
         ))}
         {specialties.catalogLabel && (
-          <li className="col-start-2 md:col-start-3 lg:col-start-5">
+          <li>
             <a href={withBase("/productos")} className={`${cardClass} bg-brand-secondary-dark text-white hover:bg-brand-tertiary-dark`}>
               <PiSquaresFourLight aria-hidden="true" className="h-9 w-9 md:h-12 md:w-12" />
               <span className="text-subtitle" data-tina-field={tinaField(specialties, "catalogLabel")}>
