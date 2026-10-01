@@ -1,6 +1,6 @@
 import type { CSSProperties } from "react";
 import { useTina, tinaField } from "tinacms/dist/react";
-import { FaTableCellsLarge } from "react-icons/fa6";
+import { PiSquaresFourLight } from "react-icons/pi";
 import SectionHeader from "./SectionHeader";
 import Icon from "../shared/Icon";
 import { withBase } from "../../utils/url";
@@ -51,7 +51,7 @@ export default function SpecialtiesReact({ query, variables, data: initialData, 
               href={withBase(`/productos/categoria/${category.slug}`)}
               className={`${cardClass} border border-line bg-surface hover:shadow-lg`}
             >
-              <Icon name={iconFor(category.slug)} fallback="kit-medical" className="h-9 w-9 text-brand-primary md:h-10 md:w-10" />
+              <Icon name={iconFor(category.slug)} fallback="kit-medical" className="h-9 w-9 text-brand-primary md:h-12 md:w-12" />
               <span className="flex flex-col gap-1">
                 <span className="text-subtitle text-brand-secondary-dark">{category.name}</span>
                 <span className="text-body-sm text-content-subtle">
@@ -67,7 +67,7 @@ export default function SpecialtiesReact({ query, variables, data: initialData, 
             className="[grid-column:span_var(--span-base)] md:[grid-column:span_var(--span-md)] lg:[grid-column:span_var(--span-lg)]"
           >
             <a href={withBase("/productos")} className={`${cardClass} bg-brand-secondary-dark text-white hover:bg-brand-tertiary-dark`}>
-              <FaTableCellsLarge aria-hidden="true" className="h-9 w-9 md:h-10 md:w-10" />
+              <PiSquaresFourLight aria-hidden="true" className="h-9 w-9 md:h-12 md:w-12" />
               <span className="text-subtitle" data-tina-field={tinaField(specialties, "catalogLabel")}>
                 {specialties.catalogLabel}
               </span>

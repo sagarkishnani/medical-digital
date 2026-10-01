@@ -39,7 +39,7 @@
   featured: { title, linkLabel, limit /* number, por defecto 4 */ },
   specialties: {
     title, linkLabel,
-    icons: [{ categorySlug, icon /* opción fija → fa6 */ }], // sin coincidencia = ícono genérico
+    icons: [{ categorySlug, icon /* opción fija → Phosphor Light */ }], // sin coincidencia = ícono genérico
   },
   about: {
     image, imageAlt, text, buttonLabel, buttonUrl,
@@ -106,7 +106,7 @@ export function getFeaturedProducts(limit: number): Promise<WooProduct[]>
 
 Convenciones:
 
-- Los íconos se eligen de una lista fija de opciones que el componente traduce a `react-icons/fa6`. Un valor desconocido no muestra ícono y no rompe el build.
+- Los íconos se eligen de una lista fija de opciones que el componente traduce a Phosphor Light (`react-icons/pi`). Un valor desconocido no muestra ícono y no rompe el build.
 - Las imágenes de Tina pasan por `mediaUrl()` (`src/utils/mediaUrl.ts`).
 - Los productos y las categorías llegan a las islas como props desde el `.astro`. Ningún `.tsx` importa `store.ts`.
 
@@ -191,7 +191,7 @@ Cada paso deja el build verde y va en su propio commit.
 | Datos de la empresa en `global.company` | Una sola fuente; el footer y el formulario futuros los reutilizarán. |
 | Logos de marcas en franja estática, no en marquee | El estándar (sección 04) prohíbe los carruseles con autoplay, y un marquee lo es. |
 | Estadísticas sin count-up | El estándar prohíbe los "contadores que corren solos". |
-| Íconos de `react-icons/fa6`, no Phosphor | Es la librería del proyecto y evita una dependencia más. |
+| Íconos Phosphor Light con `react-icons/pi` | Son los del diseño aprobado y vienen en `react-icons`, que ya está instalado: no suma dependencias. Reemplaza la convención anterior de Font Awesome (`CLAUDE.md` actualizado); WhatsApp sigue con su logo de `fa6`. Sin pulmones en Phosphor, Diagnóstico Respiratorio usa "viento". Revisión del 2026-09-30. |
 | Colores de la referencia llevados a tokens | El `CLAUDE.md` y el estándar prohíben hex en los componentes. |
 | Tarjetas de destacados sin garantía ni especificación | Esos datos no existen en `WooProduct`. Se agregan cuando Woo los exponga. |
 | La tarjeta de destacados sigue la referencia; `ProductCard` del catálogo no se toca | El rediseño del catálogo queda fuera de alcance. |
@@ -234,7 +234,7 @@ Cada paso deja el build verde y va en su propio commit.
 
 ## Notas de implementación
 
-- Íconos compartidos: `src/lib/icons.ts` (opciones de Tina) y `src/components/shared/Icon.tsx` (traducción a `react-icons/fa6`).
+- Íconos compartidos: `src/lib/icons.ts` (opciones de Tina) y `src/components/shared/Icon.tsx` (traducción a Phosphor Light, `react-icons/pi`).
 - `src/components/shared/PageHero.tsx`: cabecera con breadcrumb de Nosotros y Contacto.
 - `src/components/shared/QuoteModal.tsx`: modal de cotización con `<dialog>` nativo, reutilizable en las fichas de producto. La línea "Tu solicitud llegará a ventas@…" de la referencia se agrega con el envío real, para no prometer un envío que aún no existe.
 - Hidratación: slider con `client:load`; destacados (modal) y testimonios con `client:visible`; Políticas con `client:visible`; el resto con `client:tina` (0 JS en producción).

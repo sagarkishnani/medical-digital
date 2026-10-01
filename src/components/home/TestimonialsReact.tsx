@@ -1,5 +1,5 @@
 import { useTina, tinaField } from "tinacms/dist/react";
-import { FaChevronLeft, FaChevronRight, FaQuoteLeft, FaStar } from "react-icons/fa6";
+import { PiCaretLeftLight, PiCaretRightLight, PiQuotesFill, PiStarFill } from "react-icons/pi";
 import { useSlider } from "../../hooks/useSlider";
 
 interface Props {
@@ -33,7 +33,7 @@ export default function TestimonialsReact({ query, variables, data: initialData 
     <p className="flex flex-wrap items-center gap-2.5 text-body-sm text-content-muted">
       <span className="flex gap-0.5 text-semantics-alert" aria-hidden="true">
         {Array.from({ length: 5 }, (_, index) => (
-          <FaStar key={index} />
+          <PiStarFill key={index} />
         ))}
       </span>
       <span className="font-medium text-brand-secondary-dark" data-tina-field={tinaField(testimonials, "rating")}>
@@ -71,7 +71,7 @@ export default function TestimonialsReact({ query, variables, data: initialData 
               aria-label="Testimonio anterior"
               className={`${arrowClass} border-line bg-surface text-brand-secondary-dark hover:border-brand-secondary-dark`}
             >
-              <FaChevronLeft aria-hidden="true" />
+              <PiCaretLeftLight aria-hidden="true" className="h-5 w-5" />
             </button>
             <button
               type="button"
@@ -80,7 +80,7 @@ export default function TestimonialsReact({ query, variables, data: initialData 
               aria-label="Testimonio siguiente"
               className={`${arrowClass} border-brand-secondary-dark bg-brand-secondary-dark text-white hover:bg-brand-tertiary-dark`}
             >
-              <FaChevronRight aria-hidden="true" />
+              <PiCaretRightLight aria-hidden="true" className="h-5 w-5" />
             </button>
           </div>
         </div>
@@ -97,7 +97,7 @@ export default function TestimonialsReact({ query, variables, data: initialData 
               >
                 <figure className="flex h-full flex-col justify-between gap-5 rounded-2xl bg-surface p-6 md:min-h-[300px] md:gap-7 md:p-8">
                   <div className="flex flex-col gap-4">
-                    <FaQuoteLeft aria-hidden="true" className="h-8 w-8 text-brand-tertiary-light" />
+                    <PiQuotesFill aria-hidden="true" className="h-9 w-9 text-brand-tertiary-light" />
                     <blockquote className="text-body-lg text-brand-secondary-dark text-pretty" data-tina-field={tinaField(item, "text")}>
                       {item.text}
                     </blockquote>
@@ -153,7 +153,7 @@ export default function TestimonialsReact({ query, variables, data: initialData 
               aria-label="Testimonio anterior"
               className={`${arrowClass} border-line bg-surface text-brand-secondary-dark`}
             >
-              <FaChevronLeft aria-hidden="true" />
+              <PiCaretLeftLight aria-hidden="true" className="h-5 w-5" />
             </button>
             <button
               type="button"
@@ -162,7 +162,7 @@ export default function TestimonialsReact({ query, variables, data: initialData 
               aria-label="Testimonio siguiente"
               className={`${arrowClass} border-brand-secondary-dark bg-brand-secondary-dark text-white`}
             >
-              <FaChevronRight aria-hidden="true" />
+              <PiCaretRightLight aria-hidden="true" className="h-5 w-5" />
             </button>
           </div>
         </div>

@@ -1,7 +1,7 @@
 import { useId, useRef, useState } from "react";
 import type { KeyboardEvent } from "react";
 import { useTina, tinaField } from "tinacms/dist/react";
-import { FaCircleCheck, FaFilePdf } from "react-icons/fa6";
+import { PiCheckCircleLight, PiFilePdfLight } from "react-icons/pi";
 import { mediaUrl } from "../../utils/mediaUrl";
 
 interface Props {
@@ -111,7 +111,7 @@ export default function PoliciesReact({ query, variables, data: initialData }: P
                   className="flex items-start gap-3 border-b border-line py-3 text-body-md text-brand-secondary-dark md:gap-4 md:py-4"
                   data-tina-field={tinaField(active, "points", index)}
                 >
-                  <FaCircleCheck aria-hidden="true" className="mt-0.5 h-5 w-5 shrink-0 text-brand-tertiary-dark" />
+                  <PiCheckCircleLight aria-hidden="true" className="h-6 w-6 shrink-0 text-brand-tertiary-dark" />
                   {point}
                 </li>
               ))}
@@ -124,7 +124,7 @@ export default function PoliciesReact({ query, variables, data: initialData }: P
               className="flex items-center gap-2 self-start text-link text-brand-secondary-dark hover:underline"
               data-tina-field={tinaField(active, "document")}
             >
-              <FaFilePdf aria-hidden="true" className="h-5 w-5 text-brand-primary" />
+              <PiFilePdfLight aria-hidden="true" className="h-6 w-6 text-brand-primary" />
               Descargar documento completo
             </a>
           )}

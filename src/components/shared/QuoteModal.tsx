@@ -1,5 +1,6 @@
 import { useEffect, useId, useRef } from "react";
-import { FaWhatsapp, FaXmark } from "react-icons/fa6";
+import { FaWhatsapp } from "react-icons/fa6";
+import { PiXLight } from "react-icons/pi";
 
 export interface QuoteProduct {
   name: string;
@@ -55,7 +56,7 @@ export default function QuoteModal({ product, onClose }: Props) {
               aria-label="Cerrar"
               className="flex h-11 w-11 shrink-0 items-center justify-center rounded-pill bg-greyscale-lightest transition-colors hover:bg-greyscale-light"
             >
-              <FaXmark aria-hidden="true" />
+              <PiXLight aria-hidden="true" className="h-5 w-5" />
             </button>
           </div>
 

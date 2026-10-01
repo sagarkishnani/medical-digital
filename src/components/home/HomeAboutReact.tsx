@@ -48,7 +48,7 @@ export default function HomeAboutReact({ query, variables, data: initialData }: 
         <ul className="grid grid-cols-2 gap-x-4 gap-y-7 lg:grid-cols-4 lg:gap-8 lg:px-12">
           {stats.map((stat: any, index: number) => (
             <li key={index} className="flex flex-col gap-2 md:gap-3.5">
-              <Icon name={stat.icon} className="h-8 w-8 text-brand-secondary-dark md:h-10 md:w-10" />
+              <Icon name={stat.icon} className="h-9 w-9 text-brand-secondary-dark md:h-11 md:w-11" />
               <p className="text-heading-h2 text-brand-primary lg:text-stat" data-tina-field={tinaField(stat, "value")}>
                 {stat.prefix}
                 {stat.value}

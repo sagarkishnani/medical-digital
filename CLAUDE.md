@@ -149,15 +149,16 @@ componentes existentes. Las clases reutilizables (botones, `card`, `section`,
 **BaseLayout importa** — un CSS que nadie importa no se bundlea y no llega al
 sitio.
 
-Iconos: `react-icons` (Font Awesome 6, `react-icons/fa6`). Cuando el editor
-elige el ícono en Tina, las opciones están en `src/lib/icons.ts` y se dibujan
-con `src/components/shared/Icon.tsx`.
+Iconos: `react-icons`. El UI Kit usa **Phosphor Light** (`react-icons/pi`, sufijo
+`Light`); los logos de marca, como WhatsApp, van con `react-icons/fa6`. Cuando el
+editor elige el ícono en Tina, las opciones están en `src/lib/icons.ts` y se
+dibujan con `src/components/shared/Icon.tsx`.
 
 Componentes reutilizables (úsalos antes de escribir uno nuevo):
 
 - `src/hooks/useSlider.ts` — todo slider va con Embla y este hook: sin
-  autoplay, con teclado y `prefers-reduced-motion`. No escribas un motor de
-  arrastre propio.
+  autoplay y con `prefers-reduced-motion`. El teclado se resuelve con las
+  flechas y los dots como `<button>`. No escribas un motor de arrastre propio.
 - `src/components/shared/PageHero.tsx` — cabecera de página interna con
   breadcrumb.
 - `src/components/shared/QuoteModal.tsx` — modal "Solicitar cotización".

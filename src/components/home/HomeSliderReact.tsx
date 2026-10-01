@@ -1,5 +1,5 @@
 import { useTina, tinaField } from "tinacms/dist/react";
-import { FaChevronLeft, FaChevronRight } from "react-icons/fa6";
+import { PiCaretLeftLight, PiCaretRightLight } from "react-icons/pi";
 import { useSlider } from "../../hooks/useSlider";
 import { mediaUrl } from "../../utils/mediaUrl";
 
@@ -90,7 +90,7 @@ export default function HomeSliderReact({ query, variables, data: initialData }:
             aria-label="Slide anterior"
             className="absolute left-0 top-[calc(50%-50px)] flex h-11 w-11 items-center justify-center text-white md:left-4 md:top-1/2 md:h-14 md:w-14 md:-translate-y-1/2 md:rounded-pill md:border md:border-white/40 md:bg-white/10 md:backdrop-blur md:transition-colors md:hover:bg-white md:hover:text-brand-secondary-dark lg:left-7"
           >
-            <FaChevronLeft aria-hidden="true" />
+            <PiCaretLeftLight aria-hidden="true" className="h-6 w-6" />
           </button>
           <button
             type="button"
@@ -98,7 +98,7 @@ export default function HomeSliderReact({ query, variables, data: initialData }:
             aria-label="Slide siguiente"
             className="absolute right-0 top-[calc(50%-50px)] flex h-11 w-11 items-center justify-center text-white md:right-4 md:top-1/2 md:h-14 md:w-14 md:-translate-y-1/2 md:rounded-pill md:border md:border-white/40 md:bg-white/10 md:backdrop-blur md:transition-colors md:hover:bg-white md:hover:text-brand-secondary-dark lg:right-7"
           >
-            <FaChevronRight aria-hidden="true" />
+            <PiCaretRightLight aria-hidden="true" className="h-6 w-6" />
           </button>
           <div className="absolute inset-x-0 bottom-4 flex justify-center md:bottom-8">
             {slider.scrollSnaps.map((_, index) => (

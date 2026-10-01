@@ -1,5 +1,5 @@
 import { useTina, tinaField } from "tinacms/dist/react";
-import { FaLocationDot } from "react-icons/fa6";
+import { PiMapPinFill } from "react-icons/pi";
 
 interface Props {
   query: string;
@@ -38,7 +38,7 @@ export default function ContactMapReact({ query, variables, data: initialData }:
         />
       ) : (
         <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 map-placeholder">
-          <FaLocationDot aria-hidden="true" className="h-12 w-12 text-brand-primary" />
+          <PiMapPinFill aria-hidden="true" className="h-12 w-12 text-brand-primary" />
           <p className="rounded-pill bg-surface px-3 py-1.5 text-body-sm text-content-subtle" data-tina-field={tinaField(map, "title")}>
             {title}
           </p>

@@ -22,7 +22,7 @@
     "title": "Nuestros valores",
     "items": [
       { "icon": "handshake", "name": "Compromiso", "text": "Acompañamos a cada institución antes, durante y después de la compra." },
-      { "icon": "shield", "name": "Integridad", "text": "Actuamos con ética y transparencia en cada relación comercial." },
+      { "icon": "shield-check", "name": "Integridad", "text": "Actuamos con ética y transparencia en cada relación comercial." },
       { "icon": "lightbulb", "name": "Innovación", "text": "Traemos tecnología médica de vanguardia de marcas líderes." },
       { "icon": "headset", "name": "Servicio", "text": "Soporte técnico certificado y respuesta oportuna." },
       { "icon": "medal", "name": "Excelencia", "text": "Procesos de calidad certificados en toda la operación." }

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useTina } from "tinacms/dist/react";
-import { FaArrowRight } from "react-icons/fa6";
+import { PiArrowUpRightLight } from "react-icons/pi";
 import SectionHeader from "./SectionHeader";
 import { withBase } from "../../utils/url";
 import QuoteModal from "../shared/QuoteModal";
@@ -70,7 +70,7 @@ export default function FeaturedProductsReact({ query, variables, data: initialD
                 aria-label={`Ver ${card.name}`}
                 className="flex h-12 w-12 shrink-0 items-center justify-center rounded-pill bg-surface-raised text-brand-secondary-dark transition-colors hover:bg-brand-primary hover:text-white"
               >
-                <FaArrowRight aria-hidden="true" className="-rotate-45" />
+                <PiArrowUpRightLight aria-hidden="true" className="h-5 w-5" />
               </a>
             </div>
           </li>

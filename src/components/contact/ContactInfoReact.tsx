@@ -1,5 +1,6 @@
 import { useTina, tinaField } from "tinacms/dist/react";
-import { FaPhone, FaWhatsapp } from "react-icons/fa6";
+import { FaWhatsapp } from "react-icons/fa6";
+import { PiPhoneLight } from "react-icons/pi";
 
 interface Props {
   query: string;
@@ -34,7 +35,7 @@ export default function ContactInfoReact({ query, variables, data: initialData }
         <div className="grid grid-cols-2 gap-2.5 lg:hidden">
           {phoneDigits && (
             <a href={`tel:+${phoneDigits}`} className="btn h-[52px] border-brand-secondary-dark px-4 text-body-md text-brand-secondary-dark">
-              <FaPhone aria-hidden="true" className="h-4 w-4" />
+              <PiPhoneLight aria-hidden="true" className="h-5 w-5" />
               Llamar
             </a>
           )}
