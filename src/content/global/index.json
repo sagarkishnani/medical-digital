@@ -1,5 +1,6 @@
 {
   "nav": {
+    "logo": "/uploads/marca/logo-medical-digital.svg",
     "logoAlt": "Medical Digital",
     "links": [
       { "label": "Inicio", "url": "/" },
