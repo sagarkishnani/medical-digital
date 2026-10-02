@@ -1,6 +1,6 @@
 # SPEC 02 — Páginas institucionales: Home, Nosotros y Contacto
 
-> **Status:** Aprobado
+> **Status:** Implementado
 > **Depends on:** SPEC 01
 > **Date:** 2026-09-29
 > **Objective:** Maquetar Home, Nosotros y Contacto según la referencia "Medical Digital Desktop.html", con su contenido editable desde Tina y los formularios maquetados sin envío.
