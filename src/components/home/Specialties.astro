@@ -1,0 +1,18 @@
+---
+import SpecialtiesReact from "./SpecialtiesReact";
+import type { WooCategory } from "../../lib/woo/types";
+
+interface Props {
+  query: string;
+  variables: object;
+  data: any;
+  categories: WooCategory[];
+}
+
+const { query, variables, data } = Astro.props;
+const categories = Astro.props.categories
+  .filter((category) => category.count > 0)
+  .map(({ slug, name, count }) => ({ slug, name, count }));
+---
+
+<SpecialtiesReact query={query} variables={variables} data={data} categories={categories} client:tina />

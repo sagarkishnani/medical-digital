@@ -1,0 +1,172 @@
+import { useTina, tinaField } from "tinacms/dist/react";
+import { PiCaretLeftLight, PiCaretRightLight, PiQuotesFill, PiStarFill } from "react-icons/pi";
+import { useSlider } from "../../hooks/useSlider";
+
+interface Props {
+  query: string;
+  variables: object;
+  data: any;
+}
+
+function initials(name: string): string {
+  return name
+    .replace(/^(dra?|lic|mg|ing|sr|sra)\.\s*/i, "")
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((word) => word[0]?.toUpperCase())
+    .join("");
+}
+
+const arrowClass =
+  "flex h-12 w-12 items-center justify-center rounded-pill border transition-colors disabled:cursor-not-allowed";
+
+export default function TestimonialsReact({ query, variables, data: initialData }: Props) {
+  const { data } = useTina({ query, variables, data: initialData });
+  const testimonials = data?.home?.testimonials;
+  const items = (testimonials?.items || []).filter((item: any) => item?.text);
+  const slider = useSlider({ loop: false, align: "start" });
+
+  if (!testimonials || items.length === 0) return <div hidden />;
+
+  const rating = testimonials.rating ? (
+    <p className="flex flex-wrap items-center gap-2.5 text-body-sm text-content-muted">
+      <span className="flex gap-0.5 text-semantics-alert" aria-hidden="true">
+        {Array.from({ length: 5 }, (_, index) => (
+          <PiStarFill key={index} />
+        ))}
+      </span>
+      <span className="font-medium text-brand-secondary-dark" data-tina-field={tinaField(testimonials, "rating")}>
+        {testimonials.rating}
+      </span>
+      {testimonials.reviewsCount ? (
+        <span data-tina-field={tinaField(testimonials, "reviewsCount")}>· {testimonials.reviewsCount} reseñas en Google</span>
+      ) : null}
+    </p>
+  ) : null;
+
+  return (
+    <section className="bg-surface-raised" aria-roledescription="carrusel" aria-label="Testimonios de clientes">
+      <div className="container-xl flex flex-col gap-6 py-12 md:gap-10 md:py-24">
+        <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+          <div className="flex max-w-[640px] flex-col gap-3">
+            {testimonials.title && (
+              <h2 className="section-title" data-tina-field={tinaField(testimonials, "title")}>
+                {testimonials.title}
+              </h2>
+            )}
+            {testimonials.reviewsUrl && rating ? (
+              <a href={testimonials.reviewsUrl} target="_blank" rel="noopener noreferrer" className="self-start hover:underline">
+                {rating}
+              </a>
+            ) : (
+              rating
+            )}
+          </div>
+          <div className="hidden gap-2.5 md:flex">
+            <button
+              type="button"
+              onClick={slider.prev}
+              disabled={!slider.canPrev}
+              aria-label="Testimonio anterior"
+              className={`${arrowClass} border-brand-secondary-light bg-surface text-brand-secondary-dark enabled:hover:border-brand-secondary-dark disabled:text-brand-secondary-light`}
+            >
+              <PiCaretLeftLight aria-hidden="true" className="h-5 w-5" />
+            </button>
+            <button
+              type="button"
+              onClick={slider.next}
+              disabled={!slider.canNext}
+              aria-label="Testimonio siguiente"
+              className={`${arrowClass} border-brand-secondary-dark bg-brand-secondary-dark text-white enabled:hover:bg-brand-tertiary-dark disabled:border-brand-secondary-light disabled:bg-brand-secondary-light`}
+            >
+              <PiCaretRightLight aria-hidden="true" className="h-5 w-5" />
+            </button>
+          </div>
+        </div>
+
+        <div ref={slider.viewportRef} className="overflow-hidden">
+          <ul className="-ml-6 flex">
+            {items.map((item: any, index: number) => (
+              <li
+                key={index}
+                className="min-w-0 flex-[0_0_100%] pl-6 md:flex-[0_0_50%] lg:flex-[0_0_33.333%]"
+                role="group"
+                aria-roledescription="slide"
+                aria-label={`${index + 1} de ${items.length}`}
+              >
+                <figure className="flex h-full flex-col justify-between gap-5 rounded-2xl bg-surface p-6 md:min-h-[300px] md:gap-7 md:p-8">
+                  <div className="flex flex-col gap-4">
+                    <PiQuotesFill aria-hidden="true" className="h-9 w-9 text-brand-tertiary-light" />
+                    <blockquote className="text-body-lg text-brand-secondary-dark text-pretty" data-tina-field={tinaField(item, "text")}>
+                      {item.text}
+                    </blockquote>
+                  </div>
+                  <figcaption className="flex items-center gap-3.5 border-t border-line pt-5">
+                    <span
+                      aria-hidden="true"
+                      className="flex h-14 w-14 shrink-0 items-center justify-center rounded-pill bg-brand-tertiary-lightest text-subtitle text-brand-tertiary-dark"
+                    >
+                      {initials(item.name || "")}
+                    </span>
+                    <span className="flex flex-col gap-0.5">
+                      <span className="text-subtitle text-brand-secondary-dark" data-tina-field={tinaField(item, "name")}>
+                        {item.name}
+                      </span>
+                      {item.role && (
+                        <span className="text-body-sm text-content-subtle" data-tina-field={tinaField(item, "role")}>
+                          {item.role}
+                        </span>
+                      )}
+                    </span>
+                  </figcaption>
+                </figure>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="flex items-center justify-between md:hidden">
+          <div className="-ml-3 flex">
+            {slider.scrollSnaps.map((_, index) => (
+              <button
+                key={index}
+                type="button"
+                onClick={() => slider.goTo(index)}
+                aria-label={`Ir al testimonio ${index + 1}`}
+                aria-current={index === slider.activeIndex}
+                className="flex h-11 w-7 items-center justify-center"
+              >
+                <span
+                  className={`block h-2 rounded-pill transition-all duration-300 ${
+                    index === slider.activeIndex ? "w-6 bg-brand-secondary-dark" : "w-2 bg-brand-secondary-light"
+                  }`}
+                />
+              </button>
+            ))}
+          </div>
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={slider.prev}
+              disabled={!slider.canPrev}
+              aria-label="Testimonio anterior"
+              className={`${arrowClass} border-brand-secondary-light bg-surface text-brand-secondary-dark disabled:text-brand-secondary-light`}
+            >
+              <PiCaretLeftLight aria-hidden="true" className="h-5 w-5" />
+            </button>
+            <button
+              type="button"
+              onClick={slider.next}
+              disabled={!slider.canNext}
+              aria-label="Testimonio siguiente"
+              className={`${arrowClass} border-brand-secondary-dark bg-brand-secondary-dark text-white disabled:border-brand-secondary-light disabled:bg-brand-secondary-light`}
+            >
+              <PiCaretRightLight aria-hidden="true" className="h-5 w-5" />
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}

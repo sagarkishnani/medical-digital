@@ -1,0 +1,16 @@
+---
+import ContactFormReact from "./ContactFormReact";
+import type { WooCategory } from "../../lib/woo/types";
+
+interface Props {
+  query: string;
+  variables: object;
+  data: any;
+  categories: WooCategory[];
+}
+
+const { query, variables, data } = Astro.props;
+const specialties = Astro.props.categories.filter((category) => category.count > 0).map((category) => category.name);
+---
+
+<ContactFormReact query={query} variables={variables} data={data} specialties={specialties} client:tina />

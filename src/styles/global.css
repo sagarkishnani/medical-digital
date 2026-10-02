@@ -25,6 +25,7 @@
   .container-lg { @apply mx-auto w-full max-w-[1024px] px-5 md:px-8; }
 
   .section      { @apply py-16 md:py-24; }
+  .section-title { @apply text-heading-h3 text-brand-secondary-dark md:text-heading-h2 lg:text-heading-h1; }
   /* Sección a contraste invertido. En un sitio claro es el bloque oscuro que
      corta la página; en uno oscuro, al revés. */
   .section-alt  { @apply bg-surface-raised; }
@@ -107,6 +108,13 @@
   .btn-link:hover { @apply text-brand-primary-medium; }
   .btn-link:active { @apply text-brand-primary-dark; }
   .btn-link:is(:disabled, [aria-disabled="true"]) { @apply text-greyscale-medium; }
+
+  .map-placeholder {
+    background-image:
+      linear-gradient(theme('colors.line.DEFAULT') 1px, transparent 1px),
+      linear-gradient(90deg, theme('colors.line.DEFAULT') 1px, transparent 1px);
+    background-size: 48px 48px;
+  }
 
   .card {
     @apply rounded-xl border border-line bg-surface-raised p-6

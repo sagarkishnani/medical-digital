@@ -1,0 +1,83 @@
+{
+  "hero": {
+    "title": "Sobre nosotros",
+    "image": "/uploads/nosotros/cabecera-equipo.webp"
+  },
+  "intro": {
+    "eyebrow": "Quiénes somos",
+    "title": "Más de 18 años llevando tecnología médica de clase mundial al Perú",
+    "paragraphs": [
+      "Desde 2008 somos distribuidores oficiales de marcas líderes como Schiller, Welch Allyn, Bovie y Merivaara. Acompañamos a clínicas, hospitales y centros médicos con asesoría comercial, instalación, capacitación y un servicio técnico certificado por fábrica.",
+      "Hoy contamos con más de 1800 equipos instalados en todo el país y un sistema de gestión de calidad certificado."
+    ],
+    "image": "/uploads/nosotros/quienes-somos-especialista.webp",
+    "imageAlt": "Especialista de Medical Digital"
+  },
+  "visionMission": {
+    "image": "/uploads/nosotros/vision-mision-especialista.webp",
+    "imageAlt": "Especialista de Medical Digital",
+    "visionTitle": "Visión",
+    "vision": "Ser una organización líder en brindar soluciones integrales a las instituciones del sector salud, buscando la satisfacción total de nuestros clientes, siendo flexibles y adaptables a las exigencias de un mercado cambiante.",
+    "missionTitle": "Misión",
+    "mission": "Estamos orientados a la satisfacción de nuestros clientes, estableciendo con ellos alianzas de largo plazo. Contamos con personal de alto desempeño y los mejores proveedores a nivel mundial, ofreciendo productos de alta tecnología soportados por un servicio técnico de primer nivel."
+  },
+  "values": {
+    "title": "Nuestros valores",
+    "items": [
+      { "icon": "handshake", "name": "Compromiso", "text": "Acompañamos a cada institución antes, durante y después de la compra." },
+      { "icon": "shield-check", "name": "Integridad", "text": "Actuamos con ética y transparencia en cada relación comercial." },
+      { "icon": "lightbulb", "name": "Innovación", "text": "Traemos tecnología médica de vanguardia de marcas líderes." },
+      { "icon": "headset", "name": "Servicio", "text": "Soporte técnico certificado y respuesta oportuna." },
+      { "icon": "medal", "name": "Excelencia", "text": "Procesos de calidad certificados en toda la operación." }
+    ]
+  },
+  "policies": {
+    "title": "Políticas",
+    "items": [
+      {
+        "title": "Política de calidad",
+        "intro": "En Medical Digital comercializamos equipamiento médico, accesorios, repuestos y consumibles, y brindamos mantenimiento, instalación y capacitación dentro de un marco de calidad.",
+        "points": [
+          "Asegurar altos niveles de profesionalismo y compromiso del personal.",
+          "Cumplir con la legislación y reglamentación aplicable.",
+          "Mejorar continuamente el sistema de gestión de calidad.",
+          "Garantizar la satisfacción de clientes y partes interesadas."
+        ]
+      },
+      {
+        "title": "Política antisoborno",
+        "intro": "Conducimos nuestros negocios de forma honesta y ética. Prohibimos el soborno y nos comprometemos a prevenirlo, detectarlo y contrarrestarlo.",
+        "points": [
+          "Tolerancia cero ante actos deshonestos.",
+          "Cumplimiento de las leyes antisoborno aplicables.",
+          "Canales de denuncia confidenciales y sin represalias.",
+          "Mejora continua del sistema de gestión antisoborno."
+        ]
+      },
+      {
+        "title": "Código de ética y conducta",
+        "intro": "Nuestro código orienta la conducta de colaboradores, proveedores y socios comerciales.",
+        "points": [
+          "Transparencia con instituciones públicas y privadas.",
+          "Confidencialidad de la información de clientes y pacientes.",
+          "Respeto, equidad e inclusión en el trabajo.",
+          "Libre competencia y conflictos de interés declarados."
+        ]
+      },
+      {
+        "title": "Devoluciones y garantías",
+        "intro": "Todos nuestros equipos cuentan con garantía de fábrica gestionada por nuestro servicio técnico.",
+        "points": [
+          "Garantías de 3 a 5 años según fabricante.",
+          "Evaluación técnica en un máximo de 72 horas.",
+          "Equipo de reemplazo durante reparaciones mayores.",
+          "Devoluciones sujetas a términos y condiciones."
+        ]
+      }
+    ]
+  },
+  "seo": {
+    "title": "Nosotros | Medical Digital, tecnología médica en Perú",
+    "description": "Más de 18 años llevando tecnología médica de clase mundial al Perú. Conoce quiénes somos, nuestra visión, misión, valores y políticas de calidad."
+  }
+}

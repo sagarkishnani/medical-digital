@@ -1,0 +1,29 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import ContactHero from "../components/contact/ContactHero.astro";
+import ContactForm from "../components/contact/ContactForm.astro";
+import ContactInfo from "../components/contact/ContactInfo.astro";
+import ContactMap from "../components/contact/ContactMap.astro";
+import client from "../../tina/__generated__/client";
+import { getCategories } from "../lib/woo/store";
+
+const [contact, global, categories] = await Promise.all([
+  client.queries.contact({ relativePath: "contacto.json" }),
+  client.queries.global({ relativePath: "index.json" }),
+  getCategories(),
+]);
+const seo = contact.data.contact.seo;
+const contactSection = { query: contact.query, variables: contact.variables, data: contact.data };
+const globalSection = { query: global.query, variables: global.variables, data: global.data };
+---
+
+<BaseLayout title={seo?.title} description={seo?.description}>
+  <ContactHero {...contactSection} />
+  <section class="bg-surface-raised">
+    <div class="container-xl grid items-start gap-6 pb-10 pt-7 md:gap-12 md:pb-24 md:pt-20 lg:grid-cols-[minmax(0,7fr)_minmax(0,4fr)] lg:gap-16">
+      <ContactInfo {...globalSection} />
+      <ContactForm {...contactSection} categories={categories} />
+    </div>
+  </section>
+  <ContactMap {...contactSection} />
+</BaseLayout>

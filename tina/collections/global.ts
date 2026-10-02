@@ -96,6 +96,18 @@ export const globalCollection: Collection = {
     },
     {
       type: "object",
+      name: "company",
+      label: "Datos de la empresa",
+      description: "Los usan la página de Contacto y, más adelante, el footer.",
+      fields: [
+        { name: "address", label: "Dirección", type: "string", ui: { component: "textarea" } },
+        { name: "phone", label: "Teléfono", description: "Con código de país, tal como se muestra. Ej.: (+51) 1 222-0571", type: "string" },
+        { name: "emails", label: "Correos", type: "string", list: true },
+        { name: "hours", label: "Horario", type: "string" },
+      ],
+    },
+    {
+      type: "object",
       name: "seo",
       label: "SEO por defecto",
       fields: [

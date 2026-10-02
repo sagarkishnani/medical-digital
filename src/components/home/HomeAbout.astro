@@ -1,0 +1,13 @@
+---
+import HomeAboutReact from "./HomeAboutReact";
+
+interface Props {
+  query: string;
+  variables: object;
+  data: any;
+}
+
+const { query, variables, data } = Astro.props;
+---
+
+<HomeAboutReact query={query} variables={variables} data={data} client:tina />

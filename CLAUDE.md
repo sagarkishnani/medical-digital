@@ -99,9 +99,15 @@ Los tipos, las queries y el cliente se generan en `tina/__generated__/`
 
 Colecciones:
 
-- `global` — navegación, footer, SEO por defecto, código inyectado y el
-  WhatsApp comercial que usa el botón "Solicitar cotización".
-- `home` — contenido de la portada.
+- `global` — navegación, footer, SEO por defecto, código inyectado, el
+  WhatsApp comercial que usa el botón "Solicitar cotización" y los datos de la
+  empresa (`company`: dirección, teléfono, correos y horario).
+- `home` — contenido de la portada: slider, destacados (los marca Woo),
+  especialidades (categorías de Woo), "Conoce más", marcas, testimonios y
+  noticias (los 3 últimos posts).
+- `about` — página `/nosotros`.
+- `contact` — página `/contacto` y el mapa de Google (acepta el código de
+  "Insertar un mapa"; solo se usa si el `src` es de `google.com/maps/embed`).
 - `post` — artículos del blog en MDX (`src/content/blog/`).
 - `maintenance` — modo mantenimiento del sitio.
 - `cookieConsent` — textos del banner de cookies.
@@ -143,7 +149,20 @@ componentes existentes. Las clases reutilizables (botones, `card`, `section`,
 **BaseLayout importa** — un CSS que nadie importa no se bundlea y no llega al
 sitio.
 
-Iconos: `react-icons` (Font Awesome 6, `react-icons/fa6`).
+Iconos: `react-icons`. El UI Kit usa **Phosphor Light** (`react-icons/pi`, sufijo
+`Light`); los logos de marca, como WhatsApp, van con `react-icons/fa6`. Cuando el
+editor elige el ícono en Tina, las opciones están en `src/lib/icons.ts` y se
+dibujan con `src/components/shared/Icon.tsx`.
+
+Componentes reutilizables (úsalos antes de escribir uno nuevo):
+
+- `src/hooks/useSlider.ts` — todo slider va con Embla y este hook: sin
+  autoplay y con `prefers-reduced-motion`. El teclado se resuelve con las
+  flechas y los dots como `<button>`. No escribas un motor de arrastre propio.
+- `src/components/shared/PageHero.tsx` — cabecera de página interna con
+  breadcrumb.
+- `src/components/shared/QuoteModal.tsx` — modal "Solicitar cotización".
+- `src/utils/url.ts` (`withBase`) — rutas internas escritas en el código.
 
 **Tema: light.** Los componentes NO escriben colores: piden tokens
 semánticos, y por eso el tema se puede cambiar sin tocar una sola clase.
@@ -198,3 +217,17 @@ Pendientes de decisión de diseño: el texto blanco sobre `brand-primary-medium`
 ### Panel del CMS
 
 Disponible en `/admin` con `npm run dev`. Las imágenes se suben a `public/`.
+
+### Imágenes del contenido
+
+- Van en `public/uploads/<sección>/` (`home/`, `nosotros/`, `contacto/`…) y en
+  el contenido se escriben como `/uploads/<sección>/<archivo>`.
+- WebP para fotos y SVG para logos; ancho máximo 1440 px y menos de 300 KB
+  por imagen (estándar §5.2).
+- Nombres descriptivos en minúsculas con guiones
+  (`slide-servicio-tecnico.webp`, no `IMG_2034.jpg`).
+- Toda imagen del CMS pasa por `mediaUrl()` (`src/utils/mediaUrl.ts`): con
+  TinaCloud llegan con el prefijo `assets.tina.io` y la función las devuelve a
+  la ruta local.
+- Cada componente funciona sin imagen (degradado de marca o bloque neutro), así
+  que quitar una foto en Tina nunca rompe el layout.

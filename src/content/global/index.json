@@ -3,11 +3,11 @@
     "logoAlt": "Medical Digital",
     "links": [
       { "label": "Inicio", "url": "/" },
-      { "label": "Nosotros", "url": "/#features" },
+      { "label": "Nosotros", "url": "/nosotros" },
       { "label": "Productos", "url": "/productos" },
-      { "label": "Contacto", "url": "/#cta" }
+      { "label": "Contacto", "url": "/contacto" }
     ],
-    "cta": { "label": "Conversemos", "url": "/#cta" }
+    "cta": { "label": "Conversemos", "url": "/contacto" }
   },
   "footer": {
     "tagline": "Medical Digital cuida la salud del Perú con tecnología médica de marcas líderes en diagnóstico y soporte vital.",
@@ -24,6 +24,12 @@
     "legal": "© 2026 Medical Digital. Todos los derechos reservados."
   },
   "whatsapp": "51983511262",
+  "company": {
+    "address": "Las Palomas 392 #86\nSurquillo, Lima – Perú",
+    "phone": "(+51) 1 222-0571",
+    "emails": ["info@medicaldigitalperu.com", "ventas@medicaldigitalperu.com"],
+    "hours": "Lunes a viernes · 8:30 a 18:00"
+  },
   "seo": {
     "title": "Medical Digital",
     "description": "Medical Digital cuida la salud del Perú con tecnología médica de marcas líderes en diagnóstico y soporte vital."

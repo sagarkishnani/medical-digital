@@ -1,24 +1,33 @@
 ---
-/**
- * Home. Resolves the `home` query once and passes { query, variables, data }
- * to each section island — that triple is what useTina() needs for live editing.
- */
 import BaseLayout from "../layouts/BaseLayout.astro";
-import Hero from "../components/home/Hero.astro";
-import Features from "../components/home/Features.astro";
-import CTA from "../components/home/CTA.astro";
+import HomeSlider from "../components/home/HomeSlider.astro";
+import FeaturedProducts from "../components/home/FeaturedProducts.astro";
+import Specialties from "../components/home/Specialties.astro";
+import HomeAbout from "../components/home/HomeAbout.astro";
+import Brands from "../components/home/Brands.astro";
+import Testimonials from "../components/home/Testimonials.astro";
+import News from "../components/home/News.astro";
 import client from "../../tina/__generated__/client";
-import { getLocale } from "../utils/i18n";
-import { isLocale } from "../i18n/config";
+import { getCategories, getFeaturedProducts } from "../lib/woo/store";
 
-const locale = isLocale(Astro.currentLocale) ? Astro.currentLocale : getLocale(Astro.url);
-const result = await client.queries.home({ relativePath: "index.json" });
-const { query, variables, data } = result;
-const seo = data?.home?.seo;
+const { query, variables, data } = await client.queries.home({ relativePath: "index.json" });
+const [global, posts, featuredProducts, categories] = await Promise.all([
+  client.queries.global({ relativePath: "index.json" }),
+  client.queries.postConnection({ sort: "date", last: 3 }),
+  getFeaturedProducts(data.home.featured?.limit || 4),
+  getCategories(),
+]);
+const whatsappNumber = global.data.global.whatsapp || "";
+const seo = data.home.seo;
+const section = { query, variables, data };
 ---
 
 <BaseLayout title={seo?.title} description={seo?.description}>
-  <Hero query={query} variables={variables} data={data} locale={locale} />
-  <Features query={query} variables={variables} data={data} locale={locale} />
-  <CTA query={query} variables={variables} data={data} locale={locale} />
+  <HomeSlider {...section} />
+  <FeaturedProducts {...section} products={featuredProducts} whatsappNumber={whatsappNumber} />
+  <Specialties {...section} categories={categories} />
+  <HomeAbout {...section} />
+  <Brands {...section} />
+  <Testimonials {...section} />
+  <News {...section} posts={posts.data} />
 </BaseLayout>

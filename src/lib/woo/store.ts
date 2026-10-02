@@ -147,6 +147,16 @@ async function loadProducts(): Promise<WooProduct[]> {
     .filter((product): product is WooProduct => product !== null);
 }
 
+async function loadFeaturedProducts(limit: number): Promise<WooProduct[]> {
+  const storeUrl = getStoreUrl();
+  if (!storeUrl) return [];
+
+  const { body } = await fetchJson<StoreApiProduct[]>(storeUrl, `products?featured=true&per_page=${limit}`);
+  return body
+    .map((raw) => projectProduct(raw, storeUrl))
+    .filter((product): product is WooProduct => product !== null);
+}
+
 async function loadCategories(): Promise<WooCategory[]> {
   const storeUrl = getStoreUrl();
   if (!storeUrl) return [];
@@ -159,10 +169,19 @@ async function loadCategories(): Promise<WooCategory[]> {
 
 let productsPromise: Promise<WooProduct[]> | undefined;
 let categoriesPromise: Promise<WooCategory[]> | undefined;
+const featuredPromises = new Map<number, Promise<WooProduct[]>>();
 
 export function getProducts(): Promise<WooProduct[]> {
   productsPromise ??= loadProducts();
   return productsPromise;
+}
+
+export function getFeaturedProducts(limit: number): Promise<WooProduct[]> {
+  const perPage = Math.min(Math.max(Math.trunc(limit), 1), PAGE_SIZE);
+  if (!featuredPromises.has(perPage)) {
+    featuredPromises.set(perPage, loadFeaturedProducts(perPage));
+  }
+  return featuredPromises.get(perPage)!;
 }
 
 export function getCategories(): Promise<WooCategory[]> {

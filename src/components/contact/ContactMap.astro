@@ -1,0 +1,13 @@
+---
+import ContactMapReact from "./ContactMapReact";
+
+interface Props {
+  query: string;
+  variables: object;
+  data: any;
+}
+
+const { query, variables, data } = Astro.props;
+---
+
+<ContactMapReact query={query} variables={variables} data={data} client:tina />
