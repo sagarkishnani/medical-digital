@@ -19,7 +19,7 @@ function initials(name: string): string {
 }
 
 const arrowClass =
-  "flex h-12 w-12 items-center justify-center rounded-pill border transition-colors disabled:cursor-not-allowed disabled:opacity-40";
+  "flex h-12 w-12 items-center justify-center rounded-pill border transition-colors disabled:cursor-not-allowed";
 
 export default function TestimonialsReact({ query, variables, data: initialData }: Props) {
   const { data } = useTina({ query, variables, data: initialData });
@@ -69,7 +69,7 @@ export default function TestimonialsReact({ query, variables, data: initialData 
               onClick={slider.prev}
               disabled={!slider.canPrev}
               aria-label="Testimonio anterior"
-              className={`${arrowClass} border-line bg-surface text-brand-secondary-dark hover:border-brand-secondary-dark`}
+              className={`${arrowClass} border-brand-secondary-light bg-surface text-brand-secondary-dark enabled:hover:border-brand-secondary-dark disabled:text-brand-secondary-light`}
             >
               <PiCaretLeftLight aria-hidden="true" className="h-5 w-5" />
             </button>
@@ -78,7 +78,7 @@ export default function TestimonialsReact({ query, variables, data: initialData 
               onClick={slider.next}
               disabled={!slider.canNext}
               aria-label="Testimonio siguiente"
-              className={`${arrowClass} border-brand-secondary-dark bg-brand-secondary-dark text-white hover:bg-brand-tertiary-dark`}
+              className={`${arrowClass} border-brand-secondary-dark bg-brand-secondary-dark text-white enabled:hover:bg-brand-tertiary-dark disabled:border-brand-secondary-light disabled:bg-brand-secondary-light`}
             >
               <PiCaretRightLight aria-hidden="true" className="h-5 w-5" />
             </button>
@@ -151,7 +151,7 @@ export default function TestimonialsReact({ query, variables, data: initialData 
               onClick={slider.prev}
               disabled={!slider.canPrev}
               aria-label="Testimonio anterior"
-              className={`${arrowClass} border-line bg-surface text-brand-secondary-dark`}
+              className={`${arrowClass} border-brand-secondary-light bg-surface text-brand-secondary-dark disabled:text-brand-secondary-light`}
             >
               <PiCaretLeftLight aria-hidden="true" className="h-5 w-5" />
             </button>
@@ -160,7 +160,7 @@ export default function TestimonialsReact({ query, variables, data: initialData 
               onClick={slider.next}
               disabled={!slider.canNext}
               aria-label="Testimonio siguiente"
-              className={`${arrowClass} border-brand-secondary-dark bg-brand-secondary-dark text-white`}
+              className={`${arrowClass} border-brand-secondary-dark bg-brand-secondary-dark text-white disabled:border-brand-secondary-light disabled:bg-brand-secondary-light`}
             >
               <PiCaretRightLight aria-hidden="true" className="h-5 w-5" />
             </button>

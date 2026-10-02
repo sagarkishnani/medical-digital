@@ -101,7 +101,7 @@ export default function HomeSliderReact({ query, variables, data: initialData }:
           >
             <PiCaretRightLight aria-hidden="true" className="h-6 w-6" />
           </button>
-          <div className="absolute inset-x-0 bottom-4 flex justify-center md:bottom-8">
+          <div className="absolute inset-x-0 bottom-4 flex justify-center gap-2 md:bottom-8">
             {slider.scrollSnaps.map((_, index) => (
               <button
                 key={index}
@@ -109,11 +109,11 @@ export default function HomeSliderReact({ query, variables, data: initialData }:
                 onClick={() => slider.goTo(index)}
                 aria-label={`Ir al slide ${index + 1}`}
                 aria-current={index === slider.activeIndex}
-                className="flex h-11 w-11 items-center justify-center"
+                className="flex h-11 items-center"
               >
                 <span
                   className={`block h-1.5 rounded-pill transition-all duration-300 ${
-                    index === slider.activeIndex ? "w-8 bg-white" : "w-1.5 bg-white/50"
+                    index === slider.activeIndex ? "w-10 bg-white" : "w-2.5 bg-white/45"
                   }`}
                 />
               </button>

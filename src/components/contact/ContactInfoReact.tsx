@@ -44,7 +44,7 @@ export default function ContactInfoReact({ query, variables, data: initialData }
               href={whatsappUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="btn h-[52px] bg-semantics-success-dark px-4 text-body-md text-white"
+              className="btn h-[52px] bg-semantics-success px-4 text-body-md text-white hover:bg-semantics-success-dark"
             >
               <FaWhatsapp aria-hidden="true" className="h-5 w-5" />
               WhatsApp
@@ -89,7 +89,7 @@ export default function ContactInfoReact({ query, variables, data: initialData }
           href={whatsappUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="btn hidden self-start bg-semantics-success-dark text-white hover:bg-semantics-success-darkest lg:inline-flex"
+          className="btn hidden self-start bg-semantics-success text-white hover:bg-semantics-success-dark lg:inline-flex"
         >
           <FaWhatsapp aria-hidden="true" className="h-6 w-6" />
           Escríbenos por WhatsApp

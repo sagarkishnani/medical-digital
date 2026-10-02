@@ -242,7 +242,7 @@ Cada paso deja el build verde y va en su propio commit.
 - Especialidades en 5 columnas: la tarjeta "Ver todo el catálogo" ocupa una celda y va justo después de la última categoría, sin huecos intermedios; el espacio sobrante queda al final de la fila hasta que Woo tenga más categorías.
 - Slides 2 y 3 apuntan a `/contacto` y `/productos`: `/servicio-tecnico` y `/marcas` aún no existen.
 - Contacto en la grilla del diseño: formulario (7fr) y datos de la empresa (4fr). El formulario no necesita JS (`client:tina`).
-- Botón "Escríbenos por WhatsApp" con `semantics-success-dark`: el verde del diseño con texto blanco queda en 2.5:1.
+- Revisión del PR (2026-10-02): los botones de WhatsApp de Contacto usan el verde del diseño (`semantics-success`, hover `semantics-success-dark`); los indicadores del slider son barras como en la referencia (10 px inactivo al 45 %, 40 px activo, 8 px de separación); las flechas de testimonios tienen borde visible y ya no se atenúan al desactivarse, para que ambas se vean del mismo tamaño.
 - Radios de 48 px del diseño llevados a `2xl` (24 px): el UI Kit no tiene token de 48.
 - Mapa: el campo acepta el código completo de Google; `referrerpolicy="strict-origin-when-cross-origin"`, el que entrega Google hoy.
 - Rutas internas fijas con `withBase()` (`src/utils/url.ts`) para respetar `BASE_URL`; las URLs que vienen de Tina se usan tal cual, como en el header.
@@ -251,7 +251,7 @@ Cada paso deja el build verde y va en su propio commit.
 - Carpetas de componentes en inglés (`about/`, `contact/`), como las colecciones de Tina y el repo de referencia más reciente del equipo.
 - Colecciones nuevas en `tina dev`: hay que reiniciar el servidor para que indexe sus documentos.
 - **Pendiente para la tarea "Catálogo y detalle de producto":** en la Home "Solicitar cotización" abre el modal; en la ficha de producto (SPEC 01) abre WhatsApp directo. Unificar reutilizando `QuoteModal`.
-- **Pendiente de decisión de diseño (UI Kit):** el navy de títulos `#1C2140` se usa como `brand-secondary-dark` porque no hay token semántico para él; y el contraste no textual de los dots inactivos (2.47:1) y de los bordes de campos (`line`, 1.24:1) queda bajo el 3:1 de WCAG 1.4.11. Cambiarlo se aparta del diseño aprobado, igual que el contraste de `btn-primary` que ya figura en `CLAUDE.md`.
+- **Pendiente de decisión de diseño (UI Kit):** el texto blanco sobre el verde de WhatsApp del diseño (`#37B24D`) queda en 2.5:1, bajo el 4.5:1 de AA; y los indicadores del slider, para igualar la referencia, miden 18–48 px de ancho, menos que el área táctil de 44 × 44 del estándar (las flechas sí cumplen y hacen la misma función). Además, el navy de títulos `#1C2140` se usa como `brand-secondary-dark` porque no hay token semántico para él; y el contraste no textual de los dots inactivos (2.47:1) y de los bordes de campos (`line`, 1.24:1) queda bajo el 3:1 de WCAG 1.4.11. Cambiarlo se aparta del diseño aprobado, igual que el contraste de `btn-primary` que ya figura en `CLAUDE.md`.
 - **Pendiente para la tarea "SEO técnico":** el sitio no tiene JSON-LD `Organization` ni `LocalBusiness` (estándar 6.2); los datos ya están en `global.company`.
 - **Pendiente para la spec del footer:** el enlace "Contacto" del footer sigue en `/#cta`, que dejó de existir al reemplazar la Home. Se decidió no tocar el footer en esta spec.
 
