@@ -103,24 +103,24 @@ export default function SiteMenu({ id, open, locale, global, categories, onNavig
           <nav aria-label="Menú" className="flex flex-col lg:hidden">
             {links.map((link: any, index: number) =>
               link.productsMenu && categories.length > 0 ? (
-                <div key={index} className="border-b border-line">
+                <div key={index}>
                   <button
                     type="button"
                     onClick={() => setProductsExpanded((value) => !value)}
                     aria-expanded={productsExpanded}
                     aria-controls="mobile-products"
-                    className="flex h-[60px] w-full items-center justify-between text-heading-h4 text-brand-secondary-dark"
+                    className="flex h-[60px] w-full items-center justify-between border-b border-line text-heading-h4 text-brand-secondary-dark"
                   >
                     {tField(link, "label", locale)}
                     <PiCaretDownLight aria-hidden="true" className={`h-6 w-6 transition-transform duration-300 ${productsExpanded ? "rotate-180" : ""}`} />
                   </button>
-                  <ul id="mobile-products" hidden={!productsExpanded} className="grid grid-cols-2 gap-2 pb-3.5">
+                  <ul id="mobile-products" className={`${productsExpanded ? "grid" : "hidden"} grid-cols-2 gap-2 py-3.5`}>
                     {categories.map((category) => (
                       <li key={category.slug}>
                         <a
                           href={withBase(`/productos/categoria/${category.slug}`)}
                           onClick={onNavigate}
-                          className="flex min-h-11 items-center gap-2.5 rounded-lg bg-surface-raised p-3 text-caption font-medium text-brand-secondary-dark"
+                          className="flex h-full min-h-11 items-center gap-2.5 rounded-xl bg-surface-raised p-3 text-caption font-medium text-brand-secondary-dark"
                         >
                           <Icon name={iconFor(category.slug)} fallback="kit-medical" className="h-6 w-6 shrink-0 text-brand-primary" />
                           {category.name}
@@ -131,10 +131,10 @@ export default function SiteMenu({ id, open, locale, global, categories, onNavig
                       <a
                         href={withBase("/productos")}
                         onClick={onNavigate}
-                        className="flex min-h-11 items-center gap-2.5 rounded-lg bg-brand-secondary-dark p-3 text-caption font-medium text-white"
+                        className="flex h-full min-h-11 items-center gap-2.5 rounded-xl bg-brand-secondary-dark p-3 text-caption font-medium text-white"
                       >
                         <PiSquaresFourLight aria-hidden="true" className="h-6 w-6 shrink-0" />
-                        Ver todo el catálogo
+                        Ver todo
                       </a>
                     </li>
                   </ul>

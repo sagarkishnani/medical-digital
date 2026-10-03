@@ -49,17 +49,16 @@ export default function SearchOverlay({ id, open, placeholder, onNavigate }: Pro
   }, [term, entries]);
   const results = showAll ? matches : matches.slice(0, MAX_RESULTS);
 
-  const seeAllClassName = "text-body-sm font-medium text-accent";
   const seeAll = (className: string) => {
     if (!term)
       return (
-        <a href={withBase("/productos")} onClick={onNavigate} className={`${seeAllClassName} ${className}`}>
+        <a href={withBase("/productos")} onClick={onNavigate} className={className}>
           Ver todos los resultados
         </a>
       );
     if (showAll || matches.length <= MAX_RESULTS) return null;
     return (
-      <button type="button" onClick={() => setShowAll(true)} className={`${seeAllClassName} ${className}`}>
+      <button type="button" onClick={() => setShowAll(true)} className={className}>
         Ver todos los resultados
       </button>
     );
@@ -91,7 +90,7 @@ export default function SearchOverlay({ id, open, placeholder, onNavigate }: Pro
             autoComplete="off"
             className="w-full min-w-0 bg-transparent text-heading-h4 [&::-webkit-search-cancel-button]:appearance-none focus-visible:ring-0 focus-visible:ring-offset-0 font-normal text-brand-secondary-dark outline-none placeholder:text-content-subtle lg:text-heading-h3 lg:font-normal"
           />
-          {seeAll("hidden shrink-0 whitespace-nowrap lg:inline")}
+          {seeAll("hidden shrink-0 whitespace-nowrap text-body-sm font-medium text-accent lg:inline")}
         </div>
 
         <div aria-live="polite" className="flex flex-col gap-3.5">
@@ -107,7 +106,7 @@ export default function SearchOverlay({ id, open, placeholder, onNavigate }: Pro
                     <a
                       href={entry.url}
                       onClick={onNavigate}
-                      className="flex items-center gap-3 rounded-xl p-2.5 transition-colors hover:bg-surface-raised"
+                      className="flex items-center gap-3.5 rounded-xl py-2 transition-colors lg:gap-3 lg:p-2.5 lg:hover:bg-surface-raised"
                     >
                       <span className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-surface-raised">
                         {entry.image && (
@@ -133,7 +132,7 @@ export default function SearchOverlay({ id, open, placeholder, onNavigate }: Pro
           )}
         </div>
 
-        {seeAll("self-start lg:hidden")}
+        {seeAll("flex h-[52px] w-full items-center justify-center rounded-pill border border-brand-secondary-dark text-body-md font-medium text-brand-secondary-dark lg:hidden")}
       </div>
     </div>
   );
