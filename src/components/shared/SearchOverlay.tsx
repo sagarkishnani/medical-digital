@@ -1,116 +1,104 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { FaMagnifyingGlass, FaXmark } from "react-icons/fa6";
-import type { Locale } from "../../i18n/config";
+import { PiMagnifyingGlassLight } from "react-icons/pi";
+import { withBase } from "../../utils/url";
 
-interface Entry {
-  type: string;
-  locale: string;
+export interface SearchEntry {
+  type: "product";
   title: string;
-  description: string;
+  brand: string;
+  categories: string;
   url: string;
+  image: string;
 }
 
-/**
- * Client-side search over /search-index.json (built by search-index.json.ts).
- * The index is fetched the first time the overlay opens, never on page load.
- */
-export default function SearchOverlay({ locale }: { locale: Locale }) {
-  const [open, setOpen] = useState(false);
+interface Props {
+  id: string;
+  open: boolean;
+  placeholder?: string | null;
+  onNavigate: () => void;
+}
+
+const MAX_RESULTS = 4;
+
+function normalize(text: string): string {
+  return text.normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase();
+}
+
+export default function SearchOverlay({ id, open, placeholder, onNavigate }: Props) {
   const [query, setQuery] = useState("");
-  const [entries, setEntries] = useState<Entry[] | null>(null);
+  const [entries, setEntries] = useState<SearchEntry[] | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    if (!open || entries) return;
-    const base = import.meta.env.BASE_URL || "/";
-    fetch(`${base}search-index.json`.replace(/\/\//g, "/"))
-      .then((res) => res.json())
+    if (!open) return;
+    inputRef.current?.focus();
+    if (entries) return;
+    fetch(withBase("/search-index.json"))
+      .then((response) => response.json())
       .then(setEntries)
       .catch(() => setEntries([]));
   }, [open, entries]);
 
-  useEffect(() => {
-    if (open) inputRef.current?.focus();
-  }, [open]);
-
-  // Cmd/Ctrl+K opens it, Escape closes it.
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
-        e.preventDefault();
-        setOpen((v) => !v);
-      }
-      if (e.key === "Escape") setOpen(false);
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, []);
-
+  const term = normalize(query.trim());
   const results = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    if (!q || !entries) return [];
+    if (!term || !entries) return [];
     return entries
-      .filter((e) => e.locale === locale)
-      .filter((e) => `${e.title} ${e.description}`.toLowerCase().includes(q))
-      .slice(0, 8);
-  }, [query, entries, locale]);
+      .filter((entry) => normalize(`${entry.title} ${entry.brand} ${entry.categories}`).includes(term))
+      .slice(0, MAX_RESULTS);
+  }, [term, entries]);
 
   return (
-    <>
-      <button
-        type="button"
-        onClick={() => setOpen(true)}
-        aria-label="Buscar"
-        className="p-2 text-content-muted transition-colors hover:text-content"
-      >
-        <FaMagnifyingGlass size={16} />
-      </button>
+    <div
+      id={id}
+      hidden={!open}
+      className="fixed inset-x-0 bottom-0 top-16 overflow-y-auto border-t border-line bg-surface lg:absolute lg:bottom-auto lg:top-full lg:shadow-lg"
+    >
+      <div className="mx-auto flex max-w-[1120px] flex-col gap-6 px-4 py-6 lg:gap-8 lg:px-8 lg:py-9">
+        <label className="flex items-center gap-3 border-b-[1.5px] border-brand-secondary-dark pb-3 transition-colors focus-within:border-accent lg:gap-4 lg:pb-4">
+          <PiMagnifyingGlassLight aria-hidden="true" className="h-6 w-6 shrink-0 text-brand-secondary-dark lg:h-[30px] lg:w-[30px]" />
+          <span className="sr-only">Buscar productos</span>
+          <input
+            ref={inputRef}
+            type="search"
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+            placeholder={placeholder || "Buscar productos"}
+            autoComplete="off"
+            className="w-full min-w-0 bg-transparent text-heading-h4 [&::-webkit-search-cancel-button]:appearance-none focus-visible:ring-0 focus-visible:ring-offset-0 font-normal text-brand-secondary-dark outline-none placeholder:text-content-subtle lg:text-heading-h3 lg:font-normal"
+          />
+        </label>
 
-      {open && (
-        <div
-          className="fixed inset-0 z-[100] bg-black/70 p-4 backdrop-blur-sm"
-          onClick={() => setOpen(false)}
-        >
-          <div
-            className="mx-auto mt-[12vh] max-w-xl overflow-hidden rounded-xl border border-line bg-surface"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex items-center gap-3 border-b border-line px-4">
-              <FaMagnifyingGlass size={15} className="text-content-subtle" />
-              <input
-                ref={inputRef}
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="Buscar…"
-                className="w-full bg-transparent py-4 text-body-md text-content outline-none placeholder:text-content-subtle"
-              />
-              <button type="button" onClick={() => setOpen(false)} aria-label="Cerrar">
-                <FaXmark size={17} className="text-content-subtle hover:text-content" />
-              </button>
-            </div>
-
-            <div className="max-h-[50vh] overflow-y-auto">
-              {query && results.length === 0 && (
-                <p className="px-4 py-6 text-body-sm text-content-subtle">Sin resultados</p>
-              )}
+        <div aria-live="polite">
+          {term && entries && results.length === 0 && (
+            <p className="text-body-md text-content-muted">
+              No encontramos resultados para “{query.trim()}”. Prueba con otra marca o especialidad.
+            </p>
+          )}
+          {results.length > 0 && (
+            <ul className="flex flex-col gap-2 lg:grid lg:grid-cols-4 lg:gap-6">
               {results.map((entry) => (
-                <a
-                  key={entry.url}
-                  href={entry.url}
-                  className="block border-b border-line px-4 py-3 hover:bg-surface-raised"
-                >
-                  <p className="text-body-md text-content">{entry.title}</p>
-                  {entry.description && (
-                    <p className="mt-1 line-clamp-2 text-body-sm text-content-subtle">
-                      {entry.description}
-                    </p>
-                  )}
-                </a>
+                <li key={entry.url}>
+                  <a
+                    href={entry.url}
+                    onClick={onNavigate}
+                    className="group flex items-center gap-3.5 rounded-xl p-2 transition-colors hover:bg-surface-raised"
+                  >
+                    <span className="flex h-16 w-16 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-surface-raised">
+                      {entry.image && (
+                        <img src={entry.image} alt="" width={64} height={64} loading="lazy" className="h-full w-full object-contain mix-blend-multiply" />
+                      )}
+                    </span>
+                    <span className="flex min-w-0 flex-col gap-0.5">
+                      <span className="line-clamp-2 text-body-sm font-medium text-brand-secondary-dark group-hover:underline">{entry.title}</span>
+                      {entry.brand && <span className="text-caption text-content-muted">{entry.brand}</span>}
+                    </span>
+                  </a>
+                </li>
               ))}
-            </div>
-          </div>
+            </ul>
+          )}
         </div>
-      )}
-    </>
+      </div>
+    </div>
   );
 }

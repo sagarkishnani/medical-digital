@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useTina, tinaField } from "tinacms/dist/react";
-import { PiCaretDownLight, PiListLight, PiXLight } from "react-icons/pi";
+import { PiCaretDownLight, PiListLight, PiMagnifyingGlassLight, PiXLight } from "react-icons/pi";
 import { tField, localizeHref } from "../../utils/i18n";
 import { mediaUrl } from "../../utils/mediaUrl";
 import { withBase } from "../../utils/url";
@@ -56,7 +56,7 @@ export default function HeaderReact({ query, variables, data: initialData, local
   }, []);
 
   useEffect(() => {
-    if (openPanel !== "menu") return;
+    if (openPanel !== "menu" && openPanel !== "search") return;
     lockScroll();
     return unlockScroll;
   }, [openPanel]);
@@ -96,6 +96,7 @@ export default function HeaderReact({ query, variables, data: initialData, local
 
   const menuOpen = openPanel === "menu";
   const megaOpen = openPanel === "mega";
+  const searchOpen = openPanel === "search";
   const MenuIcon = menuOpen ? PiXLight : PiListLight;
 
   return (
@@ -179,7 +180,16 @@ export default function HeaderReact({ query, variables, data: initialData, local
           </nav>
 
           <div onMouseEnter={closeMegaOnLeave} className="ml-auto flex shrink-0 items-center pr-2 lg:ml-0 lg:px-3 xl:px-5">
-            <SearchOverlay locale={locale} />
+            <button
+              type="button"
+              onClick={(event) => togglePanel("search", event.currentTarget)}
+              aria-expanded={searchOpen}
+              aria-controls="site-search"
+              aria-label={searchOpen ? "Cerrar búsqueda" : "Buscar productos"}
+              className="flex h-12 w-12 items-center justify-center text-brand-secondary-dark transition-colors hover:text-accent"
+            >
+              {searchOpen ? <PiXLight aria-hidden="true" className="h-7 w-7" /> : <PiMagnifyingGlassLight aria-hidden="true" className="h-7 w-7" />}
+            </button>
             <button
               type="button"
               onClick={(event) => togglePanel("menu", event.currentTarget)}
@@ -214,6 +224,8 @@ export default function HeaderReact({ query, variables, data: initialData, local
           onNavigate={closePanels}
           onContactAdvisor={openQuote}
         />
+
+        <SearchOverlay id="site-search" open={searchOpen} placeholder={global?.search?.placeholder} onNavigate={closePanels} />
       </header>
 
       <SiteMenu
