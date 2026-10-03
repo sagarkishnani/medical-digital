@@ -1,6 +1,6 @@
 # SPEC 03 — Rediseño del header
 
-> **Status:** Aprobado
+> **Status:** Implementado
 > **Depends on:** SPEC 01, SPEC 02
 > **Date:** 2026-10-02
 > **Objective:** Reemplazar el header actual por el de la referencia (desktop y mobile): blanco y sticky, con mega-menú de productos, panel ☰, búsqueda de productos, "Cotiza aquí" y WhatsApp flotante, editable desde Tina.
@@ -182,55 +182,55 @@ Cada paso deja el build verde y va en su propio commit.
 
 **Build y estándar**
 
-- [ ] `npm run build:local` termina sin errores y `check:standard` no da errores.
-- [ ] Ningún `.tsx` importa `src/lib/woo/store.ts`.
-- [ ] Sin hex, `text-[NNpx]` ni `text-white/…` fuera de las excepciones del `CLAUDE.md`.
-- [ ] Los íconos son Phosphor Light, salvo el logo de WhatsApp.
+- [x] `npm run build:local` termina sin errores y `check:standard` no da errores.
+- [x] Ningún `.tsx` importa `src/lib/woo/store.ts`.
+- [x] Sin hex, `text-[NNpx]` ni `text-white/…` fuera de las excepciones del `CLAUDE.md`.
+- [x] Los íconos son Phosphor Light, salvo el logo de WhatsApp.
 
 **Header**
 
-- [ ] Mide 84 px en desktop y 64 px en mobile, es blanco y queda fijo arriba al hacer scroll (sticky) en todas las páginas.
-- [ ] La sombra aparece al hacer scroll, también si se recarga a mitad de la página.
-- [ ] El enlace de la página actual se ve activo.
-- [ ] Ningún hero queda bajo el header; ya no existen `headerTheme` ni el `pt-[72px]`.
-- [ ] `/nosotros#quienes` (y las demás anclas) deja el título visible bajo el header.
-- [ ] "Cotiza aquí" abre el modal genérico ("Asesoría comercial") y su "Hablar con un asesor" abre WhatsApp.
+- [x] Mide 84 px en desktop y 64 px en mobile, es blanco y queda fijo arriba al hacer scroll (sticky) en todas las páginas.
+- [x] La sombra aparece al hacer scroll, también si se recarga a mitad de la página.
+- [x] El enlace de la página actual se ve activo.
+- [x] Ningún hero queda bajo el header; ya no existen `headerTheme` ni el `pt-[72px]`.
+- [x] `/nosotros#quienes` (y las demás anclas) deja el título visible bajo el header.
+- [x] "Cotiza aquí" abre el modal genérico ("Asesoría comercial") y su "Hablar con un asesor" abre WhatsApp.
 
 **Mega-menú (desktop)**
 
-- [ ] Se abre al pasar sobre "Productos" y con teclado (Enter o Espacio); se cierra al salir, con Esc o al abrir otro panel.
-- [ ] Muestra las categorías de Woo con su ícono de `global.categoryIcons` y su conteo, y la foto del primer producto al pasar el mouse.
-- [ ] Muestra "Ver todo el catálogo" y "Habla con un asesor"; el enlace al catálogo PDF solo aparece si hay archivo.
+- [x] Se abre al pasar sobre "Productos" y con teclado (Enter o Espacio); se cierra al salir, con Esc o al abrir otro panel.
+- [x] Muestra las categorías de Woo con su ícono de `global.categoryIcons` y su conteo, y la foto del primer producto al pasar el mouse.
+- [x] Muestra "Ver todo el catálogo" y "Habla con un asesor"; el enlace al catálogo PDF solo aparece si hay archivo.
 
 **Panel ☰ y menú mobile**
 
-- [ ] El panel desktop muestra las tarjetas, las columnas y "Contáctanos" con los datos de `global.company`.
-- [ ] El menú mobile tiene "Productos" como acordeón, los enlaces, "Sobre nosotros", el contacto, las redes (si hay) y "Descargar catálogo" (si hay PDF).
-- [ ] Con un panel abierto la página no se desplaza, y al cerrarlo el scroll vuelve siempre.
+- [x] El panel desktop muestra las tarjetas, las columnas y "Contáctanos" con los datos de `global.company`.
+- [x] El menú mobile tiene "Productos" como acordeón, los enlaces, "Sobre nosotros", el contacto, las redes (si hay) y "Descargar catálogo" (si hay PDF).
+- [x] Con un panel abierto la página no se desplaza, y al cerrarlo el scroll vuelve siempre.
 
 **Búsqueda**
 
-- [ ] `/search-index.json` contiene solo productos, con nombre, marca, URL e imagen servida desde `dist/` (sin enlaces a WordPress).
-- [ ] Al escribir se filtran los productos; cada resultado lleva a su ficha; sin coincidencias aparece el mensaje de "sin resultados".
-- [ ] El placeholder sale de `global.search.placeholder`.
+- [x] `/search-index.json` contiene solo productos, con nombre, marca, URL e imagen servida desde `dist/` (sin enlaces a WordPress).
+- [x] Al escribir se filtran los productos; cada resultado lleva a su ficha; sin coincidencias aparece el mensaje de "sin resultados".
+- [x] El placeholder sale de `global.search.placeholder`.
 
 **WhatsApp flotante**
 
-- [ ] Aparece en todas las páginas con `whatsappButton.enabled` y abre `wa.me` con el número de `global.whatsapp`.
-- [ ] No aparece en modo mantenimiento ni con `enabled` desactivado.
+- [x] Aparece en todas las páginas con `whatsappButton.enabled` y abre `wa.me` con el número de `global.whatsapp`.
+- [x] No aparece en modo mantenimiento ni con `enabled` desactivado.
 
 **Accesibilidad y responsive**
 
-- [ ] Los botones del header llevan `aria-expanded` y `aria-label`; Esc cierra cualquier panel y el foco vuelve al botón que lo abrió.
-- [ ] Solo hay un panel abierto a la vez.
-- [ ] Transiciones de 300 ms como máximo; con `prefers-reduced-motion` los paneles aparecen sin transición.
+- [x] Los botones del header llevan `aria-expanded` y `aria-label`; Esc cierra cualquier panel y el foco vuelve al botón que lo abrió.
+- [x] Solo hay un panel abierto a la vez.
+- [x] Transiciones de 300 ms como máximo; con `prefers-reduced-motion` los paneles aparecen sin transición.
 - [ ] Áreas táctiles de al menos 44 px y sin scroll horizontal en 320, 360, 768 y 1280 px.
-- [ ] El layout coincide con la referencia desktop y mobile.
+- [x] El layout coincide con la referencia desktop y mobile.
 
 **Tina**
 
 - [ ] Se editan desde `/admin`: logo, enlaces, "Cotiza aquí", tarjetas y columnas del panel, placeholder de búsqueda, catálogo, interruptor de WhatsApp e íconos de categorías.
-- [ ] La Home sigue mostrando los íconos de especialidades, ahora desde `global`.
+- [x] La Home sigue mostrando los íconos de especialidades, ahora desde `global`.
 
 ## Decisiones
 
@@ -280,3 +280,35 @@ Cada paso deja el build verde y va en su propio commit.
 | El menú se ve más corto que en el diseño porque se omiten los destinos que no existen. | Es intencional; el PR lo indica. |
 | El catálogo PDF y las redes no están cargados. | Los campos quedan listos; el PR lo indica. |
 | El texto blanco sobre "Cotiza aquí" queda en 4.08:1. | Ya es un pendiente de diseño en el `CLAUDE.md`. |
+
+## Notas de implementación
+
+- El mega-menú quedó dentro del `<header>` (`absolute`, bajo la fila) y no como hermano: el header no usa `transform`, así que el riesgo de recorte no aplica. `SiteMenu` y `QuoteModal` sí son hermanos.
+- `nav.cta.url` se eliminó en el paso 3 (no en el 2), al conectar "Cotiza aquí" con el modal.
+- Imágenes provisionales de las tarjetas del panel en `public/uploads/menu/` (240 × 208, WebP), tomadas de la referencia; se reemplazan desde Tina.
+- Lenis ya estaba activo en `BaseLayout` (la SPEC 02 lo daba por descartado). Se expone en `window.lenis` para que `scrollLock` lo detenga con un panel abierto.
+- Las páginas de productos y blog pasaron de `pt-[128px]` a `pt-14`, porque el header ya no se superpone al contenido.
+- El header mide 84 + 1 px de borde en desktop y 64 + 1 px en mobile, igual que la referencia (el alto es de la fila; el borde va aparte).
+- Búsqueda: el índice incluye también los nombres de las categorías, para que funcione lo que sugiere el mensaje "prueba con otra marca o especialidad". Se buscan nombre, marca y categorías, sin distinguir tildes. Se muestran 4 resultados como máximo, como en la referencia. Con el campo vacío no se muestran productos: la referencia muestra "Más buscados", pero no hay datos de búsquedas.
+- El texto del campo de búsqueda usa `heading-h3` (24 px) y `heading-h4` (20 px) en mobile: los 28 px de la referencia no existen en el UI Kit.
+- El chevron de "Productos" mantiene abierto el mega-menú si ya se abrió por hover; antes, el clic con mouse lo cerraba.
+- WhatsApp flotante: `WhatsAppButton.astro`, sin JS. Usa `FaWhatsapp` en blanco sobre `semantics-success-dark` (5:1) en lugar de la imagen de la referencia; el verde medio quedaba bajo 3:1 contra el fondo blanco.
+- Las redes del menú mobile usan logos de `react-icons/fa6`, como el de WhatsApp: son logos de marca.
+- **Pendiente para una tarea propia:** dentro del menú y la búsqueda a pantalla completa (mobile), el foco con Tab puede salir hacia la página de atrás. Resolverlo requiere atrapar el foco dentro del panel.
+- **Pendiente de decisión de diseño:** el chevron de "Productos" mide 24 × 84 px. Cumple el mínimo de 24 px de WCAG 2.5.8, pero no los 44 px del estándar; agrandarlo separa "Productos" de los demás enlaces respecto de la referencia. Es solo desktop (el mega-menú táctil está fuera de alcance).
+- **Pendiente (SPEC 02):** en la Home, a 320 px, el enlace "Ver todos" de `SectionHeader` desborda 29 px y genera scroll horizontal. No viene del header.
+
+## QA realizada
+
+- `npm run build:local`: 59 páginas sin errores. `check:standard`: 0 errores (aviso previo: páginas sin `og:image`). JS de la página más pesada: 148 KB gzip, cerca del presupuesto de 150 KB.
+- `tsc --noEmit` sin errores en los archivos del header. Ningún `.tsx` importa `store.ts`; sin hex, `text-[NNpx]` ni `text-white/…` en los archivos tocados; sin comentarios agregados.
+- Playwright en 320, 360, 768 y 1280 px sobre `/`, `/nosotros`, `/contacto`, `/productos`, una ficha de producto y `/blog`: header sticky (queda en `top: 0` tras el scroll), enlace activo correcto, el contenido empieza bajo el header y no hay scroll horizontal salvo el caso pendiente de la Home a 320 px.
+- Sombra presente al recargar a mitad de página. `/nosotros#valores` deja el título a 96 px del borde, bajo el header de 85.
+- "Cotiza aquí" abre el modal "Asesoría comercial" y su WhatsApp lleva a `wa.me` con el número de `global.whatsapp`.
+- Mega-menú: hover, teclado (Enter en el chevron), clics sucesivos con mouse (abre, cierra, abre), Esc con retorno de foco y la foto del primer producto al pasar el mouse.
+- Panel ☰ y menú mobile: acordeón de productos, enlaces que cierran el panel, scroll bloqueado y liberado siempre.
+- Búsqueda: el índice se descarga recién al abrir; foco en el campo; filtra por nombre, marca y especialidad sin tildes; mensaje sin resultados; cada resultado abre su ficha; imágenes servidas desde `/_astro/`, sin enlaces a WordPress.
+- Un solo panel a la vez, Esc y retorno de foco verificados en 1280, 768 y 360 px para el menú, la búsqueda y el mega-menú.
+- WhatsApp flotante en todas las páginas probadas; desaparece con `whatsappButton.enabled: false` y en modo mantenimiento (ambos probados con cambios temporales de contenido, ya revertidos).
+- Capturas en 1440 y 390 px comparadas con "Medical Digital Desktop.html" y "Medical Digital Mobile.html": header, mega-menú y panel ☰ coinciden. La diferencia visible es que el menú solo tiene Productos, Noticias y Contacto (los demás destinos aún no existen).
+- Sin verificar desde local: edición en vivo desde `/admin`, `npm run build` con TinaCloud (lo valida el preview de Amplify) y el uso en dispositivos táctiles reales.
