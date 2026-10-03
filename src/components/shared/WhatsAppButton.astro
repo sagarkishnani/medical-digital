@@ -1,0 +1,23 @@
+---
+import { FaWhatsapp } from "react-icons/fa6";
+
+interface Props {
+  phone: string;
+}
+
+const digits = Astro.props.phone.replace(/\D/g, "");
+---
+
+{
+  digits && (
+    <a
+      href={`https://wa.me/${digits}`}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label="Escríbenos por WhatsApp"
+      class="fixed bottom-7 right-7 z-[60] flex h-[61px] w-[61px] items-center justify-center rounded-full bg-semantics-success-dark text-white shadow-[0_12px_28px_-10px] shadow-semantics-success-dark/60 transition-transform duration-[250ms] motion-safe:hover:scale-[1.08]"
+    >
+      <FaWhatsapp aria-hidden="true" className="h-8 w-8" />
+    </a>
+  )
+}
