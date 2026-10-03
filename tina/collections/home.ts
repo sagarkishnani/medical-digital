@@ -44,17 +44,6 @@ export const homeCollection: Collection = {
         { name: "title", label: "Título", type: "string" },
         { name: "linkLabel", label: "Texto del enlace", type: "string" },
         { name: "catalogLabel", label: "Texto de la tarjeta final", type: "string" },
-        {
-          type: "object",
-          name: "icons",
-          label: "Íconos por categoría",
-          list: true,
-          ui: { itemProps: (item) => ({ label: item?.categorySlug || "Categoría" }) },
-          fields: [
-            { name: "categorySlug", label: "Slug de la categoría en Woo", type: "string" },
-            { name: "icon", label: "Ícono", type: "string", options: ICON_OPTIONS },
-          ],
-        },
       ],
     },
     {

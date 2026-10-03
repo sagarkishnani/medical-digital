@@ -15,18 +15,19 @@ interface Props {
   variables: object;
   data: any;
   categories: Category[];
+  categoryIcons: { categorySlug: string; icon: string }[];
 }
 
 const cardClass =
   "flex h-full min-h-[120px] flex-col justify-between gap-3 rounded-2xl p-4 transition-[transform,box-shadow,border-color,background-color] duration-300 hover:-translate-y-1 md:min-h-44 md:p-6";
 
-export default function SpecialtiesReact({ query, variables, data: initialData, categories }: Props) {
+export default function SpecialtiesReact({ query, variables, data: initialData, categories, categoryIcons }: Props) {
   const { data } = useTina({ query, variables, data: initialData });
   const specialties = data?.home?.specialties;
   if (!specialties || categories.length === 0) return <div hidden />;
 
   const iconFor = (slug: string) =>
-    (specialties.icons || []).find((entry: any) => entry?.categorySlug === slug)?.icon;
+    categoryIcons.find((entry) => entry.categorySlug === slug)?.icon;
 
   return (
     <section className="container-xl flex flex-col gap-6 pb-12 pt-2 md:gap-10 md:pb-24 md:pt-12">
