@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useTina, tinaField } from "tinacms/dist/react";
-import { PiListLight, PiXLight } from "react-icons/pi";
+import { PiCaretDownLight, PiListLight, PiXLight } from "react-icons/pi";
 import { tField, localizeHref } from "../../utils/i18n";
 import { mediaUrl } from "../../utils/mediaUrl";
 import { withBase } from "../../utils/url";
@@ -8,9 +8,17 @@ import { lockScroll, unlockScroll } from "../../utils/scrollLock";
 import type { Locale } from "../../i18n/config";
 import SearchOverlay from "./SearchOverlay";
 import QuoteModal from "./QuoteModal";
+import ProductsMegaMenu from "./ProductsMegaMenu";
 import type { QuoteProduct } from "./QuoteModal";
 
 type Panel = "menu" | "mega" | "search" | null;
+
+export interface HeaderCategory {
+  slug: string;
+  name: string;
+  count: number;
+  image: string;
+}
 
 interface Props {
   query: string;
@@ -18,6 +26,7 @@ interface Props {
   data: any;
   locale: Locale;
   currentPath: string;
+  categories: HeaderCategory[];
 }
 
 function isActive(currentPath: string, url?: string | null): boolean {
@@ -27,7 +36,7 @@ function isActive(currentPath: string, url?: string | null): boolean {
   return target === "/" ? path === "/" : path === target || path.startsWith(`${target}/`);
 }
 
-export default function HeaderReact({ query, variables, data: initialData, locale, currentPath }: Props) {
+export default function HeaderReact({ query, variables, data: initialData, locale, currentPath, categories }: Props) {
   const { data } = useTina({ query, variables, data: initialData });
   const global = data?.global;
   const nav = global?.nav;
@@ -36,7 +45,7 @@ export default function HeaderReact({ query, variables, data: initialData, local
   const [openPanel, setOpenPanel] = useState<Panel>(null);
   const [quote, setQuote] = useState<QuoteProduct | null>(null);
   const [scrolled, setScrolled] = useState(false);
-  const menuButtonRef = useRef<HTMLButtonElement>(null);
+  const lastTriggerRef = useRef<HTMLButtonElement | null>(null);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -56,13 +65,21 @@ export default function HeaderReact({ query, variables, data: initialData, local
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key !== "Escape") return;
       setOpenPanel(null);
-      menuButtonRef.current?.focus();
+      lastTriggerRef.current?.focus();
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [openPanel]);
 
-  const toggleMenu = () => setOpenPanel((panel) => (panel === "menu" ? null : "menu"));
+  const togglePanel = (panel: Exclude<Panel, null>, trigger: HTMLButtonElement) => {
+    lastTriggerRef.current = trigger;
+    setOpenPanel((current) => (current === panel ? null : panel));
+  };
+  const openMegaOnHover = () => {
+    lastTriggerRef.current = null;
+    setOpenPanel((current) => (current === "menu" || current === "search" ? current : "mega"));
+  };
+  const closeMegaOnLeave = () => setOpenPanel((current) => (current === "mega" ? null : current));
   const closePanels = () => setOpenPanel(null);
 
   const whatsappDigits = (global?.whatsapp || "").replace(/\D/g, "");
@@ -77,11 +94,13 @@ export default function HeaderReact({ query, variables, data: initialData, local
   };
 
   const menuOpen = openPanel === "menu";
+  const megaOpen = openPanel === "mega";
   const MenuIcon = menuOpen ? PiXLight : PiListLight;
 
   return (
     <>
       <header
+        onMouseLeave={closeMegaOnLeave}
         className={`sticky top-0 z-50 border-b border-line bg-surface transition-shadow duration-300 ${
           scrolled && !menuOpen ? "shadow-md" : ""
         }`}
@@ -108,9 +127,9 @@ export default function HeaderReact({ query, variables, data: initialData, local
           </a>
 
           <button
-            ref={menuButtonRef}
             type="button"
-            onClick={toggleMenu}
+            onClick={(event) => togglePanel("menu", event.currentTarget)}
+            onMouseEnter={closeMegaOnLeave}
             aria-expanded={menuOpen}
             aria-controls="site-menu"
             aria-label={menuOpen ? "Cerrar menú" : "Abrir menú"}
@@ -121,8 +140,8 @@ export default function HeaderReact({ query, variables, data: initialData, local
 
           <nav aria-label="Navegación principal" className="hidden min-w-0 flex-1 items-stretch px-1 lg:flex xl:px-5">
             {links.map((link: any, index: number) => {
-              const active = isActive(currentPath, link.url);
-              return (
+              const active = isActive(currentPath, link.url) || (link.productsMenu && megaOpen);
+              const linkElement = (
                 <a
                   key={index}
                   href={localizeHref(link.url, locale, link.external)}
@@ -132,19 +151,37 @@ export default function HeaderReact({ query, variables, data: initialData, local
                   className={`flex items-center whitespace-nowrap px-2 text-body-sm font-medium transition-colors hover:text-accent xl:px-3.5 xl:text-body-md ${
                     active ? "text-accent" : "text-brand-secondary-dark"
                   }`}
+                  onMouseEnter={link.productsMenu ? openMegaOnHover : closeMegaOnLeave}
                   data-tina-field={tinaField(link, "label")}
                 >
                   {tField(link, "label", locale)}
                 </a>
               );
+              if (!link.productsMenu || categories.length === 0) return linkElement;
+              return (
+                <div key={index} className="flex items-stretch">
+                  {linkElement}
+                  <button
+                    type="button"
+                    onClick={(event) => togglePanel("mega", event.currentTarget)}
+                    onMouseEnter={openMegaOnHover}
+                    aria-expanded={megaOpen}
+                    aria-controls="products-menu"
+                    aria-label="Ver categorías de productos"
+                    className="-ml-1.5 flex w-6 items-center justify-center text-brand-secondary-dark hover:text-accent xl:-ml-2.5"
+                  >
+                    <PiCaretDownLight aria-hidden="true" className={`h-4 w-4 transition-transform duration-300 ${megaOpen ? "rotate-180" : ""}`} />
+                  </button>
+                </div>
+              );
             })}
           </nav>
 
-          <div className="ml-auto flex shrink-0 items-center pr-2 lg:ml-0 lg:px-3 xl:px-5">
+          <div onMouseEnter={closeMegaOnLeave} className="ml-auto flex shrink-0 items-center pr-2 lg:ml-0 lg:px-3 xl:px-5">
             <SearchOverlay locale={locale} />
             <button
               type="button"
-              onClick={toggleMenu}
+              onClick={(event) => togglePanel("menu", event.currentTarget)}
               aria-expanded={menuOpen}
               aria-controls="site-menu"
               aria-label={menuOpen ? "Cerrar menú" : "Abrir menú"}
@@ -158,6 +195,7 @@ export default function HeaderReact({ query, variables, data: initialData, local
             <button
               type="button"
               onClick={openQuote}
+              onMouseEnter={closeMegaOnLeave}
               className="hidden min-w-[120px] shrink basis-[200px] items-center justify-center whitespace-nowrap bg-brand-primary px-4 text-body-sm font-medium text-white transition-colors hover:bg-brand-primary-dark lg:flex xl:text-body-md"
               data-tina-field={tinaField(nav.cta, "label")}
             >
@@ -165,6 +203,16 @@ export default function HeaderReact({ query, variables, data: initialData, local
             </button>
           )}
         </div>
+
+        <ProductsMegaMenu
+          id="products-menu"
+          open={megaOpen}
+          categories={categories}
+          categoryIcons={global?.categoryIcons || []}
+          catalog={global?.catalog}
+          onNavigate={closePanels}
+          onContactAdvisor={openQuote}
+        />
       </header>
 
       <div
