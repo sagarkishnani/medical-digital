@@ -9,6 +9,7 @@ import type { Locale } from "../../i18n/config";
 import SearchOverlay from "./SearchOverlay";
 import QuoteModal from "./QuoteModal";
 import ProductsMegaMenu from "./ProductsMegaMenu";
+import SiteMenu from "./SiteMenu";
 import type { QuoteProduct } from "./QuoteModal";
 
 type Panel = "menu" | "mega" | "search" | null;
@@ -215,29 +216,14 @@ export default function HeaderReact({ query, variables, data: initialData, local
         />
       </header>
 
-      <div
+      <SiteMenu
         id="site-menu"
-        hidden={!menuOpen}
-        className="fixed inset-x-0 bottom-0 top-16 z-40 overflow-y-auto bg-surface lg:top-[84px]"
-      >
-        <nav aria-label="Menú" className="container-xl flex flex-col py-4">
-          {links.map((link: any, index: number) => (
-            <a
-              key={index}
-              href={localizeHref(link.url, locale, link.external)}
-              onClick={closePanels}
-              className="flex h-[60px] items-center border-b border-line text-heading-h4 text-brand-secondary-dark"
-            >
-              {tField(link, "label", locale)}
-            </a>
-          ))}
-          {nav?.cta?.label && (
-            <button type="button" onClick={openQuote} className="btn-primary mt-6 self-start">
-              {tField(nav.cta, "label", locale)}
-            </button>
-          )}
-        </nav>
-      </div>
+        open={menuOpen}
+        locale={locale}
+        global={global}
+        categories={categories}
+        onNavigate={closePanels}
+      />
 
       <QuoteModal product={quote} onClose={() => setQuote(null)} />
     </>
