@@ -99,9 +99,13 @@ Los tipos, las queries y el cliente se generan en `tina/__generated__/`
 
 Colecciones:
 
-- `global` — navegación, footer, SEO por defecto, código inyectado, el
-  WhatsApp comercial que usa el botón "Solicitar cotización" y los datos de la
-  empresa (`company`: dirección, teléfono, correos y horario).
+- `global` — header (`nav`: logo, enlaces, "Cotiza aquí" y el panel ☰ con
+  tarjetas y columnas), footer, SEO por defecto, código inyectado, el WhatsApp
+  comercial (lo usan "Solicitar cotización" y el botón flotante, que se
+  enciende con `whatsappButton.enabled`), el placeholder de la búsqueda
+  (`search`), el catálogo PDF (`catalog`), los íconos de cada categoría de Woo
+  (`categoryIcons`, los usan el header y la Home) y los datos de la empresa
+  (`company`: dirección, teléfono, correos y horario).
 - `home` — contenido de la portada: slider, destacados (los marca Woo),
   especialidades (categorías de Woo), "Conoce más", marcas, testimonios y
   noticias (los 3 últimos posts).
@@ -163,6 +167,15 @@ Componentes reutilizables (úsalos antes de escribir uno nuevo):
   breadcrumb.
 - `src/components/shared/QuoteModal.tsx` — modal "Solicitar cotización".
 - `src/utils/url.ts` (`withBase`) — rutas internas escritas en el código.
+- `src/utils/scrollLock.ts` — bloquea y libera el scroll de la página (también
+  detiene Lenis, expuesto en `window.lenis`). Úsalo en todo panel o modal a
+  pantalla completa.
+
+El header (`Header.astro` + `HeaderReact.tsx`) es sticky y coordina un solo
+panel abierto a la vez: `ProductsMegaMenu` (desktop), `SiteMenu` (☰ en desktop
+y menú mobile) y `SearchOverlay` (lee `/search-index.json`, que solo tiene
+productos de Woo). Las anclas (`[id]`) llevan `scroll-margin-top` para quedar
+visibles bajo el header; los heros ya no reservan espacio para él.
 
 **Tema: light.** Los componentes NO escriben colores: piden tokens
 semánticos, y por eso el tema se puede cambiar sin tocar una sola clase.
