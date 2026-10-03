@@ -1,15 +1,21 @@
 import { useState } from "react";
 import type { ReactNode } from "react";
 import type { IconType } from "react-icons";
-import { FaFacebookF, FaInstagram, FaLinkedinIn, FaTiktok, FaWhatsapp, FaXTwitter, FaYoutube } from "react-icons/fa6";
 import {
   PiCaretDownLight,
   PiClockLight,
   PiEnvelopeSimpleLight,
+  PiFacebookLogoLight,
   PiFilePdfLight,
+  PiInstagramLogoLight,
+  PiLinkedinLogoLight,
   PiMapPinLight,
   PiPhoneLight,
   PiSquaresFourLight,
+  PiTiktokLogoLight,
+  PiWhatsappLogoLight,
+  PiXLogoLight,
+  PiYoutubeLogoLight,
 } from "react-icons/pi";
 import Icon from "./Icon";
 import { mediaUrl } from "../../utils/mediaUrl";
@@ -19,13 +25,13 @@ import type { Locale } from "../../i18n/config";
 import type { HeaderCategory } from "./HeaderReact";
 
 const SOCIAL_ICONS: Record<string, IconType> = {
-  facebook: FaFacebookF,
-  instagram: FaInstagram,
-  linkedin: FaLinkedinIn,
-  tiktok: FaTiktok,
-  whatsapp: FaWhatsapp,
-  x: FaXTwitter,
-  youtube: FaYoutube,
+  facebook: PiFacebookLogoLight,
+  instagram: PiInstagramLogoLight,
+  linkedin: PiLinkedinLogoLight,
+  tiktok: PiTiktokLogoLight,
+  whatsapp: PiWhatsappLogoLight,
+  x: PiXLogoLight,
+  youtube: PiYoutubeLogoLight,
 };
 
 interface Props {
@@ -50,15 +56,16 @@ export default function SiteMenu({ id, open, locale, global, categories, onNavig
   const emails = (company?.emails || []).filter(Boolean);
   const phoneDigits = (company?.phone || "").replace(/\D/g, "");
   const social = (global?.footer?.social || []).filter((item: any) => item?.url && SOCIAL_ICONS[item.network]);
-  const catalog = global?.catalog?.file ? global.catalog : null;
+  const catalog = global?.catalog?.label ? global.catalog : null;
+  const catalogLinkProps = catalog?.file ? { href: mediaUrl(catalog.file), target: "_blank", rel: "noopener noreferrer" } : {};
   const categoryIcons = global?.categoryIcons || [];
   const iconFor = (slug: string) => categoryIcons.find((entry: any) => entry?.categorySlug === slug)?.icon;
 
   const contactItems = [
-    company?.phone && { icon: PiPhoneLight, content: <a href={`tel:+${phoneDigits}`} className="hover:underline">{company.phone}</a> },
+    company?.phone && { icon: PiPhoneLight, content: <a href={`tel:+${phoneDigits}`}>{company.phone}</a> },
     ...emails.map((email: string) => ({
       icon: PiEnvelopeSimpleLight,
-      content: <a href={`mailto:${email}`} className="break-all hover:underline">{email}</a>,
+      content: <a href={`mailto:${email}`} className="break-all">{email}</a>,
     })),
     company?.address && { icon: PiMapPinLight, content: <span className="whitespace-pre-line">{company.address}</span> },
     company?.hours && { icon: PiClockLight, content: <span>{company.hours}</span> },
@@ -66,17 +73,18 @@ export default function SiteMenu({ id, open, locale, global, categories, onNavig
 
   const catalogLink = (className: string) =>
     catalog && (
-      <a href={mediaUrl(catalog.file)} target="_blank" rel="noopener noreferrer" className={className}>
-        <PiFilePdfLight aria-hidden="true" className="h-6 w-6" />
-        {catalog.label || "Catálogo PDF"}
+      <a {...catalogLinkProps} className={className}>
+        <PiFilePdfLight aria-hidden="true" className="h-[22px] w-[22px]" />
+        <span className="lg:hidden">Descargar catálogo PDF</span>
+        <span className="hidden lg:inline">Catálogo PDF</span>
       </a>
     );
 
   return (
-    <div id={id} hidden={!open} className="fixed inset-x-0 bottom-0 top-16 z-40 overflow-y-auto bg-surface lg:top-[84px]">
+    <div id={id} hidden={!open} data-lenis-prevent className="fixed inset-x-0 bottom-0 top-16 z-40 overflow-y-auto overscroll-contain bg-surface lg:top-[84px]">
       <div className="min-h-full lg:grid lg:grid-cols-[132px_minmax(0,1fr)]">
         <div className="hidden items-center justify-center border-r border-line lg:flex">
-          <span className="text-body-md tracking-[0.5em] text-content-subtle [writing-mode:vertical-rl]">MENÚ</span>
+          <span className="rotate-180 text-body-md tracking-[0.5em] text-content-subtle [writing-mode:vertical-rl]">MENÚ</span>
         </div>
 
         <div className="flex max-w-[1180px] flex-col gap-7 px-4 pb-8 pt-2 lg:gap-[52px] lg:px-14 lg:pb-12 lg:pt-[52px]">
@@ -150,7 +158,7 @@ export default function SiteMenu({ id, open, locale, global, categories, onNavig
                       )}
                     </span>
                     <span className="flex flex-col gap-1">
-                      <span className="text-heading-h4 text-brand-secondary-dark group-hover:underline">{card.title}</span>
+                      <span className="text-heading-h4 text-brand-secondary-dark transition-colors duration-300 group-hover:text-accent">{card.title}</span>
                       {card.text && <span className="text-body-sm text-content-subtle">{card.text}</span>}
                     </span>
                   </a>
@@ -203,9 +211,9 @@ export default function SiteMenu({ id, open, locale, global, categories, onNavig
                           target="_blank"
                           rel="noopener noreferrer"
                           aria-label={item.network}
-                          className="flex h-11 w-11 items-center justify-center text-content hover:text-accent"
+                          className="flex h-11 w-11 items-center justify-center text-content"
                         >
-                          <SocialIcon aria-hidden="true" className="h-6 w-6" />
+                          <SocialIcon aria-hidden="true" className="h-7 w-7" />
                         </a>
                       </li>
                     );
@@ -213,7 +221,7 @@ export default function SiteMenu({ id, open, locale, global, categories, onNavig
                 </ul>
               )}
               {catalogLink(
-                "flex h-14 items-center justify-center gap-2.5 rounded-pill border border-brand-secondary-dark px-7 text-body-md font-medium text-brand-secondary-dark transition-colors hover:bg-surface-raised",
+                "flex h-14 cursor-pointer items-center justify-center gap-2.5 rounded-pill border border-brand-secondary-dark px-7 text-body-md font-medium text-brand-secondary-dark transition-colors hover:bg-surface-raised lg:ml-auto",
               )}
             </div>
           )}
