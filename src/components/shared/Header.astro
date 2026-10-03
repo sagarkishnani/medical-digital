@@ -23,7 +23,7 @@ const categories: HeaderCategory[] = await Promise.all(
     .filter((category) => category.count > 0)
     .map(async ({ slug, name, count }) => {
       const cover = products.find((product) => product.categories.some((c) => c.slug === slug))?.images[0];
-      const image = cover ? await getImage({ src: cover.src, inferSize: true, width: 184, format: "webp" }) : null;
+      const image = cover ? await getImage({ src: cover.src, inferSize: true, width: 128, format: "webp" }) : null;
       return { slug, name, count, image: image?.src ?? "" };
     }),
 );
