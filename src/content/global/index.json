@@ -54,7 +54,11 @@
         ]
       }
     ],
-    "social": [],
+    "social": [
+      { "network": "linkedin", "url": "https://www.linkedin.com/company/medicaldigitalpe/" },
+      { "network": "facebook", "url": "https://www.facebook.com/medicaldigital" },
+      { "network": "instagram", "url": "https://www.instagram.com/medicaldigital/" }
+    ],
     "legal": "© 2026 Medical Digital. Todos los derechos reservados."
   },
   "whatsapp": "51983511262",
