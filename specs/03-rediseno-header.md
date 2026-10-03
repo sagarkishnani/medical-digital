@@ -103,7 +103,7 @@ nav: {
 },
 search: { placeholder },                  // "¿Qué equipo estás buscando?"
 whatsappButton: { enabled },              // WhatsApp flotante; usa global.whatsapp
-catalog: { label, file },                 // catálogo PDF; sin archivo, no se muestra
+catalog: { label, file },                 // catálogo PDF; sin archivo, se muestra sin descarga
 categoryIcons: [{ categorySlug, icon }],  // se mueve desde home.specialties.icons
 ```
 
@@ -140,7 +140,7 @@ categoryIcons: [{ categorySlug, icon }],  // se mueve desde home.specialties.ico
 **Índice de búsqueda** (`src/pages/search-index.json.ts`): solo productos.
 
 ```ts
-{ type: "product", title, brand, url /* /productos/<slug> */, image /* WebP optimizado en el build */ }
+{ title, brand, categories, featured, url /* /productos/<slug> */, image /* WebP optimizado en el build */ }
 ```
 
 **Datos que el header recibe en el build** (`Header.astro` → `HeaderReact`):
@@ -200,12 +200,12 @@ Cada paso deja el build verde y va en su propio commit.
 
 - [x] Se abre al pasar sobre "Productos" y con teclado (Enter o Espacio); se cierra al salir, con Esc o al abrir otro panel.
 - [x] Muestra las categorías de Woo con su ícono de `global.categoryIcons` y su conteo, y la foto del primer producto al pasar el mouse.
-- [x] Muestra "Ver todo el catálogo" y "Habla con un asesor"; el enlace al catálogo PDF solo aparece si hay archivo.
+- [x] Muestra "Ver todo el catálogo", "Habla con un asesor" y el catálogo PDF (descarga solo si hay archivo; ver notas).
 
 **Panel ☰ y menú mobile**
 
 - [x] El panel desktop muestra las tarjetas, las columnas y "Contáctanos" con los datos de `global.company`.
-- [x] El menú mobile tiene "Productos" como acordeón, los enlaces, "Sobre nosotros", el contacto, las redes (si hay) y "Descargar catálogo" (si hay PDF).
+- [x] El menú mobile tiene "Productos" como acordeón, los enlaces, "Sobre nosotros", el contacto, las redes (si hay) y "Descargar catálogo PDF".
 - [x] Con un panel abierto la página no se desplaza, y al cerrarlo el scroll vuelve siempre.
 
 **Búsqueda**
@@ -289,13 +289,20 @@ Cada paso deja el build verde y va en su propio commit.
 - Lenis ya estaba activo en `BaseLayout` (la SPEC 02 lo daba por descartado). Se expone en `window.lenis` para que `scrollLock` lo detenga con un panel abierto.
 - Las páginas de productos y blog pasaron de `pt-[128px]` a `pt-14`, porque el header ya no se superpone al contenido.
 - El header mide 84 + 1 px de borde en desktop y 64 + 1 px en mobile, igual que la referencia (el alto es de la fila; el borde va aparte).
-- Búsqueda: el índice incluye también los nombres de las categorías, para que funcione lo que sugiere el mensaje "prueba con otra marca o especialidad". Se buscan nombre, marca y categorías, sin distinguir tildes. Se muestran 4 resultados como máximo, como en la referencia. Con el campo vacío no se muestran productos: la referencia muestra "Más buscados", pero no hay datos de búsquedas.
+- Búsqueda: el índice incluye también los nombres de las categorías, para que funcione lo que sugiere el mensaje "prueba con otra marca o especialidad". Se buscan nombre, marca y categorías, sin distinguir tildes. Se muestran 4 resultados como máximo, como en la referencia. Con el campo vacío aparece "Más buscados", como en la referencia, con los productos que Woo marca como destacados (los mismos de la Home): no hay datos de búsquedas, así que la lista la elige el cliente desde Woo. "Ver todos los resultados" funciona sin tocar el catálogo: con texto, muestra todas las coincidencias dentro del panel (que hace scroll propio, con `data-lenis-prevent`) y solo aparece si hay más de 4; con el campo vacío lleva a `/productos`. Cuando el catálogo tenga búsqueda, puede pasar a `/productos?q=…`.
 - El texto del campo de búsqueda usa `heading-h3` (24 px) y `heading-h4` (20 px) en mobile: los 28 px de la referencia no existen en el UI Kit.
+- Enlace activo como en la referencia: texto `text-accent` y una barra `brand-primary` de 2 px sobre el borde inferior del header (en "Productos" cubre también el chevron). `aria-current` solo marca la página actual, no el mega-menú abierto.
+- Mega-menú: 4 columnas entre `lg` y `xl` y 5 desde `xl` (con 4, las 7 categorías y "Ver todo" llenan 2 filas). Celda con padding de 16 px, ícono de 32 px y foto de 64 px, con 44 px reservados para que el nombre más largo ("Hospitalización", 119 px) no se cruce con la foto; en la referencia (20 px, 34 px, foto de 92 px, texto al 58 %) se superponen.
+- Peso de la navegación y de "Cotiza aquí": `xl:text-body-md` trae `font-weight: 400` y pisaba a `font-medium`; se agregó `xl:font-medium` (500, como la referencia).
+- El rótulo vertical "MENÚ" del panel se lee de abajo hacia arriba (`rotate-180`), como en la referencia.
+- Redes del panel: logos de Phosphor Light, de línea fina como en la referencia (el footer sigue con `fa6` hasta su spec). Se cargaron en `footer.social` las URLs públicas del sitio actual del cliente: LinkedIn, Facebook e Instagram; no tiene YouTube, así que no se agregó. El footer también las muestra.
+- Catálogo PDF: por decisión del equipo se muestra como en la referencia aunque aún no haya archivo (mega-menú, panel ☰ y menú mobile). Sin `catalog.file` es un enlace sin `href` (no navega ni cuenta como enlace roto); al subir el PDF en Tina empieza a descargar. **Pendiente del cliente:** el PDF.
 - El chevron de "Productos" mantiene abierto el mega-menú si ya se abrió por hover; antes, el clic con mouse lo cerraba.
 - WhatsApp flotante: `WhatsAppButton.astro`, sin JS. Usa `FaWhatsapp` en blanco sobre `semantics-success-dark` (5:1) en lugar de la imagen de la referencia; el verde medio quedaba bajo 3:1 contra el fondo blanco.
-- Las redes del menú mobile usan logos de `react-icons/fa6`, como el de WhatsApp: son logos de marca.
 - **Pendiente para una tarea propia:** dentro del menú y la búsqueda a pantalla completa (mobile), el foco con Tab puede salir hacia la página de atrás. Resolverlo requiere atrapar el foco dentro del panel.
 - **Pendiente de decisión de diseño:** el chevron de "Productos" mide 24 × 84 px. Cumple el mínimo de 24 px de WCAG 2.5.8, pero no los 44 px del estándar; agrandarlo separa "Productos" de los demás enlaces respecto de la referencia. Es solo desktop (el mega-menú táctil está fuera de alcance).
+- **Pendiente (SPEC 01):** los nombres de Woo llegan con entidades HTML sin decodificar (por ejemplo "EASY PULSE &#8211; …"). Se ven así en el buscador, en `/productos`, en la categoría y en la ficha. Se corrige en `store.ts`.
+- **Pendiente (SPEC 02):** el mismo problema de peso en `ContactInfoReact.tsx` (`lg:text-body-lg` pisa a `font-medium`) y `BrandsReact.tsx` (`md:text-heading-h3` pisa a `font-semibold`).
 - **Pendiente (SPEC 02):** en la Home, a 320 px, el enlace "Ver todos" de `SectionHeader` desborda 29 px y genera scroll horizontal. No viene del header.
 
 ## QA realizada
