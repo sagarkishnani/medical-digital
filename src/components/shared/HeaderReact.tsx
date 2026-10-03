@@ -76,6 +76,11 @@ export default function HeaderReact({ query, variables, data: initialData, local
     lastTriggerRef.current = trigger;
     setOpenPanel((current) => (current === panel ? null : panel));
   };
+  const toggleMega = (trigger: HTMLButtonElement) => {
+    const openedByHover = lastTriggerRef.current === null;
+    lastTriggerRef.current = trigger;
+    setOpenPanel((current) => (current === "mega" && !openedByHover ? null : "mega"));
+  };
   const openMegaOnHover = () => {
     lastTriggerRef.current = null;
     setOpenPanel((current) => (current === "menu" || current === "search" ? current : "mega"));
@@ -165,7 +170,7 @@ export default function HeaderReact({ query, variables, data: initialData, local
                   {linkElement}
                   <button
                     type="button"
-                    onClick={(event) => togglePanel("mega", event.currentTarget)}
+                    onClick={(event) => toggleMega(event.currentTarget)}
                     onMouseEnter={openMegaOnHover}
                     aria-expanded={megaOpen}
                     aria-controls="products-menu"
