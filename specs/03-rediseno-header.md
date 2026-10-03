@@ -120,8 +120,8 @@ categoryIcons: [{ categorySlug, icon }],  // se mueve desde home.specialties.ico
 "cta": { "label": "Cotiza aquí" },
 "panel": {
   "cards": [
-    { "title": "Nuestros productos", "text": "Equipos por especialidad médica", "url": "/productos" },
-    { "title": "Noticias", "text": "Capacitaciones y actividades", "url": "/blog" }
+    { "image": "/uploads/menu/tarjeta-productos.webp", "title": "Nuestros productos", "text": "Equipos por especialidad médica", "url": "/productos" },
+    { "image": "/uploads/menu/tarjeta-noticias.webp", "title": "Noticias", "text": "Capacitaciones y actividades", "url": "/blog" }
   ],
   "columns": [
     { "title": "Sobre nosotros", "links": [
