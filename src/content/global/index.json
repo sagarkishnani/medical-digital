@@ -7,7 +7,7 @@
       { "label": "Noticias", "url": "/blog" },
       { "label": "Contacto", "url": "/contacto" }
     ],
-    "cta": { "label": "Cotiza aquí", "url": "/contacto" },
+    "cta": { "label": "Cotiza aquí" },
     "panel": {
       "cards": [
         { "title": "Nuestros productos", "text": "Equipos por especialidad médica", "url": "/productos" },

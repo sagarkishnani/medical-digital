@@ -41,11 +41,9 @@ export const globalCollection: Collection = {
         {
           type: "object",
           name: "cta",
-          label: "Botón principal",
-          fields: [
-            { name: "label", label: "Texto", type: "string" },
-            { name: "url", label: "URL", type: "string" },
-          ],
+          label: "Botón \"Cotiza aquí\"",
+          description: "Abre el modal de cotización.",
+          fields: [{ name: "label", label: "Texto", type: "string" }],
         },
         {
           type: "object",

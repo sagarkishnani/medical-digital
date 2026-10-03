@@ -15,6 +15,9 @@
     @apply font-heading font-medium;
   }
   /* Keyboard focus stays visible everywhere; pointer focus does not draw a ring. */
+  [id] {
+    scroll-margin-top: 6rem;
+  }
   :focus-visible {
     @apply outline-none ring-2 ring-brand-primary ring-offset-2 ring-offset-surface;
   }

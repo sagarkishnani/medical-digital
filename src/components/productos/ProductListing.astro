@@ -16,8 +16,8 @@ interface Props {
 const { title, seoTitle, seoDescription, products, categories, activeSlug } = Astro.props;
 ---
 
-<BaseLayout title={seoTitle} description={seoDescription} headerTheme="light">
-  <section class="section pt-[128px]">
+<BaseLayout title={seoTitle} description={seoDescription}>
+  <section class="section pt-14">
     <div class="container-xl">
       <p class="text-overline uppercase text-accent">Productos</p>
       <h1 class="mt-2 text-heading-h1 text-content">{title}</h1>

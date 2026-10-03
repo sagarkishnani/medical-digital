@@ -11,7 +11,7 @@ interface Props {
 export default function PageHero({ hero, breadcrumb, compact = false }: Props) {
   return (
     <section
-      className={`relative flex items-center overflow-hidden bg-gradient-primary pt-[72px] ${
+      className={`relative flex items-center overflow-hidden bg-gradient-primary ${
         compact ? "min-h-[220px] md:min-h-[340px]" : "min-h-[260px] md:min-h-[420px]"
       }`}
     >
