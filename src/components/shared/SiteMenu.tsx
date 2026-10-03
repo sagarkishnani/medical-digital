@@ -24,6 +24,16 @@ import { localizeHref, tField } from "../../utils/i18n";
 import type { Locale } from "../../i18n/config";
 import type { HeaderCategory } from "./HeaderReact";
 
+const SOCIAL_NAMES: Record<string, string> = {
+  facebook: "Facebook",
+  instagram: "Instagram",
+  linkedin: "LinkedIn",
+  tiktok: "TikTok",
+  whatsapp: "WhatsApp",
+  x: "X",
+  youtube: "YouTube",
+};
+
 const SOCIAL_ICONS: Record<string, IconType> = {
   facebook: PiFacebookLogoLight,
   instagram: PiInstagramLogoLight,
@@ -42,6 +52,8 @@ interface Props {
   categories: HeaderCategory[];
   onNavigate: () => void;
 }
+
+const touchTargetClass = "-my-2.5 block py-2.5";
 
 const sectionLabelClass = "text-caption uppercase tracking-[0.08em] text-content-subtle lg:text-heading-h2 lg:normal-case lg:tracking-normal lg:text-brand-secondary-dark";
 
@@ -62,10 +74,10 @@ export default function SiteMenu({ id, open, locale, global, categories, onNavig
   const iconFor = (slug: string) => categoryIcons.find((entry: any) => entry?.categorySlug === slug)?.icon;
 
   const contactItems = [
-    company?.phone && { icon: PiPhoneLight, content: <a href={`tel:+${phoneDigits}`}>{company.phone}</a> },
+    company?.phone && { icon: PiPhoneLight, content: <a href={`tel:+${phoneDigits}`} className={touchTargetClass}>{company.phone}</a> },
     ...emails.map((email: string) => ({
       icon: PiEnvelopeSimpleLight,
-      content: <a href={`mailto:${email}`} className="break-all">{email}</a>,
+      content: <a href={`mailto:${email}`} className={`${touchTargetClass} break-all`}>{email}</a>,
     })),
     company?.address && { icon: PiMapPinLight, content: <span className="whitespace-pre-line">{company.address}</span> },
     company?.hours && { icon: PiClockLight, content: <span>{company.hours}</span> },
@@ -174,7 +186,7 @@ export default function SiteMenu({ id, open, locale, global, categories, onNavig
                 <ul className="grid grid-cols-2 gap-3 text-body-md text-content-muted lg:flex lg:flex-col lg:text-body-lg">
                   {(column.links || []).filter((link: any) => link?.label && link?.url).map((link: any, linkIndex: number) => (
                     <li key={linkIndex}>
-                      <a href={localizeHref(link.url, locale)} onClick={onNavigate} className="hover:text-accent">
+                      <a href={localizeHref(link.url, locale)} onClick={onNavigate} className={`${touchTargetClass} hover:text-accent`}>
                         {link.label}
                       </a>
                     </li>
@@ -210,7 +222,7 @@ export default function SiteMenu({ id, open, locale, global, categories, onNavig
                           href={item.url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          aria-label={item.network}
+                          aria-label={`${SOCIAL_NAMES[item.network]} de Medical Digital`}
                           className="flex h-11 w-11 items-center justify-center text-content"
                         >
                           <SocialIcon aria-hidden="true" className="h-7 w-7" />
