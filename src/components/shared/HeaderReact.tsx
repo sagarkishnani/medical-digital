@@ -99,6 +99,7 @@ export default function HeaderReact({ query, variables, data: initialData, local
     });
   };
 
+  const activeBarClassName = "absolute -bottom-px left-2 h-0.5 bg-brand-primary xl:left-3.5";
   const menuOpen = openPanel === "menu";
   const megaOpen = openPanel === "mega";
   const searchOpen = openPanel === "search";
@@ -147,27 +148,31 @@ export default function HeaderReact({ query, variables, data: initialData, local
 
           <nav aria-label="Navegación principal" className="hidden min-w-0 flex-1 items-stretch px-1 lg:flex xl:px-5">
             {links.map((link: any, index: number) => {
-              const active = isActive(currentPath, link.url) || (link.productsMenu && megaOpen);
+              const current = isActive(currentPath, link.url);
+              const active = current || (link.productsMenu && megaOpen);
+              const hasMega = link.productsMenu && categories.length > 0;
               const linkElement = (
                 <a
                   key={index}
                   href={localizeHref(link.url, locale, link.external)}
                   target={link.external ? "_blank" : undefined}
                   rel={link.external ? "noopener noreferrer" : undefined}
-                  aria-current={active ? "page" : undefined}
-                  className={`flex items-center whitespace-nowrap px-2 text-body-sm font-medium transition-colors hover:text-accent xl:px-3.5 xl:text-body-md ${
+                  aria-current={current ? "page" : undefined}
+                  className={`relative flex items-center whitespace-nowrap px-2 text-body-sm font-medium transition-colors hover:text-accent xl:px-3.5 xl:text-body-md xl:font-medium ${
                     active ? "text-accent" : "text-brand-secondary-dark"
                   }`}
                   onMouseEnter={link.productsMenu ? openMegaOnHover : closeMegaOnLeave}
                   data-tina-field={tinaField(link, "label")}
                 >
                   {tField(link, "label", locale)}
+                  {current && !hasMega && <span aria-hidden="true" className={`${activeBarClassName} right-2 xl:right-3.5`} />}
                 </a>
               );
-              if (!link.productsMenu || categories.length === 0) return linkElement;
+              if (!hasMega) return linkElement;
               return (
-                <div key={index} className="flex items-stretch">
+                <div key={index} className="relative flex items-stretch">
                   {linkElement}
+                  {current && <span aria-hidden="true" className={`${activeBarClassName} right-0`} />}
                   <button
                     type="button"
                     onClick={(event) => toggleMega(event.currentTarget)}
@@ -191,9 +196,9 @@ export default function HeaderReact({ query, variables, data: initialData, local
               aria-expanded={searchOpen}
               aria-controls="site-search"
               aria-label={searchOpen ? "Cerrar búsqueda" : "Buscar productos"}
-              className="flex h-12 w-12 items-center justify-center text-brand-secondary-dark transition-colors hover:text-accent"
+              className="flex h-12 w-12 items-center justify-center rounded-full text-brand-secondary-dark transition-colors duration-200 lg:hover:bg-surface-raised"
             >
-              {searchOpen ? <PiXLight aria-hidden="true" className="h-7 w-7" /> : <PiMagnifyingGlassLight aria-hidden="true" className="h-7 w-7" />}
+              {searchOpen ? <PiXLight aria-hidden="true" className="h-[26px] w-[26px]" /> : <PiMagnifyingGlassLight aria-hidden="true" className="h-[26px] w-[26px]" />}
             </button>
             <button
               type="button"
@@ -212,7 +217,7 @@ export default function HeaderReact({ query, variables, data: initialData, local
               type="button"
               onClick={openQuote}
               onMouseEnter={closeMegaOnLeave}
-              className="hidden min-w-[120px] shrink basis-[200px] items-center justify-center whitespace-nowrap bg-brand-primary px-4 text-body-sm font-medium text-white transition-colors hover:bg-brand-primary-dark lg:flex xl:text-body-md"
+              className="hidden min-w-[120px] shrink basis-[200px] items-center justify-center whitespace-nowrap bg-brand-primary px-4 text-body-sm font-medium text-white transition-colors hover:bg-brand-primary-dark lg:flex xl:text-body-md xl:font-medium"
               data-tina-field={tinaField(nav.cta, "label")}
             >
               {tField(nav.cta, "label", locale)}
