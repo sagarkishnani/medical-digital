@@ -1,5 +1,6 @@
 import { PiArrowUpRightLight, PiFilePdfLight } from "react-icons/pi";
 import Icon from "./Icon";
+import { panelMotion } from "./panelMotion";
 import { mediaUrl } from "../../utils/mediaUrl";
 import { withBase } from "../../utils/url";
 import type { HeaderCategory } from "./HeaderReact";
@@ -20,7 +21,7 @@ export default function ProductsMegaMenu({ id, open, categories, categoryIcons, 
   return (
     <div
       id={id}
-      className={`absolute inset-x-0 top-full hidden border-t border-line bg-surface shadow-lg ${open ? "lg:block" : ""}`}
+      className={`absolute inset-x-0 top-full hidden border-t border-line bg-surface shadow-lg lg:block ${panelMotion(open, "-translate-y-2")}`}
     >
       <div className="mx-auto flex max-w-[1320px] flex-col gap-5 px-8 pb-7 pt-6">
         <ul className="grid grid-cols-4 border-l border-t border-line xl:grid-cols-5">

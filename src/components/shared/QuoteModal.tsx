@@ -1,4 +1,5 @@
-import { useEffect, useId, useRef } from "react";
+import { useEffect, useId, useRef, useState } from "react";
+import type { AnimationEvent } from "react";
 import { FaWhatsapp } from "react-icons/fa6";
 import { PiXLight } from "react-icons/pi";
 
@@ -25,29 +26,48 @@ const FIELDS = [
 export default function QuoteModal({ product, onClose }: Props) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const id = useId();
+  const [shown, setShown] = useState<QuoteProduct | null>(product);
+  const [closing, setClosing] = useState(false);
 
   useEffect(() => {
     const dialog = dialogRef.current;
     if (!dialog) return;
-    if (product && !dialog.open) dialog.showModal();
-    if (!product && dialog.open) dialog.close();
+    if (product) {
+      setShown(product);
+      setClosing(false);
+      if (!dialog.open) dialog.showModal();
+    } else if (dialog.open) {
+      setClosing(true);
+    }
   }, [product]);
+
+  const finishClosing = (event: AnimationEvent<HTMLDialogElement>) => {
+    if (!closing || event.target !== dialogRef.current || event.pseudoElement) return;
+    dialogRef.current.close();
+    setClosing(false);
+    setShown(null);
+  };
 
   return (
     <dialog
       ref={dialogRef}
       aria-labelledby={`${id}-title`}
       onClose={onClose}
+      onCancel={(event) => {
+        event.preventDefault();
+        onClose();
+      }}
+      onAnimationEnd={finishClosing}
       onClick={(event) => event.target === dialogRef.current && onClose()}
-      className="w-[calc(100%-2rem)] max-w-[560px] rounded-2xl bg-surface p-0 text-brand-secondary-dark backdrop:bg-brand-secondary-darkest/55 backdrop:backdrop-blur-sm"
+      className={`w-[calc(100%-2rem)] max-w-[560px] rounded-2xl bg-surface p-0 text-brand-secondary-dark backdrop:bg-brand-secondary-darkest/55 backdrop:backdrop-blur-sm ${closing ? "animate-modal-out backdrop:animate-fade-out" : "open:animate-modal-in backdrop:animate-fade-in"}`}
     >
-      {product && (
+      {shown && (
         <form className="flex flex-col gap-5 p-6 md:p-9" onSubmit={(event) => event.preventDefault()} noValidate>
           <div className="flex items-start justify-between gap-4">
             <div className="flex flex-col gap-1.5">
               <p className="text-body-sm text-content-subtle">Solicitar cotización</p>
               <h2 id={`${id}-title`} className="text-heading-h3">
-                {product.name}
+                {shown.name}
               </h2>
             </div>
             <button
@@ -95,9 +115,9 @@ export default function QuoteModal({ product, onClose }: Props) {
             <button type="button" className="btn-primary flex-1">
               Enviar solicitud
             </button>
-            {product.whatsappUrl && (
+            {shown.whatsappUrl && (
               <a
-                href={product.whatsappUrl}
+                href={shown.whatsappUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn border-semantics-success bg-surface px-5 text-semantics-success-dark hover:bg-semantics-success-lightest"

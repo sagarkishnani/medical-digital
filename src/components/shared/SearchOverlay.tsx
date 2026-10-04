@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { PiMagnifyingGlassLight } from "react-icons/pi";
 import { withBase } from "../../utils/url";
+import { panelMotion } from "./panelMotion";
 
 export interface SearchEntry {
   title: string;
@@ -67,9 +68,8 @@ export default function SearchOverlay({ id, open, placeholder, onNavigate }: Pro
   return (
     <div
       id={id}
-      hidden={!open}
       data-lenis-prevent
-      className="fixed inset-x-0 bottom-0 top-16 overflow-y-auto overscroll-contain border-t border-line bg-surface lg:absolute lg:bottom-auto lg:top-full lg:max-h-[calc(100vh-85px)] lg:shadow-lg"
+      className={`fixed inset-x-0 bottom-0 top-16 overflow-y-auto overscroll-contain border-t border-line bg-surface lg:absolute lg:bottom-auto lg:top-full lg:max-h-[calc(100vh-85px)] lg:shadow-lg ${panelMotion(open, "-translate-y-4")}`}
     >
       <div className="mx-auto flex max-w-[1120px] flex-col gap-6 px-4 py-6 lg:gap-8 lg:px-8 lg:py-9">
         <div className="flex items-center gap-3 border-b-[1.5px] border-brand-secondary-dark pb-3 focus-within:border-b-2 lg:gap-4 lg:pb-4">

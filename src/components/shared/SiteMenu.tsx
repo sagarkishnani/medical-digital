@@ -18,6 +18,7 @@ import {
   PiYoutubeLogoLight,
 } from "react-icons/pi";
 import Icon from "./Icon";
+import { panelMotion } from "./panelMotion";
 import { mediaUrl } from "../../utils/mediaUrl";
 import { withBase } from "../../utils/url";
 import { localizeHref, tField } from "../../utils/i18n";
@@ -93,8 +94,8 @@ export default function SiteMenu({ id, open, locale, global, categories, onNavig
     );
 
   return (
-    <div id={id} hidden={!open} data-lenis-prevent className="fixed inset-x-0 bottom-0 top-16 z-40 overflow-y-auto overscroll-contain bg-surface lg:top-[84px]">
-      <div className="min-h-full lg:grid lg:grid-cols-[132px_minmax(0,1fr)]">
+    <div id={id} data-lenis-prevent className={`fixed inset-x-0 bottom-0 top-16 z-40 overflow-y-auto overscroll-contain bg-surface lg:top-[84px] ${panelMotion(open)}`}>
+      <div className={`min-h-full transition-transform duration-300 ease-out lg:grid lg:grid-cols-[132px_minmax(0,1fr)] ${open ? "translate-y-0" : "-translate-y-3"}`}>
         <div className="hidden items-center justify-center border-r border-line lg:flex">
           <span className="rotate-180 text-body-md tracking-[0.5em] text-content-subtle [writing-mode:vertical-rl]">MENÚ</span>
         </div>
