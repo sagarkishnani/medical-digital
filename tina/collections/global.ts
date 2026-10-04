@@ -130,10 +130,13 @@ export const globalCollection: Collection = {
       label: "Footer",
       fields: [
         { name: "tagline", label: "Frase", type: "string" },
+        { name: "catalogTitle", label: "Título del banner del catálogo", description: "El archivo es el del bloque \"Catálogo PDF\".", type: "string" },
+        { name: "catalogButtonLabel", label: "Texto del botón del catálogo", type: "string" },
         {
           type: "object",
           name: "columns",
           label: "Columnas",
+          description: "Una categoría de productos se enlaza con su slug de WooCommerce: /productos/categoria/<slug>. Si el slug cambia en Woo, hay que actualizarlo aquí.",
           list: true,
           ui: { itemProps: (item) => ({ label: item?.title || "Columna" }) },
           fields: [
@@ -149,6 +152,30 @@ export const globalCollection: Collection = {
                 { name: "url", label: "URL", type: "string" },
               ],
             },
+          ],
+        },
+        { name: "contactTitle", label: "Título de la columna de contacto", description: "Los datos salen de \"Datos de la empresa\".", type: "string" },
+        { name: "certificationsTitle", label: "Título de las certificaciones", type: "string" },
+        {
+          type: "object",
+          name: "certifications",
+          label: "Certificaciones",
+          description: "Sin certificaciones, el bloque no se muestra.",
+          list: true,
+          ui: { itemProps: (item) => ({ label: item?.code || "Certificación" }) },
+          fields: [
+            { name: "code", label: "Código", description: "Ej.: ISO 9001:2015", type: "string" },
+            { name: "name", label: "Nombre", description: "Ej.: Sistema de Gestión de Calidad", type: "string" },
+          ],
+        },
+        {
+          type: "object",
+          name: "complaintsBook",
+          label: "Libro de Reclamaciones",
+          description: "Sin URL, el enlace no se muestra.",
+          fields: [
+            { name: "label", label: "Texto", type: "string" },
+            { name: "url", label: "URL", type: "string" },
           ],
         },
         {
@@ -167,7 +194,7 @@ export const globalCollection: Collection = {
             { name: "url", label: "URL", type: "string" },
           ],
         },
-        { name: "legal", label: "Línea legal", type: "string" },
+        { name: "legal", label: "Línea legal", description: "Sin © ni año: se agregan solos.", type: "string" },
       ],
     },
     {
@@ -180,7 +207,7 @@ export const globalCollection: Collection = {
       type: "object",
       name: "company",
       label: "Datos de la empresa",
-      description: "Los usan la página de Contacto y, más adelante, el footer.",
+      description: "Los usan la página de Contacto, el panel del menú y el footer.",
       fields: [
         { name: "address", label: "Dirección", type: "string", ui: { component: "textarea" } },
         { name: "phone", label: "Teléfono", description: "Con código de país, tal como se muestra. Ej.: (+51) 1 222-0571", type: "string" },
