@@ -72,6 +72,17 @@ export default function HeaderReact({ query, variables, data: initialData, local
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [openPanel]);
 
+  useEffect(() => {
+    if (openPanel !== "search") return;
+    const onPointerDown = (event: PointerEvent) => {
+      const target = event.target as Node;
+      if (document.getElementById("site-search")?.contains(target) || lastTriggerRef.current?.contains(target)) return;
+      setOpenPanel(null);
+    };
+    document.addEventListener("pointerdown", onPointerDown);
+    return () => document.removeEventListener("pointerdown", onPointerDown);
+  }, [openPanel]);
+
   const togglePanel = (panel: Exclude<Panel, null>, trigger: HTMLButtonElement) => {
     lastTriggerRef.current = trigger;
     setOpenPanel((current) => (current === panel ? null : panel));
