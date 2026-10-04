@@ -202,7 +202,7 @@ export default function FooterReact({ query, variables, data: initialData, local
             {complaintsBook && (
               <a
                 href={localizeHref(complaintsBook.url, locale)}
-                className="mt-1 flex items-center gap-2.5 self-start transition-colors duration-300 hover:text-brand-primary-light xl:mt-0 xl:self-auto"
+                className="mt-1 flex items-center gap-2.5 self-start xl:mt-0 xl:self-auto"
                 data-tina-field={tinaField(complaintsBook, "label")}
               >
                 <PiBookOpenLight aria-hidden="true" className="h-7 w-7 shrink-0 xl:h-8 xl:w-8" />
