@@ -136,7 +136,7 @@ export const globalCollection: Collection = {
           type: "object",
           name: "columns",
           label: "Columnas",
-          description: "Una categoría de productos se enlaza con su slug de WooCommerce: /productos/categoria/<slug>. Si el slug cambia en Woo, hay que actualizarlo aquí.",
+          description: "Una categoría de productos se enlaza con su slug de WooCommerce, por ejemplo /productos/categoria/cardiologia. Si el slug cambia en Woo, hay que actualizarlo aquí.",
           list: true,
           ui: { itemProps: (item) => ({ label: item?.title || "Columna" }) },
           fields: [
