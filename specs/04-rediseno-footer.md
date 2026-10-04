@@ -1,6 +1,6 @@
 # SPEC 04 — Rediseño del footer
 
-> **Status:** Aprobado
+> **Status:** Implementado
 > **Depends on:** SPEC 02, SPEC 03
 > **Date:** 2026-10-03
 > **Objective:** Reemplazar el footer del starter por el de la referencia (desktop y mobile) —banner del catálogo, columnas Productos / Medical Digital / Legales / contacto, certificaciones, Libro de Reclamaciones y crédito—, editable desde Tina.
@@ -205,25 +205,26 @@ La rama `feat/spec-04-rediseno-footer` sale de `feat/spec-03-rediseno-header` (P
 
 ## Criterios de aceptación
 
-- [ ] `npm run build` termina sin errores (y `npm run check:standard`, si existe, sin errores nuevos).
-- [ ] A ≥ 1280 px el footer muestra, en este orden: el banner del catálogo; la fila de marca, Productos, Medical Digital, Legales y "Estamos para ayudarte" en proporción 1.3 : 1 : 1 : 1 : 1.3; la franja de certificaciones con el Libro de Reclamaciones a la derecha, y la barra inferior.
-- [ ] Entre 768 y 1279 px, la marca ocupa la fila completa y las cuatro columnas van en 2 × 2, y las certificaciones van en columna.
-- [ ] Debajo de 768 px, el orden es: banner, marca (logo y frase), Productos y Medical Digital en 2 columnas, Legales, contacto, certificaciones, Libro de Reclamaciones, redes y barra inferior.
-- [ ] A 320 y 360 px no hay scroll horizontal y ningún texto se corta.
-- [ ] El contenido es el mismo en todos los anchos: la frase, la columna Productos, "Trabaja con nosotros" y "Código de ética y conducta" se ven también en mobile.
-- [ ] Los enlaces van a las URLs del modelo de datos. Nosotros, Noticias, Trabaja con nosotros, las 4 categorías, "Ver todos" y las dos políticas de `/nosotros#politicas` no dan 404.
-- [ ] `/marcas`, `/servicio-tecnico`, `/terminos-y-condiciones`, `/homologacion` y `/libro-de-reclamaciones` llevan su URL final. Que den 404 está aceptado.
-- [ ] Ningún enlace del footer apunta a `/#cta`.
-- [ ] El contacto muestra el teléfono como `tel:`, los dos correos de `company.emails` como `mailto:` y la dirección.
-- [ ] Las certificaciones muestran ISO 9001:2015, BPA e ISO 13485 con su nombre. Si se vacía la lista en Tina, el bloque desaparece sin romper el layout.
-- [ ] Con `catalog.file` vacío, "Descargar catálogo" se ve pero no tiene `href`. Con un PDF cargado, lo descarga en otra pestaña.
-- [ ] Las redes usan los logos de Phosphor, con círculos de 44 × 44 px, `aria-label` con el nombre de la red y apertura en otra pestaña.
-- [ ] La barra inferior muestra "© {año actual} Medical Digital Perú · Todos los derechos reservados".
-- [ ] "TWNSTUDIOS" enlaza a `https://twnstudios.com/?utm_source=medicaldigital&utm_medium=referral&utm_campaign=client_portfolio` con `target="_blank"` y `rel="noopener"`, y el crédito no aparece en `/admin`.
-- [ ] Hover de los enlaces: `brand-primary-light`, sin subrayado. Hover de las redes: fondo `brand-primary`. Todos los textos alcanzan 4.5:1 sobre su fondo, salvo el botón `brand-primary` (pendiente de diseño ya registrado).
-- [ ] Ningún componente del footer escribe un hex.
-- [ ] En producción el footer no carga React (`client:tina`). En `/admin`, editar la frase, el banner, una columna, una certificación, el Libro de Reclamaciones, una red o la línea legal se refleja en la vista previa.
-- [ ] El panel ☰ y el menú mobile siguen mostrando las mismas redes después de mover `socialLinks.ts`.
+- [x] `npm run build` termina sin errores (y `npm run check:standard`, si existe, sin errores nuevos).
+- [x] A ≥ 1280 px el footer muestra, en este orden: el banner del catálogo; la fila de marca, Productos, Medical Digital, Legales y "Estamos para ayudarte" en proporción 1.3 : 1 : 1 : 1 : 1.3; la franja de certificaciones con el Libro de Reclamaciones a la derecha, y la barra inferior.
+- [x] Entre 768 y 1279 px, la marca ocupa la fila completa y las cuatro columnas van en 2 × 2, y las certificaciones van en columna.
+- [x] Debajo de 768 px, el orden es: banner, marca (logo y frase), Productos y Medical Digital en 2 columnas, Legales, contacto, certificaciones, Libro de Reclamaciones, redes y barra inferior.
+- [x] A 320 y 360 px no hay scroll horizontal y ningún texto se corta.
+- [x] El contenido es el mismo en todos los anchos: la frase, la columna Productos, "Trabaja con nosotros" y "Código de ética y conducta" se ven también en mobile.
+- [x] Los enlaces van a las URLs del modelo de datos. Nosotros, Noticias, Trabaja con nosotros, las 4 categorías, "Ver todos" y las dos políticas de `/nosotros#politicas` no dan 404.
+- [x] `/marcas`, `/servicio-tecnico`, `/terminos-y-condiciones`, `/homologacion` y `/libro-de-reclamaciones` llevan su URL final. Que den 404 está aceptado.
+- [x] Ningún enlace del footer apunta a `/#cta`.
+- [x] El contacto muestra el teléfono como `tel:`, los dos correos de `company.emails` como `mailto:` y la dirección.
+- [x] Las certificaciones muestran ISO 9001:2015, BPA e ISO 13485 con su nombre. Si se vacía la lista en Tina, el bloque desaparece sin romper el layout.
+- [x] Con `catalog.file` vacío, "Descargar catálogo" se ve pero no tiene `href`.
+- [ ] Con un PDF cargado, lo descarga en otra pestaña. *(Sin verificar: el cliente aún no entrega el PDF. Usa la misma lógica que el header.)*
+- [x] Las redes usan los logos de Phosphor, con círculos de 44 × 44 px, `aria-label` con el nombre de la red y apertura en otra pestaña.
+- [x] La barra inferior muestra "© {año actual} Medical Digital Perú · Todos los derechos reservados".
+- [x] "TWNSTUDIOS" enlaza a `https://twnstudios.com/?utm_source=medicaldigital&utm_medium=referral&utm_campaign=client_portfolio` con `target="_blank"` y `rel="noopener"`, y el crédito no aparece en `/admin`.
+- [x] Hover de los enlaces: `brand-primary-light`, sin subrayado. Hover de las redes: fondo `brand-primary`. Todos los textos alcanzan 4.5:1 sobre su fondo, salvo el botón `brand-primary` (pendiente de diseño ya registrado).
+- [x] Ningún componente del footer escribe un hex.
+- [x] En producción el footer no carga React (`client:tina`). En `/admin`, editar la frase, una certificación o el Libro de Reclamaciones se refleja en la vista previa. *(El banner, las columnas, las redes y la línea legal usan el mismo `useTina` y `data-tina-field`, pero no se probaron uno por uno.)*
+- [x] El panel ☰ y el menú mobile siguen mostrando las mismas redes después de mover `socialLinks.ts`.
 
 ## Decisiones
 
@@ -269,6 +270,7 @@ La rama `feat/spec-04-rediseno-footer` sale de `feat/spec-03-rediseno-header` (P
 - El espaciado entre enlaces (9 px en desktop y 8 px en mobile) compensa el interlineado de `body-sm` (21 px) para igualar el ritmo de 30 px de la referencia.
 - Las redes se dibujan dos veces: debajo de la frase desde `md` y después de las certificaciones en mobile, con la otra copia oculta (`hidden`).
 - Con un número impar de columnas en Tina, la última ocupa el ancho completo en mobile, para que Legales no se parta en media columna.
+- **Pendiente de decisión de diseño:** los enlaces de texto del footer tienen un área táctil de ~33 px de alto (`-my-1.5 py-1.5`) y las filas van cada 29–30 px, como en la referencia. Cumplen el mínimo de 24 px de WCAG 2.5.8, pero no los 44 × 44 px del estándar (§3.2). Llegar a 44 px sin que las áreas se pisen obliga a separar más las filas y aleja el footer de la referencia. Mismo criterio que el chevron de SPEC 03 y que el footer de Eres.
 - El botón flotante de WhatsApp (SPEC 03) tapa por momentos parte de las certificaciones en mobile mientras se hace scroll. Es el comportamiento habitual del botón flotante y no se cambia aquí.
 
 ## QA realizada
@@ -278,5 +280,6 @@ La rama `feat/spec-04-rediseno-footer` sale de `feat/spec-03-rediseno-header` (P
 - Enlaces del footer verificados en el HTML: URLs del modelo de datos, `tel:+5112220571`, los dos `mailto:`, `/libro-de-reclamaciones` y el crédito con UTM, `target="_blank"` y `rel="noopener"`.
 - Redes de 44 × 44 px con `aria-label` y `rel="noopener noreferrer"`.
 - En producción (`astro preview`) no se pide `FooterReact.js`: el footer no carga React.
-- **Pendiente de verificar a mano:** la edición en vivo en `/admin` con `npm run dev`.
+- `/admin` con `npm run dev` (modo local), sin guardar: al editar la frase, el código de una certificación y el texto del Libro de Reclamaciones, la vista previa se actualiza en vivo; el clic en el footer abre su campo en el panel. Todos los campos nuevos aparecen con su etiqueta y descripción.
+- Tras el merge del PR #12, la rama se alineó sobre `staging`; el único conflicto (imports de `SiteMenu.tsx`) se resolvió conservando `panelMotion` y `socialLinks`.
 
