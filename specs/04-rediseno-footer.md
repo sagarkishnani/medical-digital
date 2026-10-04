@@ -40,8 +40,8 @@ El footer es un bloque con fondo oscuro fijo: la excepción que admite el `CLAUD
 
 | Ancho | Columnas | Gap |
 |---|---|---|
-| ≥ `lg` (1024 px) | `1.3fr 1fr 1fr 1fr 1.3fr`: marca, Productos, Medical Digital, Legales y contacto | 36 px |
-| `md` a `lg` | La marca ocupa la fila completa; las cuatro columnas en 2 × 2 | 36 px |
+| ≥ `xl` (1280 px) | `1.3fr 1fr 1fr 1fr 1.3fr`: marca, Productos, Medical Digital, Legales y contacto | 36 px |
+| `md` a `xl` (768–1279 px) | La marca ocupa la fila completa; las cuatro columnas en 2 × 2 | 36 px |
 | < `md` | Productos y Medical Digital en 2 columnas; Legales debajo; contacto a todo el ancho | 24 px |
 
 - **Marca:** logo de `nav.logo` en blanco (`brightness-0 invert`) de 30 px (26 px en mobile), la frase en `body-sm` (14 px, interlineado 1.6) `brand-tertiary-light` con `max-w-[260px]` y, en desktop, las redes debajo.
@@ -57,7 +57,7 @@ El footer es un bloque con fondo oscuro fijo: la excepción que admite el `CLAUD
 **Franja de certificaciones**
 
 - `border-y border-brand-secondary` y padding vertical de 24 px (20 px en mobile).
-- Desktop: en fila con `justify-between`; a la izquierda el rótulo "CERTIFICACIONES" y las certificaciones con gap de 32 px; a la derecha el Libro de Reclamaciones. Mobile: en columna con gap de 16 px.
+- Desktop (≥ `xl`): en fila con `justify-between`; a la izquierda el rótulo "CERTIFICACIONES" y las certificaciones con gap de 32 px; a la derecha el Libro de Reclamaciones. Mobile: en columna con gap de 16 px.
 - Cada certificación: círculo de 52 px (44 en mobile) con borde `brand-tertiary-light` y `PiCertificateLight` de 26 px (22 en mobile) del mismo color; código en `body-sm` peso 500 y nombre en `caption` `brand-tertiary-light`.
 - Libro de Reclamaciones: `PiBookOpenLight` de 32 px (28 en mobile) y el texto en 13 px, en dos líneas en desktop y en una en mobile.
 
@@ -75,7 +75,7 @@ El footer es un bloque con fondo oscuro fijo: la excepción que admite el `CLAUD
 
 **Entra:**
 
-- Reescribir `FooterReact.tsx` con el layout de la referencia en los tres anchos (< `md`, `md`–`lg`, ≥ `lg`).
+- Reescribir `FooterReact.tsx` con el layout de la referencia en los tres anchos (< `md`, `md`–`xl`, ≥ `xl`).
 - Mismo contenido en desktop y mobile: solo cambia el layout.
 - Banner del catálogo con el archivo de `global.catalog.file`. Sin archivo, el botón se muestra pero no descarga, como en el header (SPEC 03).
 - Columnas Productos, Medical Digital y Legales desde `footer.columns`, con los enlaces del modelo de datos.
@@ -186,12 +186,12 @@ La rama `feat/spec-04-rediseno-footer` sale de `feat/spec-03-rediseno-header` (P
 2. **Redes compartidas.**
    - Mover `SOCIAL_NAMES` y `SOCIAL_ICONS` de `SiteMenu.tsx` a `src/components/shared/socialLinks.ts` y que `SiteMenu.tsx` los importe desde ahí.
    - *Prueba:* el panel ☰ y el menú mobile muestran las mismas redes que antes.
-3. **Footer desktop (≥ `lg`).**
+3. **Footer desktop (≥ `xl`).**
    - Reescribir `FooterReact.tsx` con el banner del catálogo, la grilla de 5 columnas (marca con redes, tres columnas del CMS y contacto), la franja de certificaciones y el Libro de Reclamaciones, y la barra inferior con el año y el crédito.
    - Cada texto editable lleva `data-tina-field`, y el logo pasa por `mediaUrl()`.
    - *Prueba:* a 1280 y 1440 px se ve como la referencia desktop.
 4. **Tablet y mobile.**
-   - De `md` a `lg`, la marca ocupa la fila completa y las columnas van en 2 × 2.
+   - De `md` a `xl`, la marca ocupa la fila completa y las columnas van en 2 × 2.
    - Debajo de `md`, se aplican el apilado y los tamaños mobile: el banner en columna con el botón a todo el ancho, Productos y Medical Digital en 2 columnas, las certificaciones en columna, las redes después de las certificaciones y la barra inferior en columna.
    - *Prueba:* a 320, 360, 390 y 768 px no hay scroll horizontal y el orden es el de la referencia mobile.
 5. **Hidratación.**
@@ -206,8 +206,8 @@ La rama `feat/spec-04-rediseno-footer` sale de `feat/spec-03-rediseno-header` (P
 ## Criterios de aceptación
 
 - [ ] `npm run build` termina sin errores (y `npm run check:standard`, si existe, sin errores nuevos).
-- [ ] A ≥ 1024 px el footer muestra, en este orden: el banner del catálogo; la fila de marca, Productos, Medical Digital, Legales y "Estamos para ayudarte" en proporción 1.3 : 1 : 1 : 1 : 1.3; la franja de certificaciones con el Libro de Reclamaciones a la derecha, y la barra inferior.
-- [ ] Entre 768 y 1023 px, la marca ocupa la fila completa y las cuatro columnas van en 2 × 2.
+- [ ] A ≥ 1280 px el footer muestra, en este orden: el banner del catálogo; la fila de marca, Productos, Medical Digital, Legales y "Estamos para ayudarte" en proporción 1.3 : 1 : 1 : 1 : 1.3; la franja de certificaciones con el Libro de Reclamaciones a la derecha, y la barra inferior.
+- [ ] Entre 768 y 1279 px, la marca ocupa la fila completa y las cuatro columnas van en 2 × 2, y las certificaciones van en columna.
 - [ ] Debajo de 768 px, el orden es: banner, marca (logo y frase), Productos y Medical Digital en 2 columnas, Legales, contacto, certificaciones, Libro de Reclamaciones, redes y barra inferior.
 - [ ] A 320 y 360 px no hay scroll horizontal y ningún texto se corta.
 - [ ] El contenido es el mismo en todos los anchos: la frase, la columna Productos, "Trabaja con nosotros" y "Código de ética y conducta" se ven también en mobile.
@@ -246,6 +246,7 @@ La rama `feat/spec-04-rediseno-footer` sale de `feat/spec-03-rediseno-header` (P
 | **Sí:** `socialLinks.ts` compartido entre el panel ☰ y el footer | Mismos nombres y logos en los dos lugares; criterio de Eres. |
 | **Sí:** paleta `brand-*` y `bg-white/5` dentro del footer | Bloque de fondo oscuro fijo: la excepción que admite el `CLAUDE.md`. `#262C52` no es token y no se agrega uno para un solo uso. |
 | **Sí:** redes de 44 px en vez de 42 | Target táctil del estándar. |
+| **Sí:** las 5 columnas y la franja de certificaciones en fila desde `xl` (1280 px), no desde `lg` | A 1024 px el área útil es de 960 px: los correos se partían a mitad de palabra y Legales y las certificaciones ocupaban dos líneas. La referencia está diseñada a 1440 px. Decidido durante la implementación. *(Elección del usuario.)* |
 | **Sí:** la rama sale de `feat/spec-03-rediseno-header` y no de `staging` | El footer usa `SiteMenu.tsx`, `global.catalog` y las redes del PR #11, que aún no está mergeado. Tras el merge se alinea con `git rebase --onto origin/staging feat/spec-03-rediseno-header` y recién entonces se abre el PR. *(Elección del usuario.)* |
 
 ## Riesgos
@@ -258,3 +259,24 @@ La rama `feat/spec-04-rediseno-footer` sale de `feat/spec-03-rediseno-header` (P
 | Si la revisión pide cambios en el header, la rama del footer queda desalineada. | Los cambios se hacen en la rama del header y el footer se vuelve a alinear con el mismo `rebase --onto`. El PR del footer no se abre hasta el merge del header. |
 | `client:tina` no reflejara la edición en vivo. | Ya se usa en Nosotros y Noticias; el paso 5 lo verifica en `/admin`. |
 | El blanco sobre "Descargar catálogo" (`brand-primary`) queda en 4.08:1. | Mismo pendiente de diseño que `btn-primary`, ya registrado en el `CLAUDE.md`. |
+
+## Notas de implementación
+
+- Rama `feat/spec-04-rediseno-footer`, creada desde `feat/spec-03-rediseno-header`. Antes de abrir el PR se alinea con `git rebase --onto origin/staging feat/spec-03-rediseno-header`.
+- El interior usa `container-xl` (1280 px, padding de 20/32 px) en lugar de los 1320 px de la referencia, para alinear el footer con el resto de las páginas (lección de Fiberlux: un solo contenedor global).
+- "Descargar catálogo" usa `btn-primary` (48 px y `body-md`) en lugar de 50 px y 15 px: es el botón del UI Kit.
+- Para no usar tamaños sueltos, los títulos de columna van en `overline` (12 px) también en mobile (la referencia usa 11 px) y el Libro de Reclamaciones en `body-sm` (14 px, la referencia usa 13 px).
+- El espaciado entre enlaces (9 px en desktop y 8 px en mobile) compensa el interlineado de `body-sm` (21 px) para igualar el ritmo de 30 px de la referencia.
+- Las redes se dibujan dos veces: debajo de la frase desde `md` y después de las certificaciones en mobile, con la otra copia oculta (`hidden`).
+- Con un número impar de columnas en Tina, la última ocupa el ancho completo en mobile, para que Legales no se parta en media columna.
+- El botón flotante de WhatsApp (SPEC 03) tapa por momentos parte de las certificaciones en mobile mientras se hace scroll. Es el comportamiento habitual del botón flotante y no se cambia aquí.
+
+## QA realizada
+
+- `npm run build:local` y `tsc --noEmit` sin errores; `npm run check:standard`: 0 errores (el aviso de `og:image` es previo).
+- Playwright sobre `/nosotros` a 320, 360, 390, 768, 1024, 1280 y 1440 px: sin scroll horizontal, comparado con capturas de las dos referencias (1440 y 390 px).
+- Enlaces del footer verificados en el HTML: URLs del modelo de datos, `tel:+5112220571`, los dos `mailto:`, `/libro-de-reclamaciones` y el crédito con UTM, `target="_blank"` y `rel="noopener"`.
+- Redes de 44 × 44 px con `aria-label` y `rel="noopener noreferrer"`.
+- En producción (`astro preview`) no se pide `FooterReact.js`: el footer no carga React.
+- **Pendiente de verificar a mano:** la edición en vivo en `/admin` con `npm run dev`.
+

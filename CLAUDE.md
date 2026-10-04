@@ -100,7 +100,9 @@ Los tipos, las queries y el cliente se generan en `tina/__generated__/`
 Colecciones:
 
 - `global` — header (`nav`: logo, enlaces, "Cotiza aquí" y el panel ☰ con
-  tarjetas y columnas), footer, SEO por defecto, código inyectado, el WhatsApp
+  tarjetas y columnas), footer (banner del catálogo, columnas de enlaces,
+  certificaciones, Libro de Reclamaciones, redes y línea legal), SEO por
+  defecto, código inyectado, el WhatsApp
   comercial (lo usan "Solicitar cotización" y el botón flotante, que se
   enciende con `whatsappButton.enabled`), el placeholder de la búsqueda
   (`search`), el catálogo PDF (`catalog`), los íconos de cada categoría de Woo
@@ -154,8 +156,8 @@ componentes existentes. Las clases reutilizables (botones, `card`, `section`,
 sitio.
 
 Iconos: `react-icons`. El UI Kit usa **Phosphor Light** (`react-icons/pi`, sufijo
-`Light`); las redes del header usan sus logos de Phosphor (`Pi…LogoLight`), como
-la referencia, y el logo de WhatsApp de los botones va con `react-icons/fa6`. Cuando el
+`Light`); las redes del header y del footer usan sus logos de Phosphor
+(`Pi…LogoLight`, en `src/components/shared/socialLinks.ts`), como la referencia, y el logo de WhatsApp de los botones va con `react-icons/fa6`. Cuando el
 editor elige el ícono en Tina, las opciones están en `src/lib/icons.ts` y se
 dibujan con `src/components/shared/Icon.tsx`.
 
@@ -184,7 +186,7 @@ semánticos, y por eso el tema se puede cambiar sin tocar una sola clase.
 | Token | Para qué | Valor |
 |---|---|---|
 | `surface` | Fondo de la página | `#FFFFFF` |
-| `surface-raised` | Tarjetas, footer | `#F7F7F8` |
+| `surface-raised` | Tarjetas | `#F7F7F8` |
 | `content` | Texto principal (azul marino de marca) | `#3A4066` |
 | `content-muted` | Texto secundario | `#3F3F3F` |
 | `content-subtle` | Metadatos | `#717274` |
@@ -193,13 +195,14 @@ semánticos, y por eso el tema se puede cambiar sin tocar una sola clase.
 
 `content`, `content-muted` y `content-subtle` cumplen 4.5:1 sobre `surface` y
 `surface-raised`, **salvo `content-subtle` sobre `surface-raised` (4.4975:1)**:
-no lo uses para texto dentro de tarjetas o footer hasta oscurecerlo. Si cambias
+no lo uses para texto dentro de tarjetas hasta oscurecerlo. Si cambias
 un tono, vuelve a medir.
 
 **Nunca escribas `text-white/65` ni `bg-white/5`**: asumen fondo oscuro y rompen
 el tema. Las únicas excepciones legítimas son los bloques con fondo oscuro fijo
-(el scrim del hero sobre una foto, el degradado de marca del CTA) y el texto
-sobre `bg-brand-primary`.
+(el scrim del hero sobre una foto, el degradado de marca del CTA, el footer
+navy) y el texto sobre `bg-brand-primary`. El footer usa la paleta `brand-*`
+en vez de los tokens semánticos.
 
 Para "texto en color de marca" usa `text-accent`, **no** `text-brand-primary-light`:
 sobre fondo claro ese tono es ilegible.
