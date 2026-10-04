@@ -7,6 +7,7 @@ interface Props {
   variables: object;
   data: any;
   categories: WooCategory[];
+  categoryIcons: { categorySlug: string; icon: string }[];
 }
 
 const { query, variables, data } = Astro.props;
@@ -15,4 +16,4 @@ const categories = Astro.props.categories
   .map(({ slug, name, count }) => ({ slug, name, count }));
 ---
 
-<SpecialtiesReact query={query} variables={variables} data={data} categories={categories} client:tina />
+<SpecialtiesReact query={query} variables={variables} data={data} categories={categories} categoryIcons={Astro.props.categoryIcons} client:tina />

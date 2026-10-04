@@ -1,14 +1,48 @@
 {
   "nav": {
+    "logo": "/uploads/marca/logo-medical-digital.svg",
     "logoAlt": "Medical Digital",
     "links": [
-      { "label": "Inicio", "url": "/" },
-      { "label": "Nosotros", "url": "/nosotros" },
-      { "label": "Productos", "url": "/productos" },
+      { "label": "Productos", "url": "/productos", "productsMenu": true },
+      { "label": "Noticias", "url": "/blog" },
       { "label": "Contacto", "url": "/contacto" }
     ],
-    "cta": { "label": "Conversemos", "url": "/contacto" }
+    "cta": { "label": "Cotiza aquí" },
+    "panel": {
+      "cards": [
+        { "image": "/uploads/menu/tarjeta-productos.webp", "title": "Nuestros productos", "text": "Equipos por especialidad médica", "url": "/productos" },
+        { "image": "/uploads/menu/tarjeta-noticias.webp", "title": "Noticias", "text": "Capacitaciones y actividades", "url": "/blog" }
+      ],
+      "columns": [
+        {
+          "title": "Sobre nosotros",
+          "links": [
+            { "label": "Quiénes somos", "url": "/nosotros#quienes" },
+            { "label": "Misión y visión", "url": "/nosotros#mision" },
+            { "label": "Valores", "url": "/nosotros#valores" },
+            { "label": "Políticas", "url": "/nosotros#politicas" }
+          ]
+        },
+        {
+          "title": "Atención al cliente",
+          "links": [{ "label": "Contacto", "url": "/contacto" }]
+        }
+      ],
+      "contactTitle": "Contáctanos"
+    }
   },
+  "search": { "placeholder": "¿Qué equipo estás buscando?" },
+  "whatsappButton": { "enabled": true },
+  "catalog": { "label": "Catálogo PDF · Medicina General Perú" },
+  "categoryIcons": [
+    { "categorySlug": "cardiologia", "icon": "heart" },
+    { "categorySlug": "emergencia", "icon": "ambulance" },
+    { "categorySlug": "consultorio-clinico", "icon": "stethoscope" },
+    { "categorySlug": "hospitalizacion", "icon": "hospital" },
+    { "categorySlug": "sala-de-operaciones", "icon": "kit-medical" },
+    { "categorySlug": "sistemas-clinicos", "icon": "monitor" },
+    { "categorySlug": "diagnostico-respiratorio", "icon": "lungs" }
+  ],
   "footer": {
     "tagline": "Medical Digital cuida la salud del Perú con tecnología médica de marcas líderes en diagnóstico y soporte vital.",
     "columns": [
@@ -20,7 +54,11 @@
         ]
       }
     ],
-    "social": [],
+    "social": [
+      { "network": "linkedin", "url": "https://www.linkedin.com/company/medicaldigitalpe/" },
+      { "network": "facebook", "url": "https://www.facebook.com/medicaldigital" },
+      { "network": "instagram", "url": "https://www.instagram.com/medicaldigital/" }
+    ],
     "legal": "© 2026 Medical Digital. Todos los derechos reservados."
   },
   "whatsapp": "51983511262",

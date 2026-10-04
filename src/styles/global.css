@@ -7,12 +7,16 @@
 @layer base {
   html {
     scroll-behavior: smooth;
+    scrollbar-gutter: stable;
   }
   body {
     @apply bg-surface text-content font-sans antialiased;
   }
   h1, h2, h3, h4, h5, h6 {
     @apply font-heading font-medium;
+  }
+  [id] {
+    scroll-margin-top: 6rem;
   }
   /* Keyboard focus stays visible everywhere; pointer focus does not draw a ring. */
   :focus-visible {

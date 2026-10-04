@@ -1,4 +1,5 @@
 import type { Collection } from "tinacms";
+import { ICON_OPTIONS } from "../../src/lib/icons";
 
 /**
  * Site-wide content: navigation, footer, SEO defaults and code injection.
@@ -29,17 +30,98 @@ export const globalCollection: Collection = {
             { name: "label", label: "Texto", type: "string" },
             { name: "url", label: "URL", type: "string" },
             { name: "external", label: "Abre en otra pestaña", type: "boolean" },
+            {
+              name: "productsMenu",
+              label: "Abre el mega-menú de productos",
+              description: "Activarlo solo en \"Productos\": muestra las categorías de WooCommerce.",
+              type: "boolean",
+            },
           ],
         },
         {
           type: "object",
           name: "cta",
-          label: "Botón principal",
+          label: "Botón \"Cotiza aquí\"",
+          description: "Abre el modal de cotización.",
+          fields: [{ name: "label", label: "Texto", type: "string" }],
+        },
+        {
+          type: "object",
+          name: "panel",
+          label: "Panel del menú ☰",
           fields: [
-            { name: "label", label: "Texto", type: "string" },
-            { name: "url", label: "URL", type: "string" },
+            {
+              type: "object",
+              name: "cards",
+              label: "Tarjetas con imagen",
+              list: true,
+              ui: { itemProps: (item) => ({ label: item?.title || "Tarjeta" }) },
+              fields: [
+                { name: "image", label: "Imagen", type: "image" },
+                { name: "imageAlt", label: "Texto alternativo de la imagen", type: "string" },
+                { name: "title", label: "Título", type: "string" },
+                { name: "text", label: "Texto", type: "string" },
+                { name: "url", label: "URL", type: "string" },
+              ],
+            },
+            {
+              type: "object",
+              name: "columns",
+              label: "Columnas de enlaces",
+              list: true,
+              ui: { itemProps: (item) => ({ label: item?.title || "Columna" }) },
+              fields: [
+                { name: "title", label: "Título", type: "string" },
+                {
+                  type: "object",
+                  name: "links",
+                  label: "Enlaces",
+                  list: true,
+                  ui: { itemProps: (item) => ({ label: item?.label || "Enlace" }) },
+                  fields: [
+                    { name: "label", label: "Texto", type: "string" },
+                    { name: "url", label: "URL", type: "string" },
+                  ],
+                },
+              ],
+            },
+            { name: "contactTitle", label: "Título de la columna de contacto", type: "string" },
           ],
         },
+      ],
+    },
+    {
+      type: "object",
+      name: "search",
+      label: "Búsqueda",
+      fields: [{ name: "placeholder", label: "Texto del campo de búsqueda", type: "string" }],
+    },
+    {
+      type: "object",
+      name: "whatsappButton",
+      label: "Botón flotante de WhatsApp",
+      fields: [{ name: "enabled", label: "Mostrar el botón", type: "boolean" }],
+    },
+    {
+      type: "object",
+      name: "catalog",
+      label: "Catálogo PDF",
+      description: "Sin archivo, los enlaces al catálogo se muestran pero no descargan nada.",
+      fields: [
+        { name: "label", label: "Texto del enlace en el menú de productos", type: "string" },
+        { name: "file", label: "Archivo PDF", type: "image" },
+      ],
+    },
+    {
+      type: "object",
+      name: "categoryIcons",
+      label: "Íconos por categoría de productos",
+      description: "Los usan el menú de productos y la sección de especialidades de la Home.",
+      list: true,
+      ui: { itemProps: (item) => ({ label: item?.categorySlug || "Categoría" }) },
+      fields: [
+        { name: "categorySlug", label: "Slug de la categoría en WooCommerce", type: "string" },
+        { name: "icon", label: "Ícono", type: "string", options: ICON_OPTIONS },
       ],
     },
     {

@@ -18,6 +18,9 @@ const [global, posts, featuredProducts, categories] = await Promise.all([
   getCategories(),
 ]);
 const whatsappNumber = global.data.global.whatsapp || "";
+const categoryIcons = (global.data.global.categoryIcons || []).flatMap((entry) =>
+  entry?.categorySlug && entry.icon ? [{ categorySlug: entry.categorySlug, icon: entry.icon }] : [],
+);
 const seo = data.home.seo;
 const section = { query, variables, data };
 ---
@@ -25,7 +28,7 @@ const section = { query, variables, data };
 <BaseLayout title={seo?.title} description={seo?.description}>
   <HomeSlider {...section} />
   <FeaturedProducts {...section} products={featuredProducts} whatsappNumber={whatsappNumber} />
-  <Specialties {...section} categories={categories} />
+  <Specialties {...section} categories={categories} categoryIcons={categoryIcons} />
   <HomeAbout {...section} />
   <Brands {...section} />
   <Testimonials {...section} />

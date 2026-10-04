@@ -33,16 +33,7 @@
   "specialties": {
     "title": "Encuentra el equipo según tu especialidad",
     "linkLabel": "Ver catálogo completo",
-    "catalogLabel": "Ver todo el catálogo",
-    "icons": [
-      { "categorySlug": "cardiologia", "icon": "heart" },
-      { "categorySlug": "emergencia", "icon": "ambulance" },
-      { "categorySlug": "consultorio-clinico", "icon": "stethoscope" },
-      { "categorySlug": "hospitalizacion", "icon": "hospital" },
-      { "categorySlug": "sala-de-operaciones", "icon": "kit-medical" },
-      { "categorySlug": "sistemas-clinicos", "icon": "monitor" },
-      { "categorySlug": "diagnostico-respiratorio", "icon": "lungs" }
-    ]
+    "catalogLabel": "Ver todo el catálogo"
   },
   "about": {
     "image": "/uploads/home/conoce-mas-medico-paciente.webp",

@@ -14,15 +14,14 @@ import { getLocale, tField } from "../utils/i18n";
 import { isLocale } from "../i18n/config";
 import "../styles/global.css";
 import CookieConsent from "../components/cookies/CookieConsent.astro";
+import WhatsAppButton from "../components/shared/WhatsAppButton.astro";
 
 interface Props {
   title?: string;
   description?: string;
-  /** Header over a light page: solid background from the start. */
-  headerTheme?: "light" | "dark";
 }
 
-const { title, description, headerTheme = "dark" } = Astro.props;
+const { title, description } = Astro.props;
 
 const locale = isLocale(Astro.currentLocale) ? Astro.currentLocale : getLocale(Astro.url);
 
@@ -121,11 +120,12 @@ try {
       </main>
     ) : (
       <>
-        <Header locale={locale} theme={headerTheme} />
+        <Header locale={locale} />
         <main>
           <slot />
         </main>
         <Footer locale={locale} />
+        {globalData?.whatsappButton?.enabled && globalData?.whatsapp && <WhatsAppButton phone={globalData.whatsapp} />}
         <CookieConsent />
       </>
     )}
@@ -141,6 +141,7 @@ try {
         if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
         lenis?.destroy();
         lenis = new Lenis({ duration: 1.1, smoothWheel: true });
+        (window as unknown as { lenis: unknown }).lenis = lenis;
         const raf = (time: number) => {
           lenis?.raf(time);
           requestAnimationFrame(raf);
