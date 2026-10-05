@@ -165,5 +165,10 @@ export default {
       },
     },
   },
-  plugins: [require('@tailwindcss/typography')],
+  plugins: [
+    require('@tailwindcss/typography'),
+    function ({ addVariant }) {
+      addVariant('can-hover', '@media (hover: hover) and (pointer: fine)');
+    },
+  ],
 };

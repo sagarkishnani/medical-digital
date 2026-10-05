@@ -20,7 +20,7 @@ const specialty = showSpecialty ? product.categories[0]?.name : undefined;
 
 <article
   class:list={[
-    "group relative flex h-full flex-col rounded-2xl border border-line bg-surface transition-[box-shadow,transform,border-color] duration-300 hover:-translate-y-1.5 hover:border-greyscale-light hover:shadow-lg",
+    "group relative flex h-full flex-col rounded-2xl border border-line bg-surface transition-[box-shadow,transform,border-color] duration-300 can-hover:hover:-translate-y-1.5 can-hover:hover:border-greyscale-light can-hover:hover:shadow-lg",
     compactOnMobile ? "p-1.5 md:p-2.5" : "p-2 md:p-2.5",
   ]}
 >
@@ -38,7 +38,7 @@ const specialty = showSpecialty ? product.categories[0]?.name : undefined;
         width={480}
         format="webp"
         loading={eager ? "eager" : "lazy"}
-        class="h-3/4 w-3/4 object-contain mix-blend-multiply transition-transform duration-300 group-hover:scale-105"
+        class="h-3/4 w-3/4 object-contain mix-blend-multiply transition-transform duration-300 can-hover:group-hover:scale-105"
       />
     )}
   </div>
@@ -56,7 +56,7 @@ const specialty = showSpecialty ? product.categories[0]?.name : undefined;
       data-quote-url={quoteUrl}
       aria-haspopup="dialog"
       class:list={[
-        "btn min-w-0 flex-1 bg-brand-secondary-dark text-body-sm text-white hover:bg-brand-tertiary-dark",
+        "btn min-w-0 flex-1 bg-brand-secondary-dark text-body-sm text-white can-hover:hover:bg-brand-tertiary-dark",
         compactOnMobile ? "h-11 px-3 md:h-12 md:px-4" : "px-4",
       ]}
     >
@@ -73,7 +73,7 @@ const specialty = showSpecialty ? product.categories[0]?.name : undefined;
       href={href}
       aria-label={`Ver ${product.name}`}
       class:list={[
-        "flex shrink-0 items-center justify-center rounded-pill bg-surface-raised text-brand-secondary-dark transition-colors hover:bg-brand-primary hover:text-white",
+        "flex shrink-0 items-center justify-center rounded-pill bg-surface-raised text-brand-secondary-dark transition-colors can-hover:hover:bg-brand-primary can-hover:hover:text-white",
         compactOnMobile ? "h-11 w-11 md:h-12 md:w-12" : "h-12 w-12",
       ]}
     >

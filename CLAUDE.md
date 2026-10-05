@@ -174,6 +174,10 @@ componentes existentes. Las clases reutilizables (botones, `card`, `section`,
 **BaseLayout importa** — un CSS que nadie importa no se bundlea y no llega al
 sitio.
 
+La variante `can-hover:` (plugin en `tailwind.config.mjs`) aplica los hover solo
+con mouse (`hover: hover` y `pointer: fine`): úsala en tarjetas y efectos que no
+deben quedar "pegados" al tocar en mobile, p. ej. `can-hover:hover:shadow-lg`.
+
 Iconos: `react-icons`. El UI Kit usa **Phosphor Light** (`react-icons/pi`, sufijo
 `Light`). Excepciones que entregó diseño: los logos de las redes y de WhatsApp van
 con `react-icons/fa6` (las redes se mapean en `src/components/shared/socialLinks.ts`)
