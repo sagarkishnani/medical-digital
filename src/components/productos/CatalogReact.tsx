@@ -87,7 +87,6 @@ export default function CatalogReact({ items, facets, implicitSpecialty, product
   const specialty = facets.specialties.find((item) => item.slug === state.especialidad);
   const activeFilters: ActiveFilter[] = [
     ...(specialty ? [{ key: "especialidad", label: specialty.name, onRemove: () => selectSpecialty(null) }] : []),
-    ...(state.q ? [{ key: "q", label: `“${state.q}”`, onRemove: () => update({ ...state, q: "", pagina: 1 }) }] : []),
     ...state.marca.map((slug) => ({
       key: `marca-${slug}`,
       label: facets.brands.find((brand) => brand.slug === slug)?.name ?? slug,
@@ -145,7 +144,12 @@ export default function CatalogReact({ items, facets, implicitSpecialty, product
         </div>
         <div ref={resultsRef} className="flex flex-col gap-4 pt-4 lg:gap-6 lg:pt-0 [html[data-catalog-pending]_&]:opacity-0">
           <div className="flex items-center justify-between gap-4 lg:min-h-11">
-            <ActiveFilters total={result.total} filters={activeFilters} onClear={clearFilters} />
+            <ActiveFilters
+              total={result.total}
+              filters={activeFilters}
+              canClear={activeFilters.length > 0 || state.q !== ""}
+              onClear={clearFilters}
+            />
             <div className="hidden shrink-0 self-start lg:block">
               <SortMenu value={state.orden} onChange={setSort} />
             </div>

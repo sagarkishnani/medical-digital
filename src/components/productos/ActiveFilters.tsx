@@ -9,13 +9,14 @@ export interface ActiveFilter {
 interface Props {
   total: number;
   filters: ActiveFilter[];
+  canClear: boolean;
   onClear: () => void;
 }
 
 const chipClassName =
   "relative inline-flex h-8 items-center gap-1.5 rounded-pill bg-brand-tertiary-lightest pl-3 pr-2.5 text-caption font-medium text-brand-tertiary-dark transition-colors hover:bg-brand-tertiary-light/40 lg:pl-3.5 lg:text-body-sm after:absolute after:inset-x-0 after:-inset-y-1.5 after:content-['']";
 
-export default function ActiveFilters({ total, filters, onClear }: Props) {
+export default function ActiveFilters({ total, filters, canClear, onClear }: Props) {
   return (
     <div className="flex flex-wrap items-center gap-2 lg:gap-2.5">
       <p aria-live="polite" className="text-body-sm text-content-subtle lg:text-body-md">
@@ -33,7 +34,7 @@ export default function ActiveFilters({ total, filters, onClear }: Props) {
           <PiXLight aria-hidden="true" className="h-3.5 w-3.5" />
         </button>
       ))}
-      {filters.length > 0 && (
+      {canClear && (
         <button
           type="button"
           onClick={onClear}

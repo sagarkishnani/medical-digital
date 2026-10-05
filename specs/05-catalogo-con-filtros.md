@@ -406,6 +406,8 @@ Cada una de esas piezas, si llega, va en su propia spec.
 - **Hoja de filtros como `<dialog>` nativo**, igual que `QuoteModal`: el foco queda atrapado y vuelve al botón "Filtros" al cerrar. Entra con 16 px de desplazamiento y fundido (`sheet-in`, 300 ms), no desde fuera de la pantalla, por la regla de desplazamiento del estándar (§4).
 - **Tamaños de texto con tokens.** Los 15 px de la referencia van en `body-md` y los 13 px en `body-sm`; el H1 usa `heading-h2` en mobile y `heading-h1` (44 px) en desktop.
 - **Chip de especialidad.** La especialidad activa aparece como chip. En `/productos` su ✕ la quita sin recargar; en una landing lleva a `/productos` conservando los demás parámetros.
+- **Sin chip de búsqueda.** Como en la referencia, los chips son solo de especialidad y marca: un chip de búsqueda cambiaba letra por letra mientras se escribía. El término ya se ve en el campo, y "Limpiar" aparece también cuando solo hay búsqueda.
+- **Modal de cotización en mobile.** `QuoteModal` (SPEC 03) tenía "Enviar solicitud" aplastado a 18 px por un `flex-1` en columna, y el campo de consulta con la altura de un input. Se corrigió en esta rama porque el catálogo lo usa en cada tarjeta.
 - **Especialidad en la URL (revisión).** Se cambió de navegación a la landing a filtro `?especialidad=` tras detectar el delay y un bug de historial con `ClientRouter`. `BaseLayout` acepta `viewTransitions` (por defecto `true`).
 - **Facetas de marca por página.** En una categoría solo se listan las marcas con productos en ella; una marca de la URL que no existe ahí se ignora.
 - **Sidebar más alto que la pantalla (≈1450 px a 1280 × 900).** Queda fijo a 112 px (`top-28`) y sube junto con el final de la grilla, como en la referencia.
