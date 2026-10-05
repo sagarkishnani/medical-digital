@@ -40,7 +40,7 @@ export default function BrandFilter({ brands, selected, counts, onToggle, large 
           const checked = selected.includes(brand.slug);
           return (
             <li key={brand.slug}>
-              <label className={`flex cursor-pointer items-center gap-3 ${large ? "min-h-12 text-body-md" : "min-h-11 text-body-md"}`}>
+              <label className={`relative flex cursor-pointer items-center gap-3 ${large ? "min-h-12 text-body-md" : "min-h-11 text-body-md"}`}>
                 <input
                   type="checkbox"
                   checked={checked}

@@ -49,9 +49,9 @@ export default function FilterSheet({ open, total, onClose, onClear, children }:
       }}
       onAnimationEnd={finishClosing}
       onClick={(event) => event.target === dialogRef.current && onClose()}
-      className={`mb-0 mt-auto max-h-[86vh] w-full max-w-full flex-col rounded-t-2xl bg-surface p-0 text-brand-secondary-dark backdrop:bg-brand-secondary-darkest/50 open:flex md:mx-auto md:max-w-lg lg:hidden ${closing ? "animate-sheet-out backdrop:animate-fade-out" : "open:animate-sheet-in backdrop:animate-fade-in"}`}
+      className={`mb-0 mt-auto max-h-[86vh] w-full max-w-full flex-col overflow-hidden rounded-t-2xl bg-surface p-0 text-brand-secondary-dark backdrop:bg-brand-secondary-darkest/50 open:flex md:mx-auto md:max-w-lg lg:hidden ${closing ? "animate-sheet-out backdrop:animate-fade-out" : "open:animate-sheet-in backdrop:animate-fade-in"}`}
     >
-      <div className="flex items-center justify-between border-b border-line px-4 py-3">
+      <div className="flex shrink-0 items-center justify-between border-b border-line px-4 py-3">
         <h2 id={`${id}-title`} className="text-heading-h4">
           Filtros
         </h2>
@@ -64,10 +64,10 @@ export default function FilterSheet({ open, total, onClose, onClear, children }:
           <PiXLight aria-hidden="true" className="h-5 w-5" />
         </button>
       </div>
-      <div data-lenis-prevent className="flex flex-col gap-5 overflow-y-auto overscroll-contain px-4 pb-5 pt-3">
+      <div data-lenis-prevent className="flex min-h-0 flex-1 flex-col gap-5 overflow-y-auto overscroll-contain px-4 pb-5 pt-3">
         {children}
       </div>
-      <div className="flex gap-2.5 border-t border-line px-4 pb-5 pt-3.5">
+      <div className="flex shrink-0 gap-2.5 border-t border-line px-4 pb-5 pt-3.5">
         <button
           type="button"
           onClick={onClear}
