@@ -4,12 +4,16 @@ import SearchField from "./SearchField";
 import SpecialtyList from "./SpecialtyList";
 import BrandFilter from "./BrandFilter";
 import AdvisorCard from "./AdvisorCard";
+import SortMenu from "./SortMenu";
+import ActiveFilters from "./ActiveFilters";
+import type { ActiveFilter } from "./ActiveFilters";
 import { useCatalogState } from "./useCatalogState";
 import QuoteModal from "../shared/QuoteModal";
 import type { QuoteProduct } from "../shared/QuoteModal";
 import { applyFilters } from "../../utils/catalog/applyFilters";
 import { serializeCatalogUrl } from "../../utils/catalog/urlState";
-import type { CatalogFacets, CatalogItem } from "../../utils/catalog/types";
+import { DEFAULT_CATALOG_STATE } from "../../utils/catalog/types";
+import type { CatalogFacets, CatalogItem, SortKey } from "../../utils/catalog/types";
 
 interface Props {
   items: CatalogItem[];
@@ -37,6 +41,20 @@ export default function CatalogReact({ items, facets, activeSpecialty, productsH
       pagina: 1,
       marca: state.marca.includes(slug) ? state.marca.filter((brand) => brand !== slug) : [...state.marca, slug],
     });
+  const setSort = (orden: SortKey) => update({ ...state, orden, pagina: 1 });
+  const clearFilters = () => update(DEFAULT_CATALOG_STATE);
+
+  const specialty = facets.specialties.find((item) => item.slug === activeSpecialty);
+  const activeFilters: ActiveFilter[] = [
+    ...(specialty ? [{ key: "especialidad", label: specialty.name, href: `${productsHref}${specialtyQuery}` }] : []),
+    ...(state.q ? [{ key: "q", label: `“${state.q}”`, onRemove: () => update({ ...state, q: "", pagina: 1 }) }] : []),
+    ...state.marca.map((slug) => ({
+      key: `marca-${slug}`,
+      label: facets.brands.find((brand) => brand.slug === slug)?.name ?? slug,
+      onRemove: () => toggleBrand(slug),
+    })),
+  ];
+
   const openAdvisor = () => setQuote({ name: "Asesoría comercial", whatsappUrl: advisorUrl });
 
   return (
@@ -66,7 +84,13 @@ export default function CatalogReact({ items, facets, activeSpecialty, productsH
         <AdvisorCard onContact={openAdvisor} />
       </aside>
 
-      <div className="flex flex-col gap-6">
+      <div className="flex flex-col gap-4 lg:gap-6">
+        <div className="flex items-center justify-between gap-4 lg:min-h-11">
+          <ActiveFilters total={result.total} filters={activeFilters} onClear={clearFilters} />
+          <div className="hidden shrink-0 self-start lg:block">
+            <SortMenu value={state.orden} onChange={setSort} />
+          </div>
+        </div>
         <ul className="grid grid-cols-2 gap-2.5 lg:grid-cols-3 lg:gap-5">
           {result.items.map((item) => (
             <ProductCard
