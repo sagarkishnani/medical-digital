@@ -185,8 +185,10 @@ Componentes reutilizables (úsalos antes de escribir uno nuevo):
 - `src/components/shared/PageHero.tsx` — cabecera de página interna con
   breadcrumb.
 - `src/components/shared/QuoteModal.tsx` — modal "Solicitar cotización".
-- `src/components/productos/ProductCard.tsx` — tarjeta de producto de la home
-  y del catálogo.
+- `src/components/productos/ProductCard.astro` — tarjeta de producto de la home
+  y del catálogo, en Astro puro. Su botón lleva `data-quote-name` y
+  `data-quote-url`: `HeaderReact` escucha esos clics y abre el `QuoteModal`.
+  Cualquier botón con esos atributos abre la cotización sin una isla propia.
 - `src/utils/url.ts` (`withBase`) — rutas internas escritas en el código.
 - `src/utils/scrollLock.ts` — bloquea y libera el scroll de la página (también
   detiene Lenis, expuesto en `window.lenis`). Úsalo en todo panel o modal a

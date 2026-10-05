@@ -124,7 +124,7 @@ Todos los valores se escriben con tokens, nunca en hex. Breakpoints del estánda
 - **Estado vacío** con "Limpiar filtros".
 - **Mobile y tablet:** barra sticky con buscador, "Filtros (n)" y orden, y una hoja inferior con especialidades y marcas.
 - **Cotizar desde la tarjeta:** "Solicitar cotización" (y "Cotizar" en mobile) abre `QuoteModal` con el producto.
-- **Tarjeta compartida:** se extrae la tarjeta de `FeaturedProductsReact` a un componente que usan la home y el catálogo.
+- **Tarjeta compartida en Astro puro** (`ProductCard.astro`), la misma para la home y el catálogo (estándar §2.1).
 - Se eliminan `ProductListing.astro`, `ProductCard.astro` y `CategoryNav.astro`, que quedan sin uso.
 
 **Fuera de alcance (para specs futuras):**
@@ -150,28 +150,29 @@ export interface WooProduct {
 - `brandSlug` sale de `raw.brands[0].slug`. Se agrega junto a `brand`, sin cambiarlo, para no tocar la home, el header ni la búsqueda.
 - "Más relevantes" necesita los destacados: `getFeaturedProducts()` ya existe y el build lo usa para ordenar.
 
-### Tarjeta compartida (`src/components/productos/ProductCard.tsx`)
+### Tarjeta compartida (`src/components/productos/ProductCard.astro`)
 
 ```ts
-export interface ProductCardData {
-  href: string;
-  name: string;
-  brand: string | null;
-  specialty: string | null;
+interface Props {
+  product: WooProduct;
   quoteUrl: string;
-  image: { src: string; alt: string; width: number; height: number } | null;
+  showSpecialty?: boolean;
+  compactOnMobile?: boolean;
+  eager?: boolean;
 }
 ```
 
-- Reemplaza a `FeaturedCard`. La home pasa `specialty: null` y la tarjeta solo la muestra si llega.
-- La tarjeta recibe `onQuote(card)`. El `QuoteModal` vive en la isla que la contiene (home o catálogo).
+- Astro puro, sin hidratar: es HTML estático en la home y en el catálogo. La imagen pasa por `<Image>` (480 px, WebP).
+- `eager` carga sin `lazy` las tarjetas de la primera fila del catálogo (LCP).
+- "Solicitar cotización" es un `<button data-quote-name data-quote-url>`. `HeaderReact`, que ya tiene el `QuoteModal` en todas las páginas, escucha esos clics y abre el modal. No hay una isla por tarjeta.
+- En la home, `FeaturedProductsReact` (`client:tina`) solo dibuja el encabezado editable y las tarjetas se renderizan en Astro, como en `eres-skin-studio`.
 
 ### Catálogo serializado (`src/utils/catalog/types.ts`, seguro para el navegador)
 
 ```ts
-export interface CatalogItem extends ProductCardData {
+export interface CatalogItem {
   id: number;
-  sku: string;
+  name: string;
   brandSlug: string | null;
   categories: string[];
   search: string;
@@ -193,7 +194,8 @@ export interface CatalogState {
 }
 ```
 
-- `src/lib/woo/catalog.ts` (`buildCatalog()`, solo build) arma `items` y `facets`, con las imágenes optimizadas (`getImage`, 480 px, WebP) y el `quoteUrl` de `buildQuoteUrl()`.
+- `src/lib/woo/catalog.ts` (`buildCatalog(category?)`, solo build) devuelve `products` (ordenados por `rank`), `items` y `facets`. La isla solo recibe `items` y `facets`: no recibe imágenes ni descripciones.
+- `CatalogPage.astro` renderiza todas las tarjetas como *children* de `CatalogReact`, dentro de `<li data-catalog-item={id}>`; desde la 13.ª salen con `hidden`. La isla aplica `hidden` y `style.order` sobre esos `<li>` (mismo patrón que `eres-skin-studio`).
 - `search` es el texto normalizado (minúsculas, sin tildes por `NFD`) de nombre, marca y SKU.
 - `rank`: primero los destacados y después el orden en que Woo devuelve los productos.
 - `categories` son slugs. En `/productos/categoria/<slug>` la isla recibe solo los productos de esa especialidad, más `activeSpecialty`.
@@ -231,8 +233,9 @@ Esta spec no toca Tina: no hay schema nuevo.
    - Agregar `brandSlug` a `WooProduct` y a la proyección de `store.ts`.
    - Verificación: `npm run build` pasa con y sin `WOO_STORE_URL`.
 3. **Tarjeta compartida.**
-   - Extraer la tarjeta de `FeaturedProductsReact` a `src/components/productos/ProductCard.tsx` (`ProductCardData` y `onQuote`), con `specialty` opcional.
-   - La home la usa sin cambios visuales. Verificación: la home se ve igual en 360 y 1280 px.
+   - Crear `src/components/productos/ProductCard.astro` a partir de la tarjeta de `FeaturedProductsReact`, con `showSpecialty`, `compactOnMobile` y `eager`.
+   - La home la usa sin cambios visuales; `FeaturedProductsReact` queda solo con el encabezado (`client:tina`).
+   - `HeaderReact` abre el `QuoteModal` con los botones `[data-quote-name]`. Verificación: la home se ve igual en 360 y 1280 px.
 4. **Modelo del catálogo.**
    - Crear `src/utils/catalog/{types,urlState,applyFilters}.ts`.
    - Verificación con `node --experimental-strip-types`:
@@ -240,12 +243,12 @@ Esta spec no toca Tina: no hay schema nuevo.
      - buscar `"electrocardiografo"` encuentra "Electrocardiógrafo";
      - dos marcas devuelven la unión de ambas.
 5. **Datos en build.**
-   - Crear `src/lib/woo/catalog.ts` con `buildCatalog(category?)`: `items` con imagen optimizada y `quoteUrl`, `facets` y `rank` con los destacados primero.
+   - Crear `src/lib/woo/catalog.ts` con `buildCatalog(category?)`: `products`, `items`, `facets` y `rank` con los destacados primero.
    - Solo se importa desde `.astro`.
 6. **Plantilla compartida sin interacción.**
-   - Crear `src/components/productos/CatalogPage.astro` (cabecera con miga y H1) y `CatalogReact.tsx` (`client:load`), que renderiza la página 1 en la grilla.
+   - Crear `src/components/productos/CatalogPage.astro` (cabecera con miga, H1 y las tarjetas Astro) y `CatalogReact.tsx` (`client:load`), que recibe las tarjetas como *children*.
    - Las dos rutas usan `CatalogPage`.
-   - Borrar `ProductListing.astro`, `ProductCard.astro` y `CategoryNav.astro`.
+   - Borrar `ProductListing.astro` y `CategoryNav.astro`; `ProductCard.astro` se reescribe como la tarjeta compartida.
    - Verificación: las dos rutas compilan y muestran 12 tarjetas.
 7. **Sidebar desktop:**
    - "Buscar producto…" con `<label>` oculto;
@@ -347,8 +350,9 @@ Esta spec no toca Tina: no hay schema nuevo.
 - **Sí: definición guiada por las recomendaciones.** Por pedido del usuario, se sigue la referencia, el estándar y la forma de trabajo de las specs de `eres-skin-studio` (09 y 10).
 - **Sí: filtrar en el navegador sobre datos generados en build.** Con 45 productos, el catálogo entero cabe en la página: es instantáneo y no consulta WordPress en runtime (SPEC 01).
 - **No: filtrar contra la Store API en vivo.** Suma latencia y dependencia de WordPress a cambio de nada con este tamaño de catálogo.
-- **Sí: una isla React que renderiza la grilla (`client:load`).** La tarjeta de la home ya es React y se reutiliza en vez de duplicarla en Astro. Astro la renderiza en build, así que el HTML trae la página 1 sin JavaScript.
-- **No: tarjetas Astro controladas desde el DOM (patrón de Eres).** Allá servía por el `QuickAdd` anidado; aquí obligaría a mantener dos tarjetas (Astro y React para la home).
+- **Sí: tarjetas Astro controladas desde el DOM (patrón de `eres-skin-studio`).** El estándar (§2.1) pide que la tarjeta de Woo sea Astro puro. La isla filtra con `hidden` y `order`, y el HTML trae los 45 productos para SEO.
+- **No: una isla React que renderiza la grilla.** Fue la primera implementación: contradecía el estándar §2.1 y pagaba React por tarjetas sin estado. Se corrigió en la misma rama.
+- **Sí: el `QuoteModal` del header abre las cotizaciones de las tarjetas** con `data-quote-name`/`data-quote-url`. El header ya hidrata en todas las páginas, así que no suma JS ni una isla por tarjeta.
 - **Sí: `/productos/categoria/<slug>` como página estática con la especialidad activa.** Conserva URLs indexables y los enlaces del mega-menú. Mismo criterio que Eres.
 - **No: especialidad como parámetro de URL o de selección múltiple.** La referencia la trata como selección única, y un parámetro haría que el H1 no coincida con la página.
 - **Sí: estado en la query string con `pushState`.** Se puede compartir, el "atrás" funciona y otras páginas pueden enlazar a vistas filtradas.
@@ -387,24 +391,26 @@ Cada una de esas piezas, si llega, va en su propia spec.
 
 - **Paso 1 sin el `fix/` de entidades HTML.** Por decisión del usuario se implementó sin esperar el fix: "EASY PULSE &#8211; …" sigue mostrando la entidad en el catálogo hasta que se corrija `store.ts`.
 - **`npm run build` necesita TinaCloud.** En local se verificó con `npm run build:local`; no dejó cambios en `tina/`.
-- **Tarjeta compartida.** `ProductCard.tsx` reemplaza la tarjeta de `FeaturedProductsReact`. La variante del catálogo (`compactOnMobile`) muestra "Cotizar" y oculta la especialidad por debajo de `md`.
+- **Tarjeta compartida en Astro.** La primera versión extrajo la tarjeta a React (`ProductCard.tsx`) y la isla dibujaba la grilla. En la revisión contra el estándar (§2.1) y contra `eres-skin-studio` se rehízo en Astro, con la isla controlando el DOM. La variante del catálogo (`compactOnMobile`) muestra "Cotizar" y oculta la especialidad por debajo de `md`.
+- **Ajustes al estándar en la misma revisión:** la miga pasa a `content-muted` (`content-subtle` sobre `surface-raised` da 4.4975:1); el borde del checkbox sin marcar pasa a `greyscale-medium` (3:1 de contraste de componente); la especialidad activa va en navy, como la referencia, y solo "Todos los productos" usa `text-accent`; las medidas sueltas se reemplazan por la escala de Tailwind (`h-12`, `h-11`, `w-52`, `top-28`…); las 3 primeras tarjetas cargan con `loading="eager"`; los enlaces de la miga amplían su área táctil.
 - **Botones de la tarjeta mobile de 44 px**, no de 40 px como la referencia: prevalece el área táctil del estándar (§3.2).
 - **Chips de 32/34 px de alto** con un área táctil extendida a 44 px mediante un pseudo-elemento.
 - **Hoja de filtros como `<dialog>` nativo**, igual que `QuoteModal`: el foco queda atrapado y vuelve al botón "Filtros" al cerrar. Entra con 16 px de desplazamiento y fundido (`sheet-in`, 300 ms), no desde fuera de la pantalla, por la regla de desplazamiento del estándar (§4).
 - **Tamaños de texto con tokens.** Los 15 px de la referencia van en `body-md` y los 13 px en `body-sm`; el H1 usa `heading-h2` en mobile y `heading-h1` (44 px) en desktop.
 - **Chip de especialidad.** En `/productos/categoria/<slug>` la especialidad aparece como chip; su ✕ lleva a `/productos` conservando los demás parámetros.
 - **Facetas de marca por página.** En una categoría solo se listan las marcas con productos en ella; una marca de la URL que no existe ahí se ignora.
-- **Sidebar más alto que la pantalla (≈1450 px a 1280 × 900).** Queda fijo a 108 px y sube junto con el final de la grilla, como en la referencia.
-- **Presupuesto de JS.** `check:standard` mide 148 KB gzipped en la página más pesada (la home), dentro del límite de 150 KB pero muy cerca.
+- **Sidebar más alto que la pantalla (≈1450 px a 1280 × 900).** Queda fijo a 112 px (`top-28`) y sube junto con el final de la grilla, como en la referencia.
+- **Presupuesto de JS.** `check:standard` mide 149 KB gzipped en la página más pesada (la home), dentro del límite de 150 KB pero muy cerca.
 
 ## QA realizada
 
 Build local (`npm run build:local`) y `npm run check:standard` (0 errores, 1 aviso previo: páginas sin `og:image`). Playwright sobre `astro preview` el 2026-10-04:
 
-- **1280 px:** sidebar con 8 especialidades y 11 marcas; 12 tarjetas por página; búsqueda sin tilde ("espirometro" → 2 resultados, `?q=espirometro`); marca Schiller (27) y unión Schiller + Edan (29); conteos de marca estables; "atrás" deshace; chips y "Limpiar"; orden A–Z; `Esc` cierra el orden; "Siguiente" escribe `?pagina=2` y deja la grilla visible bajo el header; parámetros inválidos ignorados; estado vacío y "Limpiar filtros"; especialidad conserva `?marca=`; H1, miga y `aria-current` en Cardiología; modal con el producto y enlace de WhatsApp con su nombre; asesor genérico; sidebar sticky a 108 px; destacados de Woo primero.
+- **1280 px:** sidebar con 8 especialidades y 11 marcas; 12 tarjetas por página; búsqueda sin tilde ("espirometro" → 2 resultados, `?q=espirometro`); marca Schiller (27) y unión Schiller + Edan (29); conteos de marca estables; "atrás" deshace; chips y "Limpiar"; orden A–Z; `Esc` cierra el orden; "Siguiente" escribe `?pagina=2` y deja la grilla visible bajo el header; parámetros inválidos ignorados; estado vacío y "Limpiar filtros"; especialidad conserva `?marca=`; H1, miga y `aria-current` en Cardiología; modal con el producto y enlace de WhatsApp con su nombre; asesor genérico; sidebar sticky a 112 px; especialidad activa en navy; destacados de Woo primero; la home mantiene 4 tarjetas y su cotización abre el modal.
 - **URL directa:** `/productos?marca=schiller` con JS demorado: la grilla queda en opacidad 0 hasta hidratar y aparece ya filtrada.
 - **320, 360 y 768 px:** sin scroll horizontal (también con la hoja abierta); 2 columnas; barra sticky a 64 px; la hoja bloquea y libera el scroll, se cierra con `Esc` y devuelve el foco a "Filtros (1)"; "Ver 27 productos"; buscador de 16 px.
-- **1024 px:** 3 columnas, sin scroll horizontal.
+- **1024 y 1536 px:** 3 columnas, sin scroll horizontal.
+- **HTML estático:** `/productos` trae los 45 productos (33 con `hidden`) y 3 imágenes con `loading="eager"`.
 - Sin errores de JavaScript en consola.
 - El ejemplo "electrocardiógrafo" de los criterios no existe en Woo; la búsqueda sin tilde se verificó con "espirometro".
 
