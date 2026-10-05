@@ -131,7 +131,7 @@ Todos los valores se escriben con tokens, nunca en hex. Breakpoints del estánda
 **Fuera de alcance (para specs futuras):**
 
 - Ficha de producto `/productos/<slug>`: galería, ficha técnica PDF, especificaciones, accesorios y video (SPEC 06).
-- Exponer los campos de JetEngine en la REST API: depende de la aprobación de Sagar y va con la SPEC 06.
+- Exponer los campos de JetEngine en la REST API: depende de la aprobación del revisor y va con la SPEC 06.
 - Subcategorías, sello de garantía y orden "Mayor garantía": no hay datos en Woo.
 - Página de marcas y logos de marca.
 - El bug de entidades HTML en los nombres (`store.ts`): va en un `fix/` aparte, antes de implementar esta spec.
