@@ -61,7 +61,7 @@ Todos los valores se escriben con tokens, nunca en hex. Breakpoints del estánda
 - **Buscar:** input de 52 px, radio de 14 px (`rounded-xl`), lupa de 20 px a la izquierda y texto de 15 px. Lleva un `<label>` visualmente oculto.
 - **Especialidades:**
   - Tarjeta con `border-line`, radio de 18 px (`rounded-2xl`) y padding de 24 px. Título de 20 px, peso 500.
-  - "Todos los productos" y una fila por especialidad: enlaces de 15 px con padding de 10 px. La activa va en `text-accent`, peso 500.
+  - "Todos los productos" y una fila por especialidad: enlaces de 15 px con padding de 10 px. La activa va en navy, peso 500; "Todos los productos" activo va en `text-accent` (como la referencia).
   - Sin acordeón ni caret: no hay subcategorías.
 - **Marcas:**
   - Misma tarjeta, con un input "Buscar marca…" de 42 px.
@@ -115,7 +115,8 @@ Todos los valores se escriben con tokens, nunca en hex. Breakpoints del estánda
 - `/productos` con cabecera, catálogo filtrable y "¿Necesitas ayuda?", según la referencia desktop y mobile.
 - `/productos/categoria/<slug>` con la misma plantilla y la especialidad activa. Sigue siendo una página estática indexable; los enlaces del mega-menú (SPEC 03) no cambian.
 - **Búsqueda local** "Buscar producto…": filtra la grilla por nombre, marca y SKU, sin distinguir tildes ni mayúsculas.
-- **Especialidades:** enlaces de selección única, de "Todos los productos" a `/productos/categoria/<slug>`. Al navegar se conservan marca, orden y búsqueda.
+- **Especialidades:** filtro de selección única en la URL (`?especialidad=`), instantáneo en `/productos`. Son enlaces con `href` real (funcionan sin JS) que la isla intercepta. En `/productos/categoria/<slug>` la especialidad va implícita en la ruta; elegir otra lleva a `/productos?especialidad=…` con `location.assign`, conservando marca, orden y búsqueda (patrón de `eres-skin-studio`).
+- **Sin view transitions en el catálogo:** `CatalogPage` pasa `viewTransitions={false}` a `BaseLayout`, como Eres, para que `ClientRouter` no compita con el historial del catálogo.
 - **Marcas:** selección múltiple con checkbox y conteo, más el buscador "Buscar marca…".
 - **Orden:** Más relevantes (destacados de Woo primero y después el orden de Woo), Nombre A–Z y Nombre Z–A.
 - **Chips** por cada filtro activo, "Limpiar" y el conteo "N productos".
@@ -187,6 +188,7 @@ export interface CatalogFacets {
 export type SortKey = "relevantes" | "a-z" | "z-a";
 
 export interface CatalogState {
+  especialidad: string | null;
   q: string;
   marca: string[];
   orden: SortKey;
@@ -198,13 +200,14 @@ export interface CatalogState {
 - `CatalogPage.astro` renderiza todas las tarjetas como *children* de `CatalogReact`, dentro de `<li data-catalog-item={id}>`; desde la 13.ª salen con `hidden`. La isla aplica `hidden` y `style.order` sobre esos `<li>` (mismo patrón que `eres-skin-studio`).
 - `search` es el texto normalizado (minúsculas, sin tildes por `NFD`) de nombre, marca y SKU.
 - `rank`: primero los destacados y después el orden en que Woo devuelve los productos.
-- `categories` son slugs. En `/productos/categoria/<slug>` la isla recibe solo los productos de esa especialidad, más `activeSpecialty`.
+- `categories` son slugs. En `/productos/categoria/<slug>` la isla recibe solo los productos de esa especialidad, más `implicitSpecialty`, y no escribe `especialidad` en la URL.
 - Los conteos de marca se calculan con la especialidad y la búsqueda aplicadas, sin el filtro de marca.
 
 ### URL (`src/utils/catalog/urlState.ts`)
 
 | Parámetro | Formato | Ejemplo | Por defecto (se omite) |
 |---|---|---|---|
+| `especialidad` | slug de categoría (solo en `/productos`) | `cardiologia` | ninguna |
 | `q` | texto | `holter` | vacío |
 | `marca` | slugs separados por coma | `schiller,edan` | ninguna |
 | `orden` | `SortKey` | `a-z` | `relevantes` |
@@ -214,7 +217,8 @@ export interface CatalogState {
 - Si `pagina` supera el total, se usa la última.
 - Cualquier cambio de filtro, búsqueda u orden vuelve a la página 1.
 - La búsqueda escribe la URL con `replaceState` y un debounce de 300 ms, para no llenar el historial. Los demás cambios usan `pushState`.
-- Los enlaces de especialidad conservan `q`, `marca` y `orden`, y descartan `pagina`.
+- Elegir una especialidad conserva `q`, `marca` y `orden`, y vuelve a la página 1.
+- En una landing de categoría, cambiar de especialidad, quitar su chip o "Limpiar" navegan a `/productos` con `location.assign`.
 
 ### Reglas de filtrado (`src/utils/catalog/applyFilters.ts`)
 
@@ -252,7 +256,7 @@ Esta spec no toca Tina: no hay schema nuevo.
    - Verificación: las dos rutas compilan y muestran 12 tarjetas.
 7. **Sidebar desktop:**
    - "Buscar producto…" con `<label>` oculto;
-   - "Especialidades" como enlaces, con la activa resaltada;
+   - "Especialidades" como filtro de selección única (enlaces interceptados), con la activa resaltada;
    - "Marcas" con buscador, checkboxes y conteos;
    - "¿Necesitas ayuda?";
    - sticky bajo el header.
@@ -310,8 +314,10 @@ Esta spec no toca Tina: no hay schema nuevo.
 
 **Especialidades y rutas**
 
-- [ ] Clic en "Cardiología" lleva a `/productos/categoria/cardiologia`, con miga Inicio / Productos / Cardiología, H1 "Cardiología" y la especialidad resaltada.
-- [ ] Con `?marca=schiller` activo, clic en otra especialidad conserva `?marca=schiller`.
+- [ ] En `/productos`, clic en "Cardiología" filtra sin recargar, escribe `?especialidad=cardiologia`, la resalta y agrega su chip.
+- [ ] Con `?marca=schiller` activo, elegir una especialidad conserva `marca=schiller`, y "atrás" vuelve al estado anterior.
+- [ ] `/productos/categoria/cardiologia` muestra la miga Inicio / Productos / Cardiología, el H1 "Cardiología" y 13 productos.
+- [ ] En esa landing, marcar una marca no cambia la ruta; elegir "Emergencia" lleva a `/productos?especialidad=emergencia` conservando la marca, y "atrás" vuelve a la landing.
 - [ ] Los enlaces del mega-menú del header siguen funcionando.
 
 **Paginación y URL**
@@ -341,7 +347,7 @@ Esta spec no toca Tina: no hay schema nuevo.
 **Accesibilidad**
 
 - [ ] Todo el catálogo se usa con teclado y el foco siempre es visible.
-- [ ] Los checkboxes son `<input type="checkbox">` con label, y la especialidad activa lleva `aria-current="page"`.
+- [ ] Los checkboxes son `<input type="checkbox">` con label, y la especialidad activa lleva `aria-current="true"`.
 - [ ] El conteo de resultados se anuncia en una región `aria-live="polite"`.
 - [ ] Con `prefers-reduced-motion` no hay transiciones de desplazamiento.
 
@@ -353,8 +359,10 @@ Esta spec no toca Tina: no hay schema nuevo.
 - **Sí: tarjetas Astro controladas desde el DOM (patrón de `eres-skin-studio`).** El estándar (§2.1) pide que la tarjeta de Woo sea Astro puro. La isla filtra con `hidden` y `order`, y el HTML trae los 45 productos para SEO.
 - **No: una isla React que renderiza la grilla.** Fue la primera implementación: contradecía el estándar §2.1 y pagaba React por tarjetas sin estado. Se corrigió en la misma rama.
 - **Sí: el `QuoteModal` del header abre las cotizaciones de las tarjetas** con `data-quote-name`/`data-quote-url`. El header ya hidrata en todas las páginas, así que no suma JS ni una isla por tarjeta.
-- **Sí: `/productos/categoria/<slug>` como página estática con la especialidad activa.** Conserva URLs indexables y los enlaces del mega-menú. Mismo criterio que Eres.
-- **No: especialidad como parámetro de URL o de selección múltiple.** La referencia la trata como selección única, y un parámetro haría que el H1 no coincida con la página.
+- **Sí: `/productos/categoria/<slug>` como landing estática con la especialidad implícita.** Conserva URLs indexables y los enlaces del mega-menú. Mismo criterio que Eres.
+- **Sí: especialidad como parámetro (`?especialidad=`) en `/productos`.** Filtra al instante, como `?categoria=` en Eres. La primera versión navegaba a la landing en cada clic: se sentía lenta y, con `ClientRouter`, el "atrás" dejaba la página desincronizada de la URL.
+- **No: especialidad de selección múltiple.** La referencia la trata como selección única.
+- **Sí: `viewTransitions={false}` en el catálogo.** `ClientRouter` y el `pushState` del catálogo se pisaban el historial. Eres lo resuelve igual.
 - **Sí: estado en la query string con `pushState`.** Se puede compartir, el "atrás" funciona y otras páginas pueden enlazar a vistas filtradas.
 - **Sí: `replaceState` con debounce para la búsqueda.** Una entrada de historial por tecla rompería el "atrás".
 - **Sí: paginación de 12.** La referencia no pagina, pero 45 tarjetas con imagen superan el presupuesto mobile del estándar (§5.2). Mismo valor que Eres.
@@ -397,7 +405,8 @@ Cada una de esas piezas, si llega, va en su propia spec.
 - **Chips de 32/34 px de alto** con un área táctil extendida a 44 px mediante un pseudo-elemento.
 - **Hoja de filtros como `<dialog>` nativo**, igual que `QuoteModal`: el foco queda atrapado y vuelve al botón "Filtros" al cerrar. Entra con 16 px de desplazamiento y fundido (`sheet-in`, 300 ms), no desde fuera de la pantalla, por la regla de desplazamiento del estándar (§4).
 - **Tamaños de texto con tokens.** Los 15 px de la referencia van en `body-md` y los 13 px en `body-sm`; el H1 usa `heading-h2` en mobile y `heading-h1` (44 px) en desktop.
-- **Chip de especialidad.** En `/productos/categoria/<slug>` la especialidad aparece como chip; su ✕ lleva a `/productos` conservando los demás parámetros.
+- **Chip de especialidad.** La especialidad activa aparece como chip. En `/productos` su ✕ la quita sin recargar; en una landing lleva a `/productos` conservando los demás parámetros.
+- **Especialidad en la URL (revisión).** Se cambió de navegación a la landing a filtro `?especialidad=` tras detectar el delay y un bug de historial con `ClientRouter`. `BaseLayout` acepta `viewTransitions` (por defecto `true`).
 - **Facetas de marca por página.** En una categoría solo se listan las marcas con productos en ella; una marca de la URL que no existe ahí se ignora.
 - **Sidebar más alto que la pantalla (≈1450 px a 1280 × 900).** Queda fijo a 112 px (`top-28`) y sube junto con el final de la grilla, como en la referencia.
 - **Presupuesto de JS.** `check:standard` mide 149 KB gzipped en la página más pesada (la home), dentro del límite de 150 KB pero muy cerca.
@@ -406,7 +415,7 @@ Cada una de esas piezas, si llega, va en su propia spec.
 
 Build local (`npm run build:local`) y `npm run check:standard` (0 errores, 1 aviso previo: páginas sin `og:image`). Playwright sobre `astro preview` el 2026-10-04:
 
-- **1280 px:** sidebar con 8 especialidades y 11 marcas; 12 tarjetas por página; búsqueda sin tilde ("espirometro" → 2 resultados, `?q=espirometro`); marca Schiller (27) y unión Schiller + Edan (29); conteos de marca estables; "atrás" deshace; chips y "Limpiar"; orden A–Z; `Esc` cierra el orden; "Siguiente" escribe `?pagina=2` y deja la grilla visible bajo el header; parámetros inválidos ignorados; estado vacío y "Limpiar filtros"; especialidad conserva `?marca=`; H1, miga y `aria-current` en Cardiología; modal con el producto y enlace de WhatsApp con su nombre; asesor genérico; sidebar sticky a 112 px; especialidad activa en navy; destacados de Woo primero; la home mantiene 4 tarjetas y su cotización abre el modal.
+- **1280 px:** sidebar con 8 especialidades y 11 marcas; 12 tarjetas por página; búsqueda sin tilde ("espirometro" → 2 resultados, `?q=espirometro`); marca Schiller (27) y unión Schiller + Edan (29); conteos de marca estables; "atrás" deshace; chips y "Limpiar"; orden A–Z; `Esc` cierra el orden; "Siguiente" escribe `?pagina=2` y deja la grilla visible bajo el header; parámetros inválidos ignorados; estado vacío y "Limpiar filtros"; especialidad instantánea sin recargar (`?especialidad=cardiologia&marca=schiller`, 13 productos) y "atrás" en dos pasos; landing de Cardiología con H1, miga y 13 productos; desde la landing, "Emergencia" lleva a `/productos?especialidad=emergencia&marca=schiller` y "atrás" vuelve a la landing; especialidad inválida ignorada; modal con el producto y enlace de WhatsApp con su nombre; asesor genérico; sidebar sticky a 112 px; especialidad activa en navy; destacados de Woo primero; la home mantiene 4 tarjetas y su cotización abre el modal.
 - **URL directa:** `/productos?marca=schiller` con JS demorado: la grilla queda en opacidad 0 hasta hidratar y aparece ya filtrada.
 - **320, 360 y 768 px:** sin scroll horizontal (también con la hoja abierta); 2 columnas; barra sticky a 64 px; la hoja bloquea y libera el scroll, se cierra con `Esc` y devuelve el foco a "Filtros (1)"; "Ver 27 productos"; buscador de 16 px.
 - **1024 y 1536 px:** 3 columnas, sin scroll horizontal.

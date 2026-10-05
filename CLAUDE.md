@@ -147,13 +147,17 @@ El catálogo (`/productos` y las categorías) comparte `CatalogPage.astro`:
 
 | Parámetro | Ejemplo | Por defecto (se omite) |
 |---|---|---|
+| `especialidad` | `?especialidad=cardiologia` | ninguna |
 | `q` | `?q=holter` | vacío |
 | `marca` | `?marca=schiller,edan` | ninguna |
 | `orden` | `?orden=a-z` (`relevantes`, `a-z`, `z-a`) | `relevantes` |
 | `pagina` | `?pagina=2` | `1` |
 
-La especialidad no es un parámetro: es la página `/productos/categoria/<slug>`.
-"Más relevantes" pone primero los destacados de Woo.
+`/productos/categoria/<slug>` es una landing estática con la especialidad
+implícita; cambiar de especialidad desde ahí lleva a `/productos?especialidad=…`.
+"Más relevantes" pone primero los destacados de Woo. El catálogo apaga las view
+transitions (`<BaseLayout viewTransitions={false}>`) para que `ClientRouter` no
+compita con su historial.
 
 ### Modo mantenimiento
 
