@@ -31,7 +31,7 @@ export default function BrandFilter({ brands, selected, counts, onToggle, large 
             onChange={(event) => setBrandQuery(event.target.value)}
             placeholder="Buscar marca…"
             autoComplete="off"
-            className="h-11 rounded-lg border border-line bg-surface px-3.5 text-body-sm text-brand-secondary-dark placeholder:text-content-subtle transition-colors focus:border-brand-secondary-dark focus:outline-none"
+            className="h-11 rounded-lg border border-line bg-surface px-3.5 text-body-sm text-brand-secondary-dark placeholder:text-content-subtle transition-colors focus:border-brand-secondary-dark focus:outline-none focus-visible:ring-0 focus-visible:ring-offset-0"
           />
         </>
       )}
