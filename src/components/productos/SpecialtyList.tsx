@@ -23,7 +23,7 @@ export default function SpecialtyList({ specialties, activeSpecialty, productsHr
             <a
               href={`${link.href}${query}`}
               aria-current={active ? "page" : undefined}
-              className={`flex items-center transition-colors hover:text-brand-secondary-dark ${large ? "min-h-12 text-body-md" : "min-h-11 text-body-md"} ${active ? "font-medium text-accent" : "text-content-muted"}`}
+              className={`flex items-center transition-colors hover:text-brand-secondary-dark ${large ? "min-h-12 text-body-md" : "min-h-11 text-body-md"} ${active ? (link.slug ? "font-medium text-brand-secondary-dark" : "font-medium text-accent") : "text-content-muted"}`}
             >
               {link.name}
             </a>

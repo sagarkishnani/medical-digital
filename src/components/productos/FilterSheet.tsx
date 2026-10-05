@@ -49,7 +49,7 @@ export default function FilterSheet({ open, total, onClose, onClear, children }:
       }}
       onAnimationEnd={finishClosing}
       onClick={(event) => event.target === dialogRef.current && onClose()}
-      className={`mb-0 mt-auto max-h-[86vh] w-full max-w-full flex-col rounded-t-2xl bg-surface p-0 text-brand-secondary-dark backdrop:bg-brand-secondary-darkest/50 open:flex md:mx-auto md:max-w-[480px] lg:hidden ${closing ? "animate-sheet-out backdrop:animate-fade-out" : "open:animate-sheet-in backdrop:animate-fade-in"}`}
+      className={`mb-0 mt-auto max-h-[86vh] w-full max-w-full flex-col rounded-t-2xl bg-surface p-0 text-brand-secondary-dark backdrop:bg-brand-secondary-darkest/50 open:flex md:mx-auto md:max-w-lg lg:hidden ${closing ? "animate-sheet-out backdrop:animate-fade-out" : "open:animate-sheet-in backdrop:animate-fade-in"}`}
     >
       <div className="flex items-center justify-between border-b border-line px-4 py-3">
         <h2 id={`${id}-title`} className="text-heading-h4">
@@ -71,14 +71,14 @@ export default function FilterSheet({ open, total, onClose, onClear, children }:
         <button
           type="button"
           onClick={onClear}
-          className="btn h-[52px] border-line bg-surface px-[22px] text-brand-secondary-dark hover:bg-surface-raised"
+          className="btn border-line bg-surface px-6 text-brand-secondary-dark hover:bg-surface-raised"
         >
           Limpiar
         </button>
         <button
           type="button"
           onClick={onClose}
-          className="btn h-[52px] flex-1 bg-brand-secondary-dark text-white hover:bg-brand-tertiary-dark"
+          className="btn flex-1 bg-brand-secondary-dark text-white hover:bg-brand-tertiary-dark"
         >
           Ver {total} {total === 1 ? "producto" : "productos"}
         </button>

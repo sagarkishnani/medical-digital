@@ -52,7 +52,7 @@ export default function SortMenu({ value, onChange }: Props) {
       </button>
       <ul
         id={`${id}-options`}
-        className={`absolute right-0 top-[calc(100%+4px)] z-20 w-[210px] rounded-xl border border-line bg-surface p-1.5 shadow-lg motion-reduce:transition-none ${open ? "visible translate-y-0 opacity-100 transition-[opacity,transform] duration-300 ease-out" : "pointer-events-none invisible -translate-y-1.5 opacity-0 transition-[opacity,transform,visibility] duration-300 ease-out"}`}
+        className={`absolute right-0 top-full z-20 mt-1 w-52 rounded-xl border border-line bg-surface p-1.5 shadow-lg motion-reduce:transition-none ${open ? "visible translate-y-0 opacity-100 transition-[opacity,transform] duration-300 ease-out" : "pointer-events-none invisible -translate-y-1.5 opacity-0 transition-[opacity,transform,visibility] duration-300 ease-out"}`}
       >
         {SORT_OPTIONS.map((option) => {
           const selected = option.key === value;

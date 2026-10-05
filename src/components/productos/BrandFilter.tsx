@@ -31,7 +31,7 @@ export default function BrandFilter({ brands, selected, counts, onToggle, large 
             onChange={(event) => setBrandQuery(event.target.value)}
             placeholder="Buscar marca…"
             autoComplete="off"
-            className="h-[42px] rounded-lg border border-line bg-surface px-3.5 text-body-sm text-brand-secondary-dark placeholder:text-content-subtle transition-colors focus:border-brand-secondary-dark focus:outline-none"
+            className="h-11 rounded-lg border border-line bg-surface px-3.5 text-body-sm text-brand-secondary-dark placeholder:text-content-subtle transition-colors focus:border-brand-secondary-dark focus:outline-none"
           />
         </>
       )}
@@ -49,7 +49,7 @@ export default function BrandFilter({ brands, selected, counts, onToggle, large 
                 />
                 <span
                   aria-hidden="true"
-                  className={`flex shrink-0 items-center justify-center rounded-md border-[1.5px] transition-colors peer-focus-visible:ring-2 peer-focus-visible:ring-brand-primary peer-focus-visible:ring-offset-2 ${large ? "h-[22px] w-[22px]" : "h-5 w-5"} ${checked ? "border-brand-secondary-dark bg-brand-secondary-dark text-white" : "border-brand-secondary-light bg-surface text-transparent"}`}
+                  className={`flex shrink-0 items-center justify-center rounded-md border-[1.5px] transition-colors peer-focus-visible:ring-2 peer-focus-visible:ring-brand-primary peer-focus-visible:ring-offset-2 ${large ? "h-6 w-6" : "h-5 w-5"} ${checked ? "border-brand-secondary-dark bg-brand-secondary-dark text-white" : "border-greyscale-medium bg-surface text-transparent"}`}
                 >
                   <PiCheckLight className="h-3.5 w-3.5" />
                 </span>

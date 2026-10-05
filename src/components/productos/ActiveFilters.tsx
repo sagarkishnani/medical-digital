@@ -14,7 +14,7 @@ interface Props {
 }
 
 const chipClassName =
-  "relative inline-flex h-8 items-center gap-1.5 rounded-pill bg-brand-tertiary-lightest pl-3 pr-2.5 text-caption font-medium text-brand-tertiary-dark transition-colors hover:bg-brand-tertiary-light/40 lg:h-[34px] lg:pl-3.5 lg:text-body-sm after:absolute after:inset-x-0 after:-inset-y-1.5 after:content-['']";
+  "relative inline-flex h-8 items-center gap-1.5 rounded-pill bg-brand-tertiary-lightest pl-3 pr-2.5 text-caption font-medium text-brand-tertiary-dark transition-colors hover:bg-brand-tertiary-light/40 lg:pl-3.5 lg:text-body-sm after:absolute after:inset-x-0 after:-inset-y-1.5 after:content-['']";
 
 export default function ActiveFilters({ total, filters, onClear }: Props) {
   return (

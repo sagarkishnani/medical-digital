@@ -26,7 +26,7 @@ export default function SearchField({ value, onChange, compact = false }: Props)
         placeholder="Buscar producto…"
         autoComplete="off"
         enterKeyHint="search"
-        className={`w-full rounded-xl border border-line bg-surface pl-12 pr-4 text-brand-secondary-dark placeholder:text-content-subtle transition-colors focus:border-brand-secondary-dark focus:outline-none ${compact ? "h-12 text-body-md" : "h-[52px] text-body-md"}`}
+        className={`w-full rounded-xl border border-line bg-surface pl-12 pr-4 text-brand-secondary-dark placeholder:text-content-subtle transition-colors focus:border-brand-secondary-dark focus:outline-none ${compact ? "h-12 text-body-md" : "h-12 text-body-md"}`}
       />
     </div>
   );
