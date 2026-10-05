@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import ProductCard from "./ProductCard";
 import SearchField from "./SearchField";
 import SpecialtyList from "./SpecialtyList";
@@ -6,6 +6,8 @@ import BrandFilter from "./BrandFilter";
 import AdvisorCard from "./AdvisorCard";
 import SortMenu from "./SortMenu";
 import ActiveFilters from "./ActiveFilters";
+import Pagination from "./Pagination";
+import EmptyState from "./EmptyState";
 import type { ActiveFilter } from "./ActiveFilters";
 import { useCatalogState } from "./useCatalogState";
 import QuoteModal from "../shared/QuoteModal";
@@ -27,6 +29,8 @@ export default function CatalogReact({ items, facets, activeSpecialty, productsH
   const brandSlugs = useMemo(() => facets.brands.map((brand) => brand.slug), [facets.brands]);
   const { state, update, ready } = useCatalogState(brandSlugs);
   const [quote, setQuote] = useState<QuoteProduct | null>(null);
+  const resultsRef = useRef<HTMLDivElement>(null);
+  const mobileBarRef = useRef<HTMLDivElement>(null);
   const result = applyFilters(items, state);
   const specialtyQuery = ready ? serializeCatalogUrl({ ...state, pagina: 1 }) : "";
 
@@ -43,6 +47,22 @@ export default function CatalogReact({ items, facets, activeSpecialty, productsH
     });
   const setSort = (orden: SortKey) => update({ ...state, orden, pagina: 1 });
   const clearFilters = () => update(DEFAULT_CATALOG_STATE);
+
+  const scrollToResults = () => {
+    const target = resultsRef.current;
+    if (!target) return;
+    const headerHeight = document.querySelector("header")?.getBoundingClientRect().height ?? 0;
+    const barHeight = mobileBarRef.current?.offsetParent ? mobileBarRef.current.getBoundingClientRect().height : 0;
+    const top = target.getBoundingClientRect().top + window.scrollY - headerHeight - barHeight - 16;
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const lenis = (window as unknown as { lenis?: { scrollTo: (to: number, options?: { immediate?: boolean }) => void } }).lenis;
+    if (lenis) lenis.scrollTo(top, { immediate: reduceMotion });
+    else window.scrollTo({ top, behavior: reduceMotion ? "auto" : "smooth" });
+  };
+  const changePage = (pagina: number) => {
+    update({ ...state, pagina });
+    requestAnimationFrame(scrollToResults);
+  };
 
   const specialty = facets.specialties.find((item) => item.slug === activeSpecialty);
   const activeFilters: ActiveFilter[] = [
@@ -84,13 +104,14 @@ export default function CatalogReact({ items, facets, activeSpecialty, productsH
         <AdvisorCard onContact={openAdvisor} />
       </aside>
 
-      <div className="flex flex-col gap-4 lg:gap-6">
+      <div ref={resultsRef} className="flex flex-col gap-4 lg:gap-6">
         <div className="flex items-center justify-between gap-4 lg:min-h-11">
           <ActiveFilters total={result.total} filters={activeFilters} onClear={clearFilters} />
           <div className="hidden shrink-0 self-start lg:block">
             <SortMenu value={state.orden} onChange={setSort} />
           </div>
         </div>
+        {result.total === 0 && <EmptyState onClear={clearFilters} />}
         <ul className="grid grid-cols-2 gap-2.5 lg:grid-cols-3 lg:gap-5">
           {result.items.map((item) => (
             <ProductCard
@@ -101,6 +122,12 @@ export default function CatalogReact({ items, facets, activeSpecialty, productsH
             />
           ))}
         </ul>
+        <Pagination
+          page={result.page}
+          totalPages={result.totalPages}
+          hrefFor={(pagina) => serializeCatalogUrl({ ...state, pagina }) || "?"}
+          onChange={changePage}
+        />
       </div>
       <QuoteModal product={quote} onClose={() => setQuote(null)} />
     </section>
