@@ -1,11 +1,19 @@
-import { DEFAULT_CATALOG_STATE, SORT_OPTIONS } from "./types";
+import { CATALOG_PARAM_KEYS, DEFAULT_CATALOG_STATE, SORT_OPTIONS } from "./types";
 import type { CatalogState, SortKey } from "./types";
 
 const SLUG_PATTERN = /^[a-z0-9-]+$/;
 const SORT_KEYS = new Set<string>(SORT_OPTIONS.map((option) => option.key));
 
-export function parseCatalogUrl(search: string, knownBrands?: ReadonlySet<string>): CatalogState {
+interface ParseOptions {
+  knownBrands?: ReadonlySet<string>;
+  knownSpecialties?: ReadonlySet<string>;
+  implicitSpecialty?: string | null;
+}
+
+export function parseCatalogUrl(search: string, options: ParseOptions = {}): CatalogState {
+  const { knownBrands, knownSpecialties, implicitSpecialty } = options;
   const params = new URLSearchParams(search);
+  const especialidad = (params.get("especialidad") || "").trim();
   const orden = params.get("orden") || "";
   const pagina = Number.parseInt(params.get("pagina") || "", 10);
   const marca = (params.get("marca") || "")
@@ -15,6 +23,9 @@ export function parseCatalogUrl(search: string, knownBrands?: ReadonlySet<string
     .filter((slug) => !knownBrands || knownBrands.has(slug));
 
   return {
+    especialidad:
+      implicitSpecialty ??
+      (SLUG_PATTERN.test(especialidad) && (!knownSpecialties || knownSpecialties.has(especialidad)) ? especialidad : null),
     q: (params.get("q") || "").trim().slice(0, 100),
     marca,
     orden: SORT_KEYS.has(orden) ? (orden as SortKey) : DEFAULT_CATALOG_STATE.orden,
@@ -22,8 +33,12 @@ export function parseCatalogUrl(search: string, knownBrands?: ReadonlySet<string
   };
 }
 
-export function serializeCatalogUrl(state: CatalogState, options: { keepPage?: boolean } = {}): string {
+export function serializeCatalogUrl(
+  state: CatalogState,
+  options: { keepPage?: boolean; omitSpecialty?: boolean } = {},
+): string {
   const params = new URLSearchParams();
+  if (state.especialidad && !options.omitSpecialty) params.set("especialidad", state.especialidad);
   if (state.q) params.set("q", state.q);
   if (state.marca.length > 0) params.set("marca", state.marca.join(","));
   if (state.orden !== DEFAULT_CATALOG_STATE.orden) params.set("orden", state.orden);
@@ -34,5 +49,5 @@ export function serializeCatalogUrl(state: CatalogState, options: { keepPage?: b
 
 export function hasCatalogParams(search: string): boolean {
   const params = new URLSearchParams(search);
-  return ["q", "marca", "orden", "pagina"].some((key) => params.has(key));
+  return CATALOG_PARAM_KEYS.some((key) => params.has(key));
 }

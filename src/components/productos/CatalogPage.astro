@@ -33,7 +33,7 @@ const EAGER_CARDS = 3;
 const productsHref = withBase("/productos");
 ---
 
-<BaseLayout title={seoTitle} description={seoDescription}>
+<BaseLayout title={seoTitle} description={seoDescription} viewTransitions={false}>
   <section class="bg-surface-raised">
     <div class="container-xl flex flex-col gap-2 py-7 md:gap-3 md:py-12">
       <nav aria-label="Miga de pan">
@@ -67,7 +67,7 @@ const productsHref = withBase("/productos");
   ) : (
     <>
       <script is:inline>
-        if (/[?&](q|marca|orden|pagina)=/.test(window.location.search)) {
+        if (/[?&](especialidad|q|marca|orden|pagina)=/.test(window.location.search)) {
           document.documentElement.setAttribute("data-catalog-pending", "");
           setTimeout(() => document.documentElement.removeAttribute("data-catalog-pending"), 1500);
         }
@@ -76,7 +76,7 @@ const productsHref = withBase("/productos");
         client:load
         items={items}
         facets={facets}
-        activeSpecialty={category?.slug ?? null}
+        implicitSpecialty={category?.slug ?? null}
         productsHref={productsHref}
         advisorUrl={buildAdvisorUrl(whatsappNumber)}
       >

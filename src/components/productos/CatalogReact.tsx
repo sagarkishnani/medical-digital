@@ -20,7 +20,7 @@ import type { CatalogFacets, CatalogItem, SortKey } from "../../utils/catalog/ty
 interface Props {
   items: CatalogItem[];
   facets: CatalogFacets;
-  activeSpecialty: string | null;
+  implicitSpecialty: string | null;
   productsHref: string;
   advisorUrl: string;
   children: ReactNode;
@@ -35,15 +35,18 @@ function applyViewToGrid(grid: HTMLElement, visibleIds: number[]) {
   });
 }
 
-export default function CatalogReact({ items, facets, activeSpecialty, productsHref, advisorUrl, children }: Props) {
+export default function CatalogReact({ items, facets, implicitSpecialty, productsHref, advisorUrl, children }: Props) {
   const brandSlugs = useMemo(() => facets.brands.map((brand) => brand.slug), [facets.brands]);
-  const { state, update, ready } = useCatalogState(brandSlugs);
+  const specialtySlugs = useMemo(() => facets.specialties.map((specialty) => specialty.slug), [facets.specialties]);
+  const { state, update, ready } = useCatalogState({ brandSlugs, specialtySlugs, implicitSpecialty, productsHref });
   const [sheetOpen, setSheetOpen] = useState(false);
   const resultsRef = useRef<HTMLDivElement>(null);
   const mobileBarRef = useRef<HTMLDivElement>(null);
   const gridRef = useRef<HTMLUListElement>(null);
   const result = useMemo(() => applyFilters(items, state), [items, state]);
-  const specialtyQuery = ready ? serializeCatalogUrl({ ...state, pagina: 1 }) : "";
+  const specialtyHref = (especialidad: string | null) =>
+    `${productsHref}${serializeCatalogUrl({ ...(ready ? state : DEFAULT_CATALOG_STATE), especialidad, pagina: 1 })}`;
+  const selectSpecialty = (especialidad: string | null) => update({ ...state, especialidad, pagina: 1 });
 
   useLayoutEffect(() => {
     if (!ready || !gridRef.current) return;
@@ -81,9 +84,9 @@ export default function CatalogReact({ items, facets, activeSpecialty, productsH
     requestAnimationFrame(scrollToResults);
   };
 
-  const specialty = facets.specialties.find((item) => item.slug === activeSpecialty);
+  const specialty = facets.specialties.find((item) => item.slug === state.especialidad);
   const activeFilters: ActiveFilter[] = [
-    ...(specialty ? [{ key: "especialidad", label: specialty.name, href: `${productsHref}${specialtyQuery}` }] : []),
+    ...(specialty ? [{ key: "especialidad", label: specialty.name, onRemove: () => selectSpecialty(null) }] : []),
     ...(state.q ? [{ key: "q", label: `“${state.q}”`, onRemove: () => update({ ...state, q: "", pagina: 1 }) }] : []),
     ...state.marca.map((slug) => ({
       key: `marca-${slug}`,
@@ -92,7 +95,7 @@ export default function CatalogReact({ items, facets, activeSpecialty, productsH
     })),
   ];
 
-  const filterCount = state.marca.length + (activeSpecialty ? 1 : 0);
+  const filterCount = state.marca.length + (state.especialidad ? 1 : 0);
 
   return (
     <section className="container-xl pb-12 lg:grid lg:grid-cols-[320px_minmax(0,1fr)] lg:items-start lg:gap-10 lg:pb-24 lg:pt-10">
@@ -102,9 +105,9 @@ export default function CatalogReact({ items, facets, activeSpecialty, productsH
           <h2 className="text-heading-h4 text-brand-secondary-dark">Especialidades</h2>
           <SpecialtyList
             specialties={facets.specialties}
-            activeSpecialty={activeSpecialty}
-            productsHref={productsHref}
-            query={specialtyQuery}
+            selected={state.especialidad}
+            hrefFor={specialtyHref}
+            onSelect={selectSpecialty}
           />
         </div>
         {facets.brands.length > 0 && (
@@ -165,9 +168,9 @@ export default function CatalogReact({ items, facets, activeSpecialty, productsH
           <h3 className="py-1.5 text-caption uppercase tracking-wider text-content-subtle">Especialidades</h3>
           <SpecialtyList
             specialties={facets.specialties}
-            activeSpecialty={activeSpecialty}
-            productsHref={productsHref}
-            query={specialtyQuery}
+            selected={state.especialidad}
+            hrefFor={specialtyHref}
+            onSelect={selectSpecialty}
             large
           />
         </div>

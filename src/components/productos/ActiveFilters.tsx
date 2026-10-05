@@ -3,8 +3,7 @@ import { PiXLight } from "react-icons/pi";
 export interface ActiveFilter {
   key: string;
   label: string;
-  onRemove?: () => void;
-  href?: string;
+  onRemove: () => void;
 }
 
 interface Props {
@@ -22,25 +21,18 @@ export default function ActiveFilters({ total, filters, onClear }: Props) {
       <p aria-live="polite" className="text-body-sm text-content-subtle lg:text-body-md">
         {total} {total === 1 ? "producto" : "productos"}
       </p>
-      {filters.map((filter) =>
-        filter.href ? (
-          <a key={filter.key} href={filter.href} aria-label={`Quitar filtro ${filter.label}`} className={chipClassName}>
-            {filter.label}
-            <PiXLight aria-hidden="true" className="h-3.5 w-3.5" />
-          </a>
-        ) : (
-          <button
-            key={filter.key}
-            type="button"
-            onClick={filter.onRemove}
-            aria-label={`Quitar filtro ${filter.label}`}
-            className={chipClassName}
-          >
-            {filter.label}
-            <PiXLight aria-hidden="true" className="h-3.5 w-3.5" />
-          </button>
-        ),
-      )}
+      {filters.map((filter) => (
+        <button
+          key={filter.key}
+          type="button"
+          onClick={filter.onRemove}
+          aria-label={`Quitar filtro ${filter.label}`}
+          className={chipClassName}
+        >
+          {filter.label}
+          <PiXLight aria-hidden="true" className="h-3.5 w-3.5" />
+        </button>
+      ))}
       {filters.length > 0 && (
         <button
           type="button"

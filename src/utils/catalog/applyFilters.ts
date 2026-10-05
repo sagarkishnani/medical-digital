@@ -25,7 +25,9 @@ function sortItems(items: CatalogItem[], orden: CatalogState["orden"]): CatalogI
 
 export function applyFilters(all: CatalogItem[], state: CatalogState): CatalogResult {
   const query = normalizeSearch(state.q);
-  const searched = all.filter((item) => matchesSearch(item, query));
+  const searched = all.filter(
+    (item) => (!state.especialidad || item.categories.includes(state.especialidad)) && matchesSearch(item, query),
+  );
 
   const brandCounts = new Map<string, number>();
   for (const item of searched) {
