@@ -119,6 +119,7 @@ function projectProduct(raw: StoreApiProduct, storeUrl: string): WooProduct | nu
     slug: raw.slug,
     sku: raw.sku || "",
     brand: raw.brands?.[0]?.name || null,
+    brandSlug: SLUG_PATTERN.test(raw.brands?.[0]?.slug || "") ? raw.brands![0].slug : null,
     shortDescription: sanitizeDescription(raw.short_description || ""),
     description: sanitizeDescription(raw.description || ""),
     images,
