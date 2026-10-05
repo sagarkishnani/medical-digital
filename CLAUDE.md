@@ -156,8 +156,9 @@ componentes existentes. Las clases reutilizables (botones, `card`, `section`,
 sitio.
 
 Iconos: `react-icons`. El UI Kit usa **Phosphor Light** (`react-icons/pi`, sufijo
-`Light`); las redes del header y del footer usan sus logos de Phosphor
-(`Pi…LogoLight`, en `src/components/shared/socialLinks.ts`), como la referencia, y el logo de WhatsApp de los botones va con `react-icons/fa6`. Cuando el
+`Light`). Excepciones que entregó diseño: los logos de las redes y de WhatsApp van
+con `react-icons/fa6` (las redes se mapean en `src/components/shared/socialLinks.ts`)
+y el ícono PDF es `BsFiletypePdf` (`react-icons/bs`). Cuando el
 editor elige el ícono en Tina, las opciones están en `src/lib/icons.ts` y se
 dibujan con `src/components/shared/Icon.tsx`.
 

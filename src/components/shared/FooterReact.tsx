@@ -5,11 +5,11 @@ import {
   PiBookOpenLight,
   PiCertificateLight,
   PiEnvelopeSimpleLight,
-  PiFilePdfLight,
   PiMapPinLight,
   PiPhoneLight,
 } from "react-icons/pi";
 import { SOCIAL_ICONS, SOCIAL_NAMES } from "./socialLinks";
+import { BsFiletypePdf } from "react-icons/bs";
 import { mediaUrl } from "../../utils/mediaUrl";
 import { tField, localizeHref } from "../../utils/i18n";
 import type { Locale } from "../../i18n/config";
@@ -91,7 +91,7 @@ export default function FooterReact({ query, variables, data: initialData, local
           <div className="flex flex-col gap-3.5 rounded-[20px] bg-white/5 px-4 py-5 md:flex-row md:items-center md:justify-between md:gap-6 md:rounded-2xl md:py-6 md:pl-8 md:pr-7">
             <div className="flex items-center gap-3.5 md:gap-[18px]">
               <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-brand-primary md:h-14 md:w-14 md:rounded-[14px]">
-                <PiFilePdfLight aria-hidden="true" className="h-[26px] w-[26px] md:h-[30px] md:w-[30px]" />
+                <BsFiletypePdf aria-hidden="true" className="h-[26px] w-[26px] md:h-[30px] md:w-[30px]" />
               </span>
               <p className="text-subtitle md:text-heading-h4" data-tina-field={tinaField(footer, "catalogTitle")}>
                 {tField(footer, "catalogTitle", locale)}

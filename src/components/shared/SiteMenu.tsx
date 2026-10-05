@@ -5,12 +5,12 @@ import {
   PiCaretDownLight,
   PiClockLight,
   PiEnvelopeSimpleLight,
-  PiFilePdfLight,
   PiMapPinLight,
   PiPhoneLight,
   PiSquaresFourLight,
 } from "react-icons/pi";
 import Icon from "./Icon";
+import { BsFiletypePdf } from "react-icons/bs";
 import { panelMotion } from "./panelMotion";
 import { SOCIAL_ICONS, SOCIAL_NAMES } from "./socialLinks";
 import { mediaUrl } from "../../utils/mediaUrl";
@@ -61,7 +61,7 @@ export default function SiteMenu({ id, open, locale, global, categories, onNavig
   const catalogLink = (className: string) =>
     catalog && (
       <a {...catalogLinkProps} className={className}>
-        <PiFilePdfLight aria-hidden="true" className="h-[22px] w-[22px]" />
+        <BsFiletypePdf aria-hidden="true" className="h-[22px] w-[22px]" />
         <span className="lg:hidden">Descargar catálogo PDF</span>
         <span className="hidden lg:inline">Catálogo PDF</span>
       </a>

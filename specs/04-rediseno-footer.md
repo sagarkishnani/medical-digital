@@ -32,7 +32,7 @@ El footer es un bloque con fondo oscuro fijo: la excepción que admite el `CLAUD
 
 - Fondo `#262C52`, que no existe como token: se usa `bg-white/5` sobre el navy (≈ `#272C4A`), dentro de la excepción de fondo oscuro fijo.
 - Desktop: radio 24 px, padding `24px 28px 24px 32px`, en fila con `justify-between`. Mobile: radio 20 px, padding `20px 16px`, en columna con gap de 14 px.
-- Ícono `PiFilePdfLight` blanco sobre una caja `brand-primary`: 56 px con radio 14 e ícono de 30 px (desktop); 48 px con radio 12 e ícono de 26 px (mobile).
+- Ícono PDF del diseño (`BsFiletypePdf`) blanco sobre una caja `brand-primary`: 56 px con radio 14 e ícono de 30 px (desktop); 48 px con radio 12 e ícono de 26 px (mobile).
 - Título "Catálogo de Productos para Medicina General Perú": `heading-h4` (20 px) en desktop y `subtitle` (16 px) en mobile.
 - Botón "Descargar catálogo": 50 px de alto, `rounded-full`, `brand-primary`, hover `brand-primary-dark`, 15 px peso 500; padding horizontal de 28 px en desktop y ancho completo en mobile.
 
@@ -51,7 +51,7 @@ El footer es un bloque con fondo oscuro fijo: la excepción que admite el `CLAUD
 
 **Redes**
 
-- Círculos de 44 px con borde `brand-secondary` e ícono Phosphor `Pi…LogoLight` de 18 px; hover con fondo y borde `brand-primary`. La referencia mide 42 px; se sube a 44 por el target táctil del estándar.
+- Círculos de 44 px con borde `brand-secondary` e ícono del logo de la red de 18 px; hover con fondo y borde `brand-primary`. La referencia mide 42 px; se sube a 44 por el target táctil del estándar.
 - En desktop van debajo de la frase; en mobile, después de las certificaciones.
 
 **Franja de certificaciones**
@@ -82,7 +82,7 @@ El footer es un bloque con fondo oscuro fijo: la excepción que admite el `CLAUD
 - Columna de contacto desde `global.company`: teléfono, todos los correos y dirección.
 - Certificaciones como lista editable en Tina, sembrada con los 3 valores de la referencia.
 - Libro de Reclamaciones con texto y URL editables, sembrado con `/libro-de-reclamaciones`.
-- Redes de `footer.social` con los logos de Phosphor. Los mapas `SOCIAL_NAMES` y `SOCIAL_ICONS` salen de `SiteMenu.tsx` a `src/components/shared/socialLinks.ts`, y los usan el panel ☰ y el footer.
+- Redes de `footer.social` con los logos entregados por diseño. Los mapas `SOCIAL_NAMES` y `SOCIAL_ICONS` salen de `SiteMenu.tsx` a `src/components/shared/socialLinks.ts`, y los usan el panel ☰ y el footer.
 - Año del copyright automático en build.
 - Crédito "Desarrollado por TWNSTUDIOS", fijo en el código y enlazado con UTM.
 - `Footer.astro` pasa de `client:visible` a `client:tina`: el footer no tiene interacción, así que en producción no carga React.
@@ -218,7 +218,7 @@ La rama `feat/spec-04-rediseno-footer` sale de `feat/spec-03-rediseno-header` (P
 - [x] Las certificaciones muestran ISO 9001:2015, BPA e ISO 13485 con su nombre. Si se vacía la lista en Tina, el bloque desaparece sin romper el layout.
 - [x] Con `catalog.file` vacío, "Descargar catálogo" se ve pero no tiene `href`.
 - [ ] Con un PDF cargado, lo descarga en otra pestaña. *(Sin verificar: el cliente aún no entrega el PDF. Usa la misma lógica que el header.)*
-- [x] Las redes usan los logos de Phosphor, con círculos de 44 × 44 px, `aria-label` con el nombre de la red y apertura en otra pestaña.
+- [x] Las redes usan los logos entregados por diseño, con círculos de 44 × 44 px, `aria-label` con el nombre de la red y apertura en otra pestaña.
 - [x] La barra inferior muestra "© {año actual} Medical Digital Perú · Todos los derechos reservados".
 - [x] "TWNSTUDIOS" enlaza a `https://twnstudios.com/?utm_source=medicaldigital&utm_medium=referral&utm_campaign=client_portfolio` con `target="_blank"` y `rel="noopener"`, y el crédito no aparece en `/admin`.
 - [x] Hover de los enlaces: `brand-primary-light`, sin subrayado. Hover de las redes: fondo `brand-primary`. Todos los textos alcanzan 4.5:1 sobre su fondo, salvo el botón `brand-primary` (pendiente de diseño ya registrado).
@@ -271,6 +271,7 @@ La rama `feat/spec-04-rediseno-footer` sale de `feat/spec-03-rediseno-header` (P
 - Las redes se dibujan dos veces: debajo de la frase desde `md` y después de las certificaciones en mobile, con la otra copia oculta (`hidden`).
 - Con un número impar de columnas en Tina, la última ocupa el ancho completo en mobile, para que Legales no se parta en media columna.
 - **Pendiente de decisión de diseño:** los enlaces de texto del footer tienen un área táctil de ~33 px de alto (`-my-1.5 py-1.5`) y las filas van cada 29–30 px, como en la referencia. Cumplen el mínimo de 24 px de WCAG 2.5.8, pero no los 44 × 44 px del estándar (§3.2). Llegar a 44 px sin que las áreas se pisen obliga a separar más las filas y aleja el footer de la referencia. Mismo criterio que el chevron de SPEC 03 y que el footer de Eres.
+- Íconos del diseño (entregados después de abrir el PR): los SVG de Facebook, Instagram, LinkedIn y YouTube coinciden con `FaFacebookF`, `FaInstagram`, `FaLinkedinIn` y `FaYoutube` de `react-icons/fa6`, y el del PDF con `BsFiletypePdf` de `react-icons/bs`. Se usan esos componentes en lugar de copiar los SVG: ya están en la librería del proyecto (como en el footer de Fiberlux) y heredan `currentColor`. Como `socialLinks.ts` es compartido, el cambio también aplica al panel ☰; el PDF cambia en el banner del footer, el mega-menú, el panel ☰ y las políticas de Nosotros. Los íconos de categorías y los logos de marcas de la misma entrega quedan para otra tarea (Home y header).
 - El botón flotante de WhatsApp (SPEC 03) tapa por momentos parte de las certificaciones en mobile mientras se hace scroll. Es el comportamiento habitual del botón flotante y no se cambia aquí.
 
 ## QA realizada

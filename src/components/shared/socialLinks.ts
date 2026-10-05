@@ -1,13 +1,6 @@
 import type { IconType } from "react-icons";
-import {
-  PiFacebookLogoLight,
-  PiInstagramLogoLight,
-  PiLinkedinLogoLight,
-  PiTiktokLogoLight,
-  PiWhatsappLogoLight,
-  PiXLogoLight,
-  PiYoutubeLogoLight,
-} from "react-icons/pi";
+import { PiTiktokLogoLight, PiWhatsappLogoLight, PiXLogoLight } from "react-icons/pi";
+import { FaFacebookF, FaInstagram, FaLinkedinIn, FaYoutube } from "react-icons/fa6";
 
 export const SOCIAL_NAMES: Record<string, string> = {
   facebook: "Facebook",
@@ -20,11 +13,11 @@ export const SOCIAL_NAMES: Record<string, string> = {
 };
 
 export const SOCIAL_ICONS: Record<string, IconType> = {
-  facebook: PiFacebookLogoLight,
-  instagram: PiInstagramLogoLight,
-  linkedin: PiLinkedinLogoLight,
+  facebook: FaFacebookF,
+  instagram: FaInstagram,
+  linkedin: FaLinkedinIn,
   tiktok: PiTiktokLogoLight,
   whatsapp: PiWhatsappLogoLight,
   x: PiXLogoLight,
-  youtube: PiYoutubeLogoLight,
+  youtube: FaYoutube,
 };

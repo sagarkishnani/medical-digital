@@ -1,7 +1,8 @@
 import { useId, useRef, useState } from "react";
 import type { KeyboardEvent } from "react";
 import { useTina, tinaField } from "tinacms/dist/react";
-import { PiCheckCircleLight, PiFilePdfLight } from "react-icons/pi";
+import { PiCheckCircleLight } from "react-icons/pi";
+import { BsFiletypePdf } from "react-icons/bs";
 import { mediaUrl } from "../../utils/mediaUrl";
 
 interface Props {
@@ -124,7 +125,7 @@ export default function PoliciesReact({ query, variables, data: initialData }: P
               className="flex items-center gap-2 self-start text-link text-brand-secondary-dark hover:underline"
               data-tina-field={tinaField(active, "document")}
             >
-              <PiFilePdfLight aria-hidden="true" className="h-6 w-6 text-brand-primary" />
+              <BsFiletypePdf aria-hidden="true" className="h-6 w-6 text-brand-primary" />
               Descargar documento completo
             </a>
           )}
