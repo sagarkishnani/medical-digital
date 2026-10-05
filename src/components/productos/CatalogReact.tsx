@@ -38,6 +38,10 @@ export default function CatalogReact({ items, facets, activeSpecialty, productsH
   const specialtyQuery = ready ? serializeCatalogUrl({ ...state, pagina: 1 }) : "";
 
   useEffect(() => {
+    if (ready) document.documentElement.removeAttribute("data-catalog-pending");
+  }, [ready]);
+
+  useEffect(() => {
     if (ready && result.page !== state.pagina) update({ ...state, pagina: result.page }, "replace");
   }, [ready, result.page, state, update]);
 
@@ -127,7 +131,7 @@ export default function CatalogReact({ items, facets, activeSpecialty, productsH
             <SortMenu value={state.orden} onChange={setSort} />
           </div>
         </div>
-        <div ref={resultsRef} className="flex flex-col gap-4 pt-4 lg:gap-6 lg:pt-0">
+        <div ref={resultsRef} className="flex flex-col gap-4 pt-4 lg:gap-6 lg:pt-0 [html[data-catalog-pending]_&]:opacity-0">
           <div className="flex items-center justify-between gap-4 lg:min-h-11">
             <ActiveFilters total={result.total} filters={activeFilters} onClear={clearFilters} />
             <div className="hidden shrink-0 self-start lg:block">

@@ -62,13 +62,21 @@ const productsHref = withBase("/productos");
       </div>
     </section>
   ) : (
-    <CatalogReact
-      client:load
-      items={items}
-      facets={facets}
-      activeSpecialty={category?.slug ?? null}
-      productsHref={productsHref}
-      advisorUrl={buildAdvisorUrl(whatsappNumber)}
-    />
+    <>
+      <script is:inline>
+        if (/[?&](q|marca|orden|pagina)=/.test(window.location.search)) {
+          document.documentElement.setAttribute("data-catalog-pending", "");
+          setTimeout(() => document.documentElement.removeAttribute("data-catalog-pending"), 1500);
+        }
+      </script>
+      <CatalogReact
+        client:load
+        items={items}
+        facets={facets}
+        activeSpecialty={category?.slug ?? null}
+        productsHref={productsHref}
+        advisorUrl={buildAdvisorUrl(whatsappNumber)}
+      />
+    </>
   )}
 </BaseLayout>
