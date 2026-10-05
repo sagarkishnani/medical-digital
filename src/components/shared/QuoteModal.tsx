@@ -14,7 +14,7 @@ interface Props {
 }
 
 const fieldBaseClass =
-  "w-full rounded-lg border border-line bg-surface px-4 text-body-sm text-brand-secondary-dark placeholder:text-content-subtle focus:border-brand-secondary-dark focus:outline-none";
+  "w-full rounded-lg border border-line bg-surface px-4 text-body-sm text-brand-secondary-dark placeholder:text-content-subtle focus:border-brand-secondary-dark focus:outline-none focus-visible:ring-0 focus-visible:ring-offset-0";
 
 const FIELDS = [
   { name: "name", label: "Nombre y apellido", type: "text", autoComplete: "name" },
