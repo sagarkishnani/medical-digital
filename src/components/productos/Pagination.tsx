@@ -1,5 +1,3 @@
-import { PiArrowRightLight } from "react-icons/pi";
-
 interface Props {
   page: number;
   totalPages: number;
@@ -38,19 +36,17 @@ export default function Pagination({ page, totalPages, hrefFor, onChange }: Prop
         ))}
         <li>
           {isLast ? (
-            <span aria-disabled="true" className={`${itemClassName} gap-2 text-content-subtle`}>
+            <span aria-disabled="true" className={`${itemClassName} text-content-subtle`}>
               Siguiente
-              <PiArrowRightLight aria-hidden="true" className="h-4 w-4" />
             </span>
           ) : (
             <a
               href={hrefFor(page + 1)}
               onClick={(event) => go(event, page + 1)}
               rel="next"
-              className={`${itemClassName} gap-2 font-medium text-brand-secondary-dark hover:bg-surface-raised`}
+              className={`${itemClassName} font-medium text-brand-secondary-dark hover:bg-surface-raised`}
             >
               Siguiente
-              <PiArrowRightLight aria-hidden="true" className="h-4 w-4" />
             </a>
           )}
         </li>
