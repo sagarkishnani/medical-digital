@@ -1,14 +1,15 @@
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import ProductCard from "./ProductCard";
 import SearchField from "./SearchField";
 import SpecialtyList from "./SpecialtyList";
 import BrandFilter from "./BrandFilter";
 import AdvisorCard from "./AdvisorCard";
+import { useCatalogState } from "./useCatalogState";
 import QuoteModal from "../shared/QuoteModal";
 import type { QuoteProduct } from "../shared/QuoteModal";
 import { applyFilters } from "../../utils/catalog/applyFilters";
-import { DEFAULT_CATALOG_STATE } from "../../utils/catalog/types";
-import type { CatalogFacets, CatalogItem, CatalogState } from "../../utils/catalog/types";
+import { serializeCatalogUrl } from "../../utils/catalog/urlState";
+import type { CatalogFacets, CatalogItem } from "../../utils/catalog/types";
 
 interface Props {
   items: CatalogItem[];
@@ -19,29 +20,36 @@ interface Props {
 }
 
 export default function CatalogReact({ items, facets, activeSpecialty, productsHref, advisorUrl }: Props) {
-  const [state, setState] = useState<CatalogState>(DEFAULT_CATALOG_STATE);
+  const brandSlugs = useMemo(() => facets.brands.map((brand) => brand.slug), [facets.brands]);
+  const { state, update, ready } = useCatalogState(brandSlugs);
   const [quote, setQuote] = useState<QuoteProduct | null>(null);
   const result = applyFilters(items, state);
+  const specialtyQuery = ready ? serializeCatalogUrl({ ...state, pagina: 1 }) : "";
 
+  useEffect(() => {
+    if (ready && result.page !== state.pagina) update({ ...state, pagina: result.page }, "replace");
+  }, [ready, result.page, state, update]);
+
+  const setSearch = (q: string) => update({ ...state, q, pagina: 1 }, "debounce");
   const toggleBrand = (slug: string) =>
-    setState((current) => ({
-      ...current,
+    update({
+      ...state,
       pagina: 1,
-      marca: current.marca.includes(slug) ? current.marca.filter((brand) => brand !== slug) : [...current.marca, slug],
-    }));
+      marca: state.marca.includes(slug) ? state.marca.filter((brand) => brand !== slug) : [...state.marca, slug],
+    });
   const openAdvisor = () => setQuote({ name: "Asesoría comercial", whatsappUrl: advisorUrl });
 
   return (
     <section className="container-xl pb-12 pt-4 lg:grid lg:grid-cols-[320px_minmax(0,1fr)] lg:items-start lg:gap-10 lg:pb-24 lg:pt-10">
       <aside aria-label="Filtros del catálogo" className="hidden lg:sticky lg:top-[108px] lg:flex lg:flex-col lg:gap-4">
-        <SearchField value={state.q} onChange={(q) => setState((current) => ({ ...current, q, pagina: 1 }))} />
+        <SearchField value={state.q} onChange={setSearch} />
         <div className="flex flex-col gap-3 rounded-2xl border border-line pb-3.5 pl-6 pr-[18px] pt-6">
           <h2 className="text-heading-h4 text-brand-secondary-dark">Especialidades</h2>
           <SpecialtyList
             specialties={facets.specialties}
             activeSpecialty={activeSpecialty}
             productsHref={productsHref}
-            query=""
+            query={specialtyQuery}
           />
         </div>
         {facets.brands.length > 0 && (
