@@ -175,7 +175,13 @@ export default function CatalogReact({ items, facets, implicitSpecialty, product
           <AdvisorCard advisorUrl={advisorUrl} className="mt-2 lg:hidden" />
         </div>
       </div>
-      <FilterSheet open={sheetOpen} total={result.total} onClose={() => setSheetOpen(false)} onClear={clearFilters}>
+      <FilterSheet
+        open={sheetOpen}
+        openedByTouch={sheetOpenedByTouch}
+        total={result.total}
+        onClose={() => setSheetOpen(false)}
+        onClear={clearFilters}
+      >
         <div className="flex flex-col">
           <h3 className="py-1.5 text-caption uppercase tracking-wider text-content-subtle">Especialidades</h3>
           <SpecialtyList

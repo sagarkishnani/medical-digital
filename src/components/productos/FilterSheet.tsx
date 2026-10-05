@@ -7,13 +7,14 @@ const CLOSE_FALLBACK_MS = 300;
 
 interface Props {
   open: boolean;
+  openedByTouch: boolean;
   total: number;
   onClose: () => void;
   onClear: () => void;
   children: ReactNode;
 }
 
-export default function FilterSheet({ open, total, onClose, onClear, children }: Props) {
+export default function FilterSheet({ open, openedByTouch, total, onClose, onClear, children }: Props) {
   const id = useId();
   const dialogRef = useRef<HTMLDialogElement>(null);
   const [closing, setClosing] = useState(false);
@@ -24,6 +25,7 @@ export default function FilterSheet({ open, total, onClose, onClear, children }:
     if (open) {
       setClosing(false);
       if (!dialog.open) {
+        dialog.setAttribute("autofocus", "");
         dialog.showModal();
         dialog.focus();
         lockScroll();
@@ -63,7 +65,7 @@ export default function FilterSheet({ open, total, onClose, onClear, children }:
       onAnimationEnd={handleAnimationEnd}
       tabIndex={-1}
       onClick={(event) => event.target === dialogRef.current && onClose()}
-      className={`mb-0 mt-auto max-h-[86vh] outline-none focus-visible:ring-0 focus-visible:ring-offset-0 w-full max-w-full flex-col overflow-hidden rounded-t-2xl bg-surface p-0 text-brand-secondary-dark backdrop:bg-brand-secondary-darkest/50 open:flex md:mx-auto md:max-w-lg lg:hidden ${closing ? "animate-sheet-out backdrop:animate-fade-out" : "open:animate-sheet-in backdrop:animate-fade-in"}`}
+      className={`mb-0 mt-auto max-h-[86dvh] outline-none focus-visible:ring-0 focus-visible:ring-offset-0 w-full max-w-full flex-col overflow-hidden rounded-t-2xl bg-surface p-0 text-brand-secondary-dark backdrop:bg-brand-secondary-darkest/50 open:flex md:mx-auto md:max-w-lg lg:hidden ${closing ? "animate-sheet-out backdrop:animate-fade-out" : "open:animate-sheet-in backdrop:animate-fade-in"}`}
     >
       <div className="flex shrink-0 items-center justify-between border-b border-line px-4 py-3">
         <h2 id={`${id}-title`} className="text-heading-h4">
@@ -73,12 +75,12 @@ export default function FilterSheet({ open, total, onClose, onClear, children }:
           type="button"
           onClick={onClose}
           aria-label="Cerrar filtros"
-          className="flex h-11 w-11 items-center justify-center rounded-pill bg-greyscale-lightest transition-colors hover:bg-greyscale-light"
+          className={`flex h-11 w-11 items-center justify-center rounded-pill bg-greyscale-lightest transition-colors hover:bg-greyscale-light ${openedByTouch ? "focus-visible:ring-0 focus-visible:ring-offset-0" : ""}`}
         >
           <PiXLight aria-hidden="true" className="h-5 w-5" />
         </button>
       </div>
-      <div data-lenis-prevent className="flex min-h-0 flex-1 flex-col gap-5 overflow-y-auto overscroll-contain px-4 pb-5 pt-3">
+      <div data-lenis-prevent className="flex min-h-0 flex-col gap-5 overflow-y-auto overscroll-contain px-4 pb-5 pt-3">
         {children}
       </div>
       <div className="flex shrink-0 gap-2.5 border-t border-line px-4 pb-5 pt-3.5">
