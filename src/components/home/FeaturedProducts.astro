@@ -1,10 +1,8 @@
 ---
-import { getImage } from "astro:assets";
 import FeaturedProductsReact from "./FeaturedProductsReact";
-import type { ProductCardData } from "../productos/ProductCard";
+import ProductCard from "../productos/ProductCard.astro";
 import type { WooProduct } from "../../lib/woo/types";
 import { buildQuoteUrl } from "../../utils/whatsapp";
-import { withBase } from "../../utils/url";
 
 interface Props {
   query: string;
@@ -17,25 +15,23 @@ interface Props {
 const { query, variables, data, products, whatsappNumber } = Astro.props;
 const base = import.meta.env.BASE_URL || "/";
 const siteUrl = new URL(base, Astro.site || "https://medicaldigitalperu.com").href;
-
-const cards: ProductCardData[] = await Promise.all(
-  products.map(async (product) => {
-    const cover = product.images[0];
-    const image = cover
-      ? await getImage({ src: cover.src, inferSize: true, width: 480, format: "webp" })
-      : null;
-    return {
-      href: withBase(`/productos/${product.slug}`),
-      name: product.name,
-      brand: product.brand,
-      specialty: null,
-      quoteUrl: whatsappNumber ? buildQuoteUrl(whatsappNumber, product, siteUrl) : "",
-      image: image
-        ? { src: image.src, alt: cover.alt, width: Number(image.attributes.width), height: Number(image.attributes.height) }
-        : null,
-    };
-  }),
-);
+const enabled = Boolean(data?.home?.featured) && products.length > 0;
 ---
 
-<FeaturedProductsReact query={query} variables={variables} data={data} cards={cards} client:visible />
+{
+  enabled && (
+    <section class="container-xl flex flex-col gap-5 pb-10 pt-12 md:gap-9 md:pb-12 md:pt-24">
+      <FeaturedProductsReact query={query} variables={variables} data={data} client:tina />
+      <ul class="-mx-5 flex snap-x snap-mandatory scroll-px-5 gap-3 overflow-x-auto px-5 pb-2 [scrollbar-width:none] sm:mx-0 sm:grid sm:grid-cols-2 sm:gap-5 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-4">
+        {products.map((product) => (
+          <li class="w-[72%] shrink-0 snap-start sm:w-auto">
+            <ProductCard
+              product={product}
+              quoteUrl={whatsappNumber ? buildQuoteUrl(whatsappNumber, product, siteUrl) : ""}
+            />
+          </li>
+        ))}
+      </ul>
+    </section>
+  )
+}

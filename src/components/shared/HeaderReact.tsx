@@ -56,6 +56,18 @@ export default function HeaderReact({ query, variables, data: initialData, local
   }, []);
 
   useEffect(() => {
+    const openQuoteFromTrigger = (event: MouseEvent) => {
+      const trigger = (event.target as Element | null)?.closest<HTMLElement>("[data-quote-name]");
+      if (!trigger) return;
+      event.preventDefault();
+      setOpenPanel(null);
+      setQuote({ name: trigger.dataset.quoteName || "", whatsappUrl: trigger.dataset.quoteUrl || "" });
+    };
+    document.addEventListener("click", openQuoteFromTrigger);
+    return () => document.removeEventListener("click", openQuoteFromTrigger);
+  }, []);
+
+  useEffect(() => {
     if (openPanel !== "menu" && openPanel !== "search") return;
     lockScroll();
     return unlockScroll;

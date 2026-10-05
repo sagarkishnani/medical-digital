@@ -1,11 +1,11 @@
 import { PiHeadsetLight } from "react-icons/pi";
 
 interface Props {
-  onContact: () => void;
+  advisorUrl: string;
   className?: string;
 }
 
-export default function AdvisorCard({ onContact, className = "" }: Props) {
+export default function AdvisorCard({ advisorUrl, className = "" }: Props) {
   return (
     <div className={`flex flex-col gap-2.5 rounded-2xl bg-gradient-primary p-6 text-white lg:gap-3 lg:px-6 lg:pb-6 lg:pt-7 ${className}`}>
       <PiHeadsetLight aria-hidden="true" className="h-8 w-8 lg:h-9 lg:w-9" />
@@ -16,7 +16,8 @@ export default function AdvisorCard({ onContact, className = "" }: Props) {
       </p>
       <button
         type="button"
-        onClick={onContact}
+        data-quote-name="Asesoría comercial"
+        data-quote-url={advisorUrl}
         aria-haspopup="dialog"
         className="btn mt-1.5 bg-surface-raised text-body-md text-brand-secondary-dark hover:bg-surface"
       >

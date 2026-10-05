@@ -1,8 +1,6 @@
-import type { ProductCardData } from "../../components/productos/ProductCard";
-
-export interface CatalogItem extends ProductCardData {
+export interface CatalogItem {
   id: number;
-  sku: string;
+  name: string;
   brandSlug: string | null;
   categories: string[];
   search: string;

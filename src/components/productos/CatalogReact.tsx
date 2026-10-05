@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import type { ReactNode } from "react";
 import { PiSlidersHorizontalLight } from "react-icons/pi";
-import ProductCard from "./ProductCard";
 import SearchField from "./SearchField";
 import SpecialtyList from "./SpecialtyList";
 import BrandFilter from "./BrandFilter";
@@ -12,8 +12,6 @@ import EmptyState from "./EmptyState";
 import FilterSheet from "./FilterSheet";
 import type { ActiveFilter } from "./ActiveFilters";
 import { useCatalogState } from "./useCatalogState";
-import QuoteModal from "../shared/QuoteModal";
-import type { QuoteProduct } from "../shared/QuoteModal";
 import { applyFilters } from "../../utils/catalog/applyFilters";
 import { serializeCatalogUrl } from "../../utils/catalog/urlState";
 import { DEFAULT_CATALOG_STATE } from "../../utils/catalog/types";
@@ -25,21 +23,33 @@ interface Props {
   activeSpecialty: string | null;
   productsHref: string;
   advisorUrl: string;
+  children: ReactNode;
 }
 
-export default function CatalogReact({ items, facets, activeSpecialty, productsHref, advisorUrl }: Props) {
+function applyViewToGrid(grid: HTMLElement, visibleIds: number[]) {
+  const positions = new Map(visibleIds.map((id, index) => [id, index]));
+  grid.querySelectorAll<HTMLElement>("[data-catalog-item]").forEach((element) => {
+    const position = positions.get(Number(element.dataset.catalogItem));
+    element.hidden = position === undefined;
+    element.style.order = position === undefined ? "" : String(position);
+  });
+}
+
+export default function CatalogReact({ items, facets, activeSpecialty, productsHref, advisorUrl, children }: Props) {
   const brandSlugs = useMemo(() => facets.brands.map((brand) => brand.slug), [facets.brands]);
   const { state, update, ready } = useCatalogState(brandSlugs);
-  const [quote, setQuote] = useState<QuoteProduct | null>(null);
   const [sheetOpen, setSheetOpen] = useState(false);
   const resultsRef = useRef<HTMLDivElement>(null);
   const mobileBarRef = useRef<HTMLDivElement>(null);
-  const result = applyFilters(items, state);
+  const gridRef = useRef<HTMLUListElement>(null);
+  const result = useMemo(() => applyFilters(items, state), [items, state]);
   const specialtyQuery = ready ? serializeCatalogUrl({ ...state, pagina: 1 }) : "";
 
-  useEffect(() => {
-    if (ready) document.documentElement.removeAttribute("data-catalog-pending");
-  }, [ready]);
+  useLayoutEffect(() => {
+    if (!ready || !gridRef.current) return;
+    applyViewToGrid(gridRef.current, result.items.map((item) => item.id));
+    document.documentElement.removeAttribute("data-catalog-pending");
+  }, [ready, result]);
 
   useEffect(() => {
     if (ready && result.page !== state.pagina) update({ ...state, pagina: result.page }, "replace");
@@ -83,13 +93,12 @@ export default function CatalogReact({ items, facets, activeSpecialty, productsH
   ];
 
   const filterCount = state.marca.length + (activeSpecialty ? 1 : 0);
-  const openAdvisor = () => setQuote({ name: "Asesoría comercial", whatsappUrl: advisorUrl });
 
   return (
     <section className="container-xl pb-12 lg:grid lg:grid-cols-[320px_minmax(0,1fr)] lg:items-start lg:gap-10 lg:pb-24 lg:pt-10">
-      <aside aria-label="Filtros del catálogo" className="hidden lg:sticky lg:top-[108px] lg:flex lg:flex-col lg:gap-4">
+      <aside aria-label="Filtros del catálogo" className="hidden lg:sticky lg:top-28 lg:flex lg:flex-col lg:gap-4">
         <SearchField value={state.q} onChange={setSearch} />
-        <div className="flex flex-col gap-3 rounded-2xl border border-line pb-3.5 pl-6 pr-[18px] pt-6">
+        <div className="flex flex-col gap-3 rounded-2xl border border-line px-6 pb-3.5 pt-6">
           <h2 className="text-heading-h4 text-brand-secondary-dark">Especialidades</h2>
           <SpecialtyList
             specialties={facets.specialties}
@@ -109,7 +118,7 @@ export default function CatalogReact({ items, facets, activeSpecialty, productsH
             />
           </div>
         )}
-        <AdvisorCard onContact={openAdvisor} />
+        <AdvisorCard advisorUrl={advisorUrl} />
       </aside>
 
       <div>
@@ -125,7 +134,7 @@ export default function CatalogReact({ items, facets, activeSpecialty, productsH
               aria-haspopup="dialog"
               className="flex h-11 items-center gap-2 rounded-pill border border-brand-secondary-dark px-4 text-body-sm font-medium text-brand-secondary-dark"
             >
-              <PiSlidersHorizontalLight aria-hidden="true" className="h-[18px] w-[18px]" />
+              <PiSlidersHorizontalLight aria-hidden="true" className="h-5 w-5" />
               Filtros{filterCount > 0 ? ` (${filterCount})` : ""}
             </button>
             <SortMenu value={state.orden} onChange={setSort} />
@@ -139,15 +148,8 @@ export default function CatalogReact({ items, facets, activeSpecialty, productsH
             </div>
           </div>
           {result.total === 0 && <EmptyState onClear={clearFilters} />}
-          <ul className="grid grid-cols-2 gap-2.5 lg:grid-cols-3 lg:gap-5">
-            {result.items.map((item) => (
-              <ProductCard
-                key={item.id}
-                card={item}
-                compactOnMobile
-                onQuote={(card) => setQuote({ name: card.name, whatsappUrl: card.quoteUrl })}
-              />
-            ))}
+          <ul ref={gridRef} className="grid grid-cols-2 gap-2.5 lg:grid-cols-3 lg:gap-5">
+            {children}
           </ul>
           <Pagination
             page={result.page}
@@ -155,7 +157,7 @@ export default function CatalogReact({ items, facets, activeSpecialty, productsH
             hrefFor={(pagina) => serializeCatalogUrl({ ...state, pagina }) || "?"}
             onChange={changePage}
           />
-          <AdvisorCard onContact={openAdvisor} className="mt-2 lg:hidden" />
+          <AdvisorCard advisorUrl={advisorUrl} className="mt-2 lg:hidden" />
         </div>
       </div>
       <FilterSheet open={sheetOpen} total={result.total} onClose={() => setSheetOpen(false)} onClear={clearFilters}>
@@ -183,7 +185,6 @@ export default function CatalogReact({ items, facets, activeSpecialty, productsH
           </div>
         )}
       </FilterSheet>
-      <QuoteModal product={quote} onClose={() => setQuote(null)} />
     </section>
   );
 }
