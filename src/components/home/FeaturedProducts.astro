@@ -1,7 +1,7 @@
 ---
 import { getImage } from "astro:assets";
 import FeaturedProductsReact from "./FeaturedProductsReact";
-import type { FeaturedCard } from "./FeaturedProductsReact";
+import type { ProductCardData } from "../productos/ProductCard";
 import type { WooProduct } from "../../lib/woo/types";
 import { buildQuoteUrl } from "../../utils/whatsapp";
 import { withBase } from "../../utils/url";
@@ -18,7 +18,7 @@ const { query, variables, data, products, whatsappNumber } = Astro.props;
 const base = import.meta.env.BASE_URL || "/";
 const siteUrl = new URL(base, Astro.site || "https://medicaldigitalperu.com").href;
 
-const cards: FeaturedCard[] = await Promise.all(
+const cards: ProductCardData[] = await Promise.all(
   products.map(async (product) => {
     const cover = product.images[0];
     const image = cover
@@ -28,6 +28,7 @@ const cards: FeaturedCard[] = await Promise.all(
       href: withBase(`/productos/${product.slug}`),
       name: product.name,
       brand: product.brand,
+      specialty: null,
       quoteUrl: whatsappNumber ? buildQuoteUrl(whatsappNumber, product, siteUrl) : "",
       image: image
         ? { src: image.src, alt: cover.alt, width: Number(image.attributes.width), height: Number(image.attributes.height) }
