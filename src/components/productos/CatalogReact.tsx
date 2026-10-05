@@ -40,6 +40,7 @@ export default function CatalogReact({ items, facets, implicitSpecialty, product
   const specialtySlugs = useMemo(() => facets.specialties.map((specialty) => specialty.slug), [facets.specialties]);
   const { state, update, ready } = useCatalogState({ brandSlugs, specialtySlugs, implicitSpecialty, productsHref });
   const [sheetOpen, setSheetOpen] = useState(false);
+  const [sheetOpenedByTouch, setSheetOpenedByTouch] = useState(false);
   const resultsRef = useRef<HTMLDivElement>(null);
   const mobileBarRef = useRef<HTMLDivElement>(null);
   const gridRef = useRef<HTMLUListElement>(null);
@@ -47,6 +48,12 @@ export default function CatalogReact({ items, facets, implicitSpecialty, product
   const specialtyHref = (especialidad: string | null) =>
     `${productsHref}${serializeCatalogUrl({ ...(ready ? state : DEFAULT_CATALOG_STATE), especialidad, pagina: 1 })}`;
   const selectSpecialty = (especialidad: string | null) => update({ ...state, especialidad, pagina: 1 });
+
+  useEffect(() => {
+    const resetOnKeyboard = () => setSheetOpenedByTouch(false);
+    document.addEventListener("keydown", resetOnKeyboard);
+    return () => document.removeEventListener("keydown", resetOnKeyboard);
+  }, []);
 
   useLayoutEffect(() => {
     if (!ready || !gridRef.current) return;
@@ -132,9 +139,10 @@ export default function CatalogReact({ items, facets, implicitSpecialty, product
           <div className="flex items-center justify-between gap-4">
             <button
               type="button"
+              onPointerDown={(event) => setSheetOpenedByTouch(event.pointerType !== "mouse")}
               onClick={() => setSheetOpen(true)}
               aria-haspopup="dialog"
-              className="flex h-11 items-center gap-2 rounded-pill border border-brand-secondary-dark px-4 text-body-sm font-medium text-brand-secondary-dark"
+              className={`flex h-11 items-center gap-2 rounded-pill border border-brand-secondary-dark px-4 text-body-sm font-medium text-brand-secondary-dark ${sheetOpenedByTouch ? "focus-visible:ring-0 focus-visible:ring-offset-0" : ""}`}
             >
               <PiSlidersHorizontalLight aria-hidden="true" className="h-5 w-5" />
               Filtros{filterCount > 0 ? ` (${filterCount})` : ""}

@@ -1,7 +1,9 @@
-import { useEffect, useId, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useRef, useState } from "react";
 import type { AnimationEvent, ReactNode } from "react";
 import { PiXLight } from "react-icons/pi";
 import { lockScroll, unlockScroll } from "../../utils/scrollLock";
+
+const CLOSE_FALLBACK_MS = 300;
 
 interface Props {
   open: boolean;
@@ -23,6 +25,7 @@ export default function FilterSheet({ open, total, onClose, onClear, children }:
       setClosing(false);
       if (!dialog.open) {
         dialog.showModal();
+        dialog.focus();
         lockScroll();
       }
     } else if (dialog.open) {
@@ -32,11 +35,21 @@ export default function FilterSheet({ open, total, onClose, onClear, children }:
 
   useEffect(() => () => unlockScroll(), []);
 
-  const finishClosing = (event: AnimationEvent<HTMLDialogElement>) => {
-    if (!closing || event.target !== dialogRef.current || event.pseudoElement) return;
-    dialogRef.current.close();
+  const finishClosing = useCallback(() => {
+    if (dialogRef.current?.open) dialogRef.current.close();
     setClosing(false);
     unlockScroll();
+  }, []);
+
+  useEffect(() => {
+    if (!closing) return;
+    // Safari no siempre emite animationend al cerrar: sin este respaldo la hoja queda abierta e invisible.
+    const timer = window.setTimeout(finishClosing, CLOSE_FALLBACK_MS);
+    return () => window.clearTimeout(timer);
+  }, [closing, finishClosing]);
+
+  const handleAnimationEnd = (event: AnimationEvent<HTMLDialogElement>) => {
+    if (closing && event.target === dialogRef.current && !event.pseudoElement) finishClosing();
   };
 
   return (
@@ -47,9 +60,10 @@ export default function FilterSheet({ open, total, onClose, onClear, children }:
         event.preventDefault();
         onClose();
       }}
-      onAnimationEnd={finishClosing}
+      onAnimationEnd={handleAnimationEnd}
+      tabIndex={-1}
       onClick={(event) => event.target === dialogRef.current && onClose()}
-      className={`mb-0 mt-auto max-h-[86vh] w-full max-w-full flex-col overflow-hidden rounded-t-2xl bg-surface p-0 text-brand-secondary-dark backdrop:bg-brand-secondary-darkest/50 open:flex md:mx-auto md:max-w-lg lg:hidden ${closing ? "animate-sheet-out backdrop:animate-fade-out" : "open:animate-sheet-in backdrop:animate-fade-in"}`}
+      className={`mb-0 mt-auto max-h-[86vh] outline-none focus-visible:ring-0 focus-visible:ring-offset-0 w-full max-w-full flex-col overflow-hidden rounded-t-2xl bg-surface p-0 text-brand-secondary-dark backdrop:bg-brand-secondary-darkest/50 open:flex md:mx-auto md:max-w-lg lg:hidden ${closing ? "animate-sheet-out backdrop:animate-fade-out" : "open:animate-sheet-in backdrop:animate-fade-in"}`}
     >
       <div className="flex shrink-0 items-center justify-between border-b border-line px-4 py-3">
         <h2 id={`${id}-title`} className="text-heading-h4">
