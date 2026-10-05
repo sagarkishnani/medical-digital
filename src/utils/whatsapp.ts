@@ -6,3 +6,9 @@ export function buildQuoteUrl(number: string, product: Pick<WooProduct, "name" |
   const message = `Hola, quiero cotizar: ${product.name} — ${productUrl}`;
   return `https://wa.me/${digits}?text=${encodeURIComponent(message)}`;
 }
+
+export function buildAdvisorUrl(number: string): string {
+  const digits = number.replace(/\D/g, "");
+  if (!digits) return "";
+  return `https://wa.me/${digits}?text=${encodeURIComponent("Hola, quiero asesoría sobre equipos médicos.")}`;
+}
