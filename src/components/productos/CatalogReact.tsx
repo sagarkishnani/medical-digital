@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { PiSlidersHorizontalLight } from "react-icons/pi";
 import ProductCard from "./ProductCard";
 import SearchField from "./SearchField";
 import SpecialtyList from "./SpecialtyList";
@@ -8,6 +9,7 @@ import SortMenu from "./SortMenu";
 import ActiveFilters from "./ActiveFilters";
 import Pagination from "./Pagination";
 import EmptyState from "./EmptyState";
+import FilterSheet from "./FilterSheet";
 import type { ActiveFilter } from "./ActiveFilters";
 import { useCatalogState } from "./useCatalogState";
 import QuoteModal from "../shared/QuoteModal";
@@ -29,6 +31,7 @@ export default function CatalogReact({ items, facets, activeSpecialty, productsH
   const brandSlugs = useMemo(() => facets.brands.map((brand) => brand.slug), [facets.brands]);
   const { state, update, ready } = useCatalogState(brandSlugs);
   const [quote, setQuote] = useState<QuoteProduct | null>(null);
+  const [sheetOpen, setSheetOpen] = useState(false);
   const resultsRef = useRef<HTMLDivElement>(null);
   const mobileBarRef = useRef<HTMLDivElement>(null);
   const result = applyFilters(items, state);
@@ -75,10 +78,11 @@ export default function CatalogReact({ items, facets, activeSpecialty, productsH
     })),
   ];
 
+  const filterCount = state.marca.length + (activeSpecialty ? 1 : 0);
   const openAdvisor = () => setQuote({ name: "Asesoría comercial", whatsappUrl: advisorUrl });
 
   return (
-    <section className="container-xl pb-12 pt-4 lg:grid lg:grid-cols-[320px_minmax(0,1fr)] lg:items-start lg:gap-10 lg:pb-24 lg:pt-10">
+    <section className="container-xl pb-12 lg:grid lg:grid-cols-[320px_minmax(0,1fr)] lg:items-start lg:gap-10 lg:pb-24 lg:pt-10">
       <aside aria-label="Filtros del catálogo" className="hidden lg:sticky lg:top-[108px] lg:flex lg:flex-col lg:gap-4">
         <SearchField value={state.q} onChange={setSearch} />
         <div className="flex flex-col gap-3 rounded-2xl border border-line pb-3.5 pl-6 pr-[18px] pt-6">
@@ -104,31 +108,77 @@ export default function CatalogReact({ items, facets, activeSpecialty, productsH
         <AdvisorCard onContact={openAdvisor} />
       </aside>
 
-      <div ref={resultsRef} className="flex flex-col gap-4 lg:gap-6">
-        <div className="flex items-center justify-between gap-4 lg:min-h-11">
-          <ActiveFilters total={result.total} filters={activeFilters} onClear={clearFilters} />
-          <div className="hidden shrink-0 self-start lg:block">
+      <div>
+        <div
+          ref={mobileBarRef}
+          className="sticky top-16 z-30 -mx-5 flex flex-col gap-3 border-b border-line bg-surface px-5 py-3.5 md:-mx-8 md:px-8 lg:hidden"
+        >
+          <SearchField value={state.q} onChange={setSearch} compact />
+          <div className="flex items-center justify-between gap-4">
+            <button
+              type="button"
+              onClick={() => setSheetOpen(true)}
+              aria-haspopup="dialog"
+              className="flex h-11 items-center gap-2 rounded-pill border border-brand-secondary-dark px-4 text-body-sm font-medium text-brand-secondary-dark"
+            >
+              <PiSlidersHorizontalLight aria-hidden="true" className="h-[18px] w-[18px]" />
+              Filtros{filterCount > 0 ? ` (${filterCount})` : ""}
+            </button>
             <SortMenu value={state.orden} onChange={setSort} />
           </div>
         </div>
-        {result.total === 0 && <EmptyState onClear={clearFilters} />}
-        <ul className="grid grid-cols-2 gap-2.5 lg:grid-cols-3 lg:gap-5">
-          {result.items.map((item) => (
-            <ProductCard
-              key={item.id}
-              card={item}
-              compactOnMobile
-              onQuote={(card) => setQuote({ name: card.name, whatsappUrl: card.quoteUrl })}
-            />
-          ))}
-        </ul>
-        <Pagination
-          page={result.page}
-          totalPages={result.totalPages}
-          hrefFor={(pagina) => serializeCatalogUrl({ ...state, pagina }) || "?"}
-          onChange={changePage}
-        />
+        <div ref={resultsRef} className="flex flex-col gap-4 pt-4 lg:gap-6 lg:pt-0">
+          <div className="flex items-center justify-between gap-4 lg:min-h-11">
+            <ActiveFilters total={result.total} filters={activeFilters} onClear={clearFilters} />
+            <div className="hidden shrink-0 self-start lg:block">
+              <SortMenu value={state.orden} onChange={setSort} />
+            </div>
+          </div>
+          {result.total === 0 && <EmptyState onClear={clearFilters} />}
+          <ul className="grid grid-cols-2 gap-2.5 lg:grid-cols-3 lg:gap-5">
+            {result.items.map((item) => (
+              <ProductCard
+                key={item.id}
+                card={item}
+                compactOnMobile
+                onQuote={(card) => setQuote({ name: card.name, whatsappUrl: card.quoteUrl })}
+              />
+            ))}
+          </ul>
+          <Pagination
+            page={result.page}
+            totalPages={result.totalPages}
+            hrefFor={(pagina) => serializeCatalogUrl({ ...state, pagina }) || "?"}
+            onChange={changePage}
+          />
+          <AdvisorCard onContact={openAdvisor} className="mt-2 lg:hidden" />
+        </div>
       </div>
+      <FilterSheet open={sheetOpen} total={result.total} onClose={() => setSheetOpen(false)} onClear={clearFilters}>
+        <div className="flex flex-col">
+          <h3 className="py-1.5 text-caption uppercase tracking-wider text-content-subtle">Especialidades</h3>
+          <SpecialtyList
+            specialties={facets.specialties}
+            activeSpecialty={activeSpecialty}
+            productsHref={productsHref}
+            query={specialtyQuery}
+            large
+          />
+        </div>
+        {facets.brands.length > 0 && (
+          <div className="flex flex-col gap-1">
+            <h3 className="py-1.5 text-caption uppercase tracking-wider text-content-subtle">Marcas</h3>
+            <BrandFilter
+              brands={facets.brands}
+              selected={state.marca}
+              counts={result.brandCounts}
+              onToggle={toggleBrand}
+              large
+              searchable={false}
+            />
+          </div>
+        )}
+      </FilterSheet>
       <QuoteModal product={quote} onClose={() => setQuote(null)} />
     </section>
   );

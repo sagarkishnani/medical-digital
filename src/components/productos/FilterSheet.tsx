@@ -1,0 +1,88 @@
+import { useEffect, useId, useRef, useState } from "react";
+import type { AnimationEvent, ReactNode } from "react";
+import { PiXLight } from "react-icons/pi";
+import { lockScroll, unlockScroll } from "../../utils/scrollLock";
+
+interface Props {
+  open: boolean;
+  total: number;
+  onClose: () => void;
+  onClear: () => void;
+  children: ReactNode;
+}
+
+export default function FilterSheet({ open, total, onClose, onClear, children }: Props) {
+  const id = useId();
+  const dialogRef = useRef<HTMLDialogElement>(null);
+  const [closing, setClosing] = useState(false);
+
+  useEffect(() => {
+    const dialog = dialogRef.current;
+    if (!dialog) return;
+    if (open) {
+      setClosing(false);
+      if (!dialog.open) {
+        dialog.showModal();
+        lockScroll();
+      }
+    } else if (dialog.open) {
+      setClosing(true);
+    }
+  }, [open]);
+
+  useEffect(() => () => unlockScroll(), []);
+
+  const finishClosing = (event: AnimationEvent<HTMLDialogElement>) => {
+    if (!closing || event.target !== dialogRef.current || event.pseudoElement) return;
+    dialogRef.current.close();
+    setClosing(false);
+    unlockScroll();
+  };
+
+  return (
+    <dialog
+      ref={dialogRef}
+      aria-labelledby={`${id}-title`}
+      onCancel={(event) => {
+        event.preventDefault();
+        onClose();
+      }}
+      onAnimationEnd={finishClosing}
+      onClick={(event) => event.target === dialogRef.current && onClose()}
+      className={`mb-0 mt-auto max-h-[86vh] w-full max-w-full flex-col rounded-t-2xl bg-surface p-0 text-brand-secondary-dark backdrop:bg-brand-secondary-darkest/50 open:flex md:mx-auto md:max-w-[480px] lg:hidden ${closing ? "animate-sheet-out backdrop:animate-fade-out" : "open:animate-sheet-in backdrop:animate-fade-in"}`}
+    >
+      <div className="flex items-center justify-between border-b border-line px-4 py-3">
+        <h2 id={`${id}-title`} className="text-heading-h4">
+          Filtros
+        </h2>
+        <button
+          type="button"
+          onClick={onClose}
+          aria-label="Cerrar filtros"
+          className="flex h-11 w-11 items-center justify-center rounded-pill bg-greyscale-lightest transition-colors hover:bg-greyscale-light"
+        >
+          <PiXLight aria-hidden="true" className="h-5 w-5" />
+        </button>
+      </div>
+      <div data-lenis-prevent className="flex flex-col gap-5 overflow-y-auto overscroll-contain px-4 pb-5 pt-3">
+        {children}
+      </div>
+      <div className="flex gap-2.5 border-t border-line px-4 pb-5 pt-3.5">
+        <button
+          type="button"
+          onClick={onClear}
+          className="btn h-[52px] border-line bg-surface px-[22px] text-brand-secondary-dark hover:bg-surface-raised"
+        >
+          Limpiar
+        </button>
+        <button
+          type="button"
+          onClick={onClose}
+          className="btn h-[52px] flex-1 bg-brand-secondary-dark text-white hover:bg-brand-tertiary-dark"
+        >
+          Ver {total} {total === 1 ? "producto" : "productos"}
+        </button>
+      </div>
+    </dialog>
+  );
+}
