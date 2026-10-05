@@ -12,11 +12,10 @@ const { locale } = Astro.props;
 const result = await client.queries.global({ relativePath: "index.json" });
 ---
 
-<!-- Below the fold: hydrate only when it scrolls into view. -->
 <FooterReact
   query={result.query}
   variables={result.variables}
   data={result.data}
   locale={locale}
-  client:visible
+  client:tina
 />

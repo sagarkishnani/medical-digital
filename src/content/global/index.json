@@ -44,22 +44,54 @@
     { "categorySlug": "diagnostico-respiratorio", "icon": "lungs" }
   ],
   "footer": {
-    "tagline": "Medical Digital cuida la salud del Perú con tecnología médica de marcas líderes en diagnóstico y soporte vital.",
+    "tagline": "Más de 18 años equipando a las instituciones de salud del Perú con tecnología médica de marcas líderes.",
+    "catalogTitle": "Catálogo de Productos para Medicina General Perú",
+    "catalogButtonLabel": "Descargar catálogo",
     "columns": [
       {
-        "title": "Sitio",
+        "title": "Productos",
         "links": [
-          { "label": "Inicio", "url": "/" },
-          { "label": "Contacto", "url": "/#cta" }
+          { "label": "Cardiología", "url": "/productos/categoria/cardiologia" },
+          { "label": "Emergencia", "url": "/productos/categoria/emergencia" },
+          { "label": "Diagnóstico respiratorio", "url": "/productos/categoria/diagnostico-respiratorio" },
+          { "label": "Hospitalización", "url": "/productos/categoria/hospitalizacion" },
+          { "label": "Ver todos", "url": "/productos" }
+        ]
+      },
+      {
+        "title": "Medical Digital",
+        "links": [
+          { "label": "Nosotros", "url": "/nosotros" },
+          { "label": "Marcas y reseñas", "url": "/marcas" },
+          { "label": "Servicio técnico", "url": "/servicio-tecnico" },
+          { "label": "Noticias", "url": "/blog" },
+          { "label": "Trabaja con nosotros", "url": "/contacto" }
+        ]
+      },
+      {
+        "title": "Legales",
+        "links": [
+          { "label": "Términos y condiciones", "url": "/terminos-y-condiciones" },
+          { "label": "Devoluciones y garantías", "url": "/nosotros#politicas" },
+          { "label": "Código de ética y conducta", "url": "/nosotros#politicas" },
+          { "label": "Homologación", "url": "/homologacion" }
         ]
       }
     ],
+    "contactTitle": "Estamos para ayudarte",
+    "certificationsTitle": "Certificaciones",
+    "certifications": [
+      { "code": "ISO 9001:2015", "name": "Sistema de Gestión de Calidad" },
+      { "code": "BPA", "name": "Buenas Prácticas de Almacenamiento" },
+      { "code": "ISO 13485", "name": "Dispositivos médicos" }
+    ],
+    "complaintsBook": { "label": "Libro de Reclamaciones", "url": "/libro-de-reclamaciones" },
     "social": [
       { "network": "linkedin", "url": "https://www.linkedin.com/company/medicaldigitalpe/" },
       { "network": "facebook", "url": "https://www.facebook.com/medicaldigital" },
       { "network": "instagram", "url": "https://www.instagram.com/medicaldigital/" }
     ],
-    "legal": "© 2026 Medical Digital. Todos los derechos reservados."
+    "legal": "Medical Digital Perú · Todos los derechos reservados"
   },
   "whatsapp": "51983511262",
   "company": {

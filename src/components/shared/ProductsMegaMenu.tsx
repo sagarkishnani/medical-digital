@@ -1,5 +1,6 @@
-import { PiArrowUpRightLight, PiFilePdfLight } from "react-icons/pi";
+import { PiArrowUpRightLight } from "react-icons/pi";
 import Icon from "./Icon";
+import { BsFiletypePdf } from "react-icons/bs";
 import { panelMotion } from "./panelMotion";
 import { mediaUrl } from "../../utils/mediaUrl";
 import { withBase } from "../../utils/url";
@@ -76,7 +77,7 @@ export default function ProductsMegaMenu({ id, open, categories, categoryIcons, 
               {...(catalog.file ? { href: mediaUrl(catalog.file), target: "_blank", rel: "noopener noreferrer" } : {})}
               className="flex cursor-pointer items-center gap-1.5 font-medium text-brand-secondary-dark"
             >
-              <PiFilePdfLight aria-hidden="true" className="h-5 w-5 text-brand-primary" />
+              <BsFiletypePdf aria-hidden="true" className="h-5 w-5 text-brand-primary" />
               {catalog.label || "Catálogo PDF"}
             </a>
           )}

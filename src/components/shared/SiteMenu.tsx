@@ -5,45 +5,19 @@ import {
   PiCaretDownLight,
   PiClockLight,
   PiEnvelopeSimpleLight,
-  PiFacebookLogoLight,
-  PiFilePdfLight,
-  PiInstagramLogoLight,
-  PiLinkedinLogoLight,
   PiMapPinLight,
   PiPhoneLight,
   PiSquaresFourLight,
-  PiTiktokLogoLight,
-  PiWhatsappLogoLight,
-  PiXLogoLight,
-  PiYoutubeLogoLight,
 } from "react-icons/pi";
 import Icon from "./Icon";
+import { BsFiletypePdf } from "react-icons/bs";
 import { panelMotion } from "./panelMotion";
+import { SOCIAL_ICONS, SOCIAL_NAMES } from "./socialLinks";
 import { mediaUrl } from "../../utils/mediaUrl";
 import { withBase } from "../../utils/url";
 import { localizeHref, tField } from "../../utils/i18n";
 import type { Locale } from "../../i18n/config";
 import type { HeaderCategory } from "./HeaderReact";
-
-const SOCIAL_NAMES: Record<string, string> = {
-  facebook: "Facebook",
-  instagram: "Instagram",
-  linkedin: "LinkedIn",
-  tiktok: "TikTok",
-  whatsapp: "WhatsApp",
-  x: "X",
-  youtube: "YouTube",
-};
-
-const SOCIAL_ICONS: Record<string, IconType> = {
-  facebook: PiFacebookLogoLight,
-  instagram: PiInstagramLogoLight,
-  linkedin: PiLinkedinLogoLight,
-  tiktok: PiTiktokLogoLight,
-  whatsapp: PiWhatsappLogoLight,
-  x: PiXLogoLight,
-  youtube: PiYoutubeLogoLight,
-};
 
 interface Props {
   id: string;
@@ -87,7 +61,7 @@ export default function SiteMenu({ id, open, locale, global, categories, onNavig
   const catalogLink = (className: string) =>
     catalog && (
       <a {...catalogLinkProps} className={className}>
-        <PiFilePdfLight aria-hidden="true" className="h-[22px] w-[22px]" />
+        <BsFiletypePdf aria-hidden="true" className="h-[22px] w-[22px]" />
         <span className="lg:hidden">Descargar catálogo PDF</span>
         <span className="hidden lg:inline">Catálogo PDF</span>
       </a>
