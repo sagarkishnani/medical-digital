@@ -1,6 +1,6 @@
 # SPEC 05 — Catálogo con filtros
 
-> **Status:** Aprobado
+> **Status:** Implementado
 > **Depends on:** SPEC 01, SPEC 03
 > **Date:** 2026-10-04
 > **Objective:** Rehacer `/productos` y `/productos/categoria/<slug>` según la referencia (desktop y mobile), con búsqueda, filtros por especialidad y marca, orden y paginación que funcionan en el navegador y viven en la URL.
