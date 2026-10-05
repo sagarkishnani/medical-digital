@@ -140,6 +140,21 @@ proxy, ni fetch a WordPress desde el navegador. Ver `specs/01-catalogo-productos
 
 Rutas: `/productos`, `/productos/categoria/[slug]` y `/productos/[slug]`.
 
+El catálogo (`/productos` y las categorías) comparte `CatalogPage.astro`:
+`src/lib/woo/catalog.ts` arma en build los productos y las facetas, y la isla
+`CatalogReact` filtra en el navegador. El estado vive en la URL (ver
+`specs/05-catalogo-con-filtros.md`):
+
+| Parámetro | Ejemplo | Por defecto (se omite) |
+|---|---|---|
+| `q` | `?q=holter` | vacío |
+| `marca` | `?marca=schiller,edan` | ninguna |
+| `orden` | `?orden=a-z` (`relevantes`, `a-z`, `z-a`) | `relevantes` |
+| `pagina` | `?pagina=2` | `1` |
+
+La especialidad no es un parámetro: es la página `/productos/categoria/<slug>`.
+"Más relevantes" pone primero los destacados de Woo.
+
 ### Modo mantenimiento
 
 `BaseLayout.astro` consulta la colección `maintenance` en build time; con
@@ -170,6 +185,8 @@ Componentes reutilizables (úsalos antes de escribir uno nuevo):
 - `src/components/shared/PageHero.tsx` — cabecera de página interna con
   breadcrumb.
 - `src/components/shared/QuoteModal.tsx` — modal "Solicitar cotización".
+- `src/components/productos/ProductCard.tsx` — tarjeta de producto de la home
+  y del catálogo.
 - `src/utils/url.ts` (`withBase`) — rutas internas escritas en el código.
 - `src/utils/scrollLock.ts` — bloquea y libera el scroll de la página (también
   detiene Lenis, expuesto en `window.lenis`). Úsalo en todo panel o modal a

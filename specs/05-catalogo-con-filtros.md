@@ -382,3 +382,30 @@ Esta spec no toca Tina: no hay schema nuevo.
 - Textos de la cabecera y de "¿Necesitas ayuda?" editables en Tina.
 
 Cada una de esas piezas, si llega, va en su propia spec.
+
+## Notas de implementación
+
+- **Paso 1 sin el `fix/` de entidades HTML.** Por decisión del usuario se implementó sin esperar el fix: "EASY PULSE &#8211; …" sigue mostrando la entidad en el catálogo hasta que se corrija `store.ts`.
+- **`npm run build` necesita TinaCloud.** En local se verificó con `npm run build:local`; no dejó cambios en `tina/`.
+- **Tarjeta compartida.** `ProductCard.tsx` reemplaza la tarjeta de `FeaturedProductsReact`. La variante del catálogo (`compactOnMobile`) muestra "Cotizar" y oculta la especialidad por debajo de `md`.
+- **Botones de la tarjeta mobile de 44 px**, no de 40 px como la referencia: prevalece el área táctil del estándar (§3.2).
+- **Chips de 32/34 px de alto** con un área táctil extendida a 44 px mediante un pseudo-elemento.
+- **Hoja de filtros como `<dialog>` nativo**, igual que `QuoteModal`: el foco queda atrapado y vuelve al botón "Filtros" al cerrar. Entra con 16 px de desplazamiento y fundido (`sheet-in`, 300 ms), no desde fuera de la pantalla, por la regla de desplazamiento del estándar (§4).
+- **Tamaños de texto con tokens.** Los 15 px de la referencia van en `body-md` y los 13 px en `body-sm`; el H1 usa `heading-h2` en mobile y `heading-h1` (44 px) en desktop.
+- **Chip de especialidad.** En `/productos/categoria/<slug>` la especialidad aparece como chip; su ✕ lleva a `/productos` conservando los demás parámetros.
+- **Facetas de marca por página.** En una categoría solo se listan las marcas con productos en ella; una marca de la URL que no existe ahí se ignora.
+- **Sidebar más alto que la pantalla (≈1450 px a 1280 × 900).** Queda fijo a 108 px y sube junto con el final de la grilla, como en la referencia.
+- **Presupuesto de JS.** `check:standard` mide 148 KB gzipped en la página más pesada (la home), dentro del límite de 150 KB pero muy cerca.
+
+## QA realizada
+
+Build local (`npm run build:local`) y `npm run check:standard` (0 errores, 1 aviso previo: páginas sin `og:image`). Playwright sobre `astro preview` el 2026-10-04:
+
+- **1280 px:** sidebar con 8 especialidades y 11 marcas; 12 tarjetas por página; búsqueda sin tilde ("espirometro" → 2 resultados, `?q=espirometro`); marca Schiller (27) y unión Schiller + Edan (29); conteos de marca estables; "atrás" deshace; chips y "Limpiar"; orden A–Z; `Esc` cierra el orden; "Siguiente" escribe `?pagina=2` y deja la grilla visible bajo el header; parámetros inválidos ignorados; estado vacío y "Limpiar filtros"; especialidad conserva `?marca=`; H1, miga y `aria-current` en Cardiología; modal con el producto y enlace de WhatsApp con su nombre; asesor genérico; sidebar sticky a 108 px; destacados de Woo primero.
+- **URL directa:** `/productos?marca=schiller` con JS demorado: la grilla queda en opacidad 0 hasta hidratar y aparece ya filtrada.
+- **320, 360 y 768 px:** sin scroll horizontal (también con la hoja abierta); 2 columnas; barra sticky a 64 px; la hoja bloquea y libera el scroll, se cierra con `Esc` y devuelve el foco a "Filtros (1)"; "Ver 27 productos"; buscador de 16 px.
+- **1024 px:** 3 columnas, sin scroll horizontal.
+- Sin errores de JavaScript en consola.
+- El ejemplo "electrocardiógrafo" de los criterios no existe en Woo; la búsqueda sin tilde se verificó con "espirometro".
+
+Pendiente de verificar a mano: zoom en iOS real, swipe y toques en un Android real, y recorrido completo con teclado y lector de pantalla.
