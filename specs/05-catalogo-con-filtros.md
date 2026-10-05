@@ -409,7 +409,7 @@ Cada una de esas piezas, si llega, va en su propia spec.
 - **Especialidad en la URL (revisión).** Se cambió de navegación a la landing a filtro `?especialidad=` tras detectar el delay y un bug de historial con `ClientRouter`. `BaseLayout` acepta `viewTransitions` (por defecto `true`).
 - **Facetas de marca por página.** En una categoría solo se listan las marcas con productos en ella; una marca de la URL que no existe ahí se ignora.
 - **Sidebar más alto que la pantalla (≈1450 px a 1280 × 900).** Queda fijo a 112 px (`top-28`) y sube junto con el final de la grilla, como en la referencia.
-- **Presupuesto de JS.** `check:standard` mide 149 KB gzipped en la página más pesada (la home), dentro del límite de 150 KB pero muy cerca.
+- **Presupuesto de JS.** Tras traer `staging` (footer de la SPEC 04), `check:standard` mide 150 KB gzipped en la home, justo en el límite (aviso). 119 KB son el runtime de React; la isla de destacados de esta spec pesa menos de 1 KB y el footer suma 3 KB. Conviene revisar el presupuesto de la home en otra tarea.
 
 ## QA realizada
 
@@ -422,5 +422,7 @@ Build local (`npm run build:local`) y `npm run check:standard` (0 errores, 1 avi
 - **HTML estático:** `/productos` trae los 45 productos (33 con `hidden`) y 3 imágenes con `loading="eager"`.
 - Sin errores de JavaScript en consola.
 - El ejemplo "electrocardiógrafo" de los criterios no existe en Woo; la búsqueda sin tilde se verificó con "espirometro".
+
+Repetida completa (57 checks del catálogo y 13 de especialidad y landing) después de traer `staging` con el footer de la SPEC 04, el 2026-10-05.
 
 Pendiente de verificar a mano: zoom en iOS real, swipe y toques en un Android real, y recorrido completo con teclado y lector de pantalla.
