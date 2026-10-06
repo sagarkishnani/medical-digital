@@ -21,6 +21,20 @@ const SANITIZE_OPTIONS: sanitizeHtml.IOptions = {
   },
 };
 
+const NAMED_ENTITIES: Record<string, string> = {
+  amp: "&", lt: "<", gt: ">", quot: '"', apos: "'", nbsp: "\u00a0",
+  ndash: "–", mdash: "—", hellip: "…", lsquo: "‘", rsquo: "’", ldquo: "“", rdquo: "”",
+  laquo: "«", raquo: "»", reg: "®", trade: "™", copy: "©", deg: "°", times: "×", middot: "·",
+};
+
+function decodeEntities(text: string): string {
+  return text.replace(/&(#x[0-9a-f]+|#\d+|[a-z]+);/gi, (entity, code: string) => {
+    if (code[0] !== "#") return NAMED_ENTITIES[code.toLowerCase()] ?? entity;
+    const point = code[1].toLowerCase() === "x" ? Number.parseInt(code.slice(2), 16) : Number.parseInt(code.slice(1), 10);
+    return point > 0 && point <= 0x10ffff ? String.fromCodePoint(point) : entity;
+  });
+}
+
 function sanitizeDescription(html: string): string {
   return sanitizeHtml(html, SANITIZE_OPTIONS).replace(LEFTOVER_SHORTCODE, "").trim();
 }
@@ -98,7 +112,7 @@ function projectImages(images: StoreApiImage[], storeUrl: string, fallbackAlt: s
   const projected: WooImage[] = [];
   for (const image of images) {
     if (!image.src?.startsWith(`${storeUrl}/`)) return null;
-    projected.push({ src: image.src, alt: image.alt?.trim() || fallbackAlt });
+    projected.push({ src: image.src, alt: decodeEntities(image.alt?.trim() || fallbackAlt) });
   }
   return projected;
 }
@@ -108,24 +122,25 @@ function projectProduct(raw: StoreApiProduct, storeUrl: string): WooProduct | nu
     console.warn(`[woo] Producto ${raw.id} descartado: slug inválido "${raw.slug}".`);
     return null;
   }
-  const images = projectImages(raw.images || [], storeUrl, raw.name);
+  const name = decodeEntities(raw.name);
+  const images = projectImages(raw.images || [], storeUrl, name);
   if (!images) {
     console.warn(`[woo] Producto ${raw.id} descartado: imagen fuera de ${storeUrl}.`);
     return null;
   }
   return {
     id: raw.id,
-    name: raw.name,
+    name,
     slug: raw.slug,
     sku: raw.sku || "",
-    brand: raw.brands?.[0]?.name || null,
+    brand: raw.brands?.[0]?.name ? decodeEntities(raw.brands[0].name) : null,
     brandSlug: SLUG_PATTERN.test(raw.brands?.[0]?.slug || "") ? raw.brands![0].slug : null,
     shortDescription: sanitizeDescription(raw.short_description || ""),
     description: sanitizeDescription(raw.description || ""),
     images,
     categories: (raw.categories || [])
       .filter((category) => SLUG_PATTERN.test(category.slug))
-      .map(({ id, name, slug }) => ({ id, name, slug })),
+      .map(({ id, name: categoryName, slug }) => ({ id, name: decodeEntities(categoryName), slug })),
   };
 }
 
@@ -165,7 +180,7 @@ async function loadCategories(): Promise<WooCategory[]> {
   const { body } = await fetchJson<StoreApiCategory[]>(storeUrl, "products/categories");
   return body
     .filter((category) => SLUG_PATTERN.test(category.slug))
-    .map(({ id, name, slug, count }) => ({ id, name, slug, count }));
+    .map(({ id, name, slug, count }) => ({ id, name: decodeEntities(name), slug, count }));
 }
 
 let productsPromise: Promise<WooProduct[]> | undefined;
