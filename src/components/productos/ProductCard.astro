@@ -1,34 +1,83 @@
 ---
 import { Image } from "astro:assets";
+import { PiArrowUpRightLight } from "react-icons/pi";
 import type { WooProduct } from "../../lib/woo/types";
+import { withBase } from "../../utils/url";
 
 interface Props {
   product: WooProduct;
+  quoteUrl: string;
+  showSpecialty?: boolean;
+  compactOnMobile?: boolean;
+  eager?: boolean;
 }
 
-const { product } = Astro.props;
-const base = import.meta.env.BASE_URL || "/";
+const { product, quoteUrl, showSpecialty = false, compactOnMobile = false, eager = false } = Astro.props;
+const href = withBase(`/productos/${product.slug}`);
 const cover = product.images[0];
-const category = product.categories[0];
+const specialty = showSpecialty ? product.categories[0]?.name : undefined;
 ---
 
-<a href={`${base}productos/${product.slug}`} class="card group flex w-full flex-col overflow-hidden !p-0">
-  <div class="flex aspect-square items-center justify-center bg-surface p-6">
-    {cover ? (
+<article
+  class:list={[
+    "group relative flex h-full flex-col rounded-2xl border border-line bg-surface transition-[box-shadow,transform,border-color] duration-300 can-hover:hover:-translate-y-1.5 can-hover:hover:border-greyscale-light can-hover:hover:shadow-lg",
+    compactOnMobile ? "p-1.5 md:p-2.5" : "p-2 md:p-2.5",
+  ]}
+>
+  <div
+    class:list={[
+      "flex items-center justify-center overflow-hidden rounded-xl bg-surface-raised",
+      compactOnMobile ? "aspect-[10/9]" : "aspect-[20/17] md:aspect-[10/9]",
+    ]}
+  >
+    {cover && (
       <Image
         src={cover.src}
         alt={cover.alt}
         inferSize
         width={480}
-        class="max-h-full w-auto object-contain transition-transform duration-500 group-hover:scale-[1.03]"
+        format="webp"
+        loading={eager ? "eager" : "lazy"}
+        class="h-3/4 w-3/4 object-contain mix-blend-multiply transition-transform duration-300 can-hover:group-hover:scale-105"
       />
-    ) : (
-      <span class="text-body-sm text-content-muted">Sin imagen</span>
     )}
   </div>
-  <div class="flex flex-1 flex-col gap-2 border-t border-line p-6">
-    {product.brand && <p class="text-overline uppercase text-accent">{product.brand}</p>}
-    <h2 class="text-heading-h4 text-content">{product.name}</h2>
-    {category && <p class="mt-auto text-caption text-content-muted">{category.name}</p>}
+  <div class:list={["flex flex-1 flex-col gap-1.5 pt-4", compactOnMobile ? "px-1.5 pb-1.5 md:px-2.5 md:pb-2.5" : "px-2.5 pb-2.5"]}>
+    {product.brand && <p class="text-overline uppercase tracking-wider text-content-subtle">{product.brand}</p>}
+    <h3 class:list={["text-brand-secondary-dark", compactOnMobile ? "text-body-sm font-medium md:text-subtitle" : "text-subtitle"]}>
+      <a href={href} class="after:absolute after:inset-0 after:rounded-2xl">{product.name}</a>
+    </h3>
+    {specialty && <p class:list={["text-caption text-content-subtle", compactOnMobile && "hidden md:block"]}>{specialty}</p>}
   </div>
-</a>
+  <div class:list={["relative z-10 flex items-center gap-2", compactOnMobile ? "p-1 md:p-1.5" : "p-1.5"]}>
+    <button
+      type="button"
+      data-quote-name={product.name}
+      data-quote-url={quoteUrl}
+      aria-haspopup="dialog"
+      class:list={[
+        "btn min-w-0 flex-1 bg-brand-secondary-dark text-body-sm text-white can-hover:hover:bg-brand-tertiary-dark",
+        compactOnMobile ? "h-11 px-3 md:h-12 md:px-4" : "px-4",
+      ]}
+    >
+      {compactOnMobile ? (
+        <>
+          <span class="md:hidden">Cotizar</span>
+          <span class="hidden md:inline">Solicitar cotización</span>
+        </>
+      ) : (
+        "Solicitar cotización"
+      )}
+    </button>
+    <a
+      href={href}
+      aria-label={`Ver ${product.name}`}
+      class:list={[
+        "flex shrink-0 items-center justify-center rounded-pill bg-surface-raised text-brand-secondary-dark transition-colors can-hover:hover:bg-brand-primary can-hover:hover:text-white",
+        compactOnMobile ? "h-11 w-11 md:h-12 md:w-12" : "h-12 w-12",
+      ]}
+    >
+      <PiArrowUpRightLight aria-hidden="true" class="h-5 w-5" />
+    </a>
+  </div>
+</article>

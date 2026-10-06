@@ -13,8 +13,8 @@ interface Props {
   onClose: () => void;
 }
 
-const fieldClass =
-  "h-[50px] w-full rounded-lg border border-line bg-surface px-4 text-body-sm text-brand-secondary-dark placeholder:text-content-subtle focus:border-brand-secondary-dark focus:outline-none";
+const fieldBaseClass =
+  "w-full rounded-lg border border-line bg-surface px-4 text-body-sm text-brand-secondary-dark placeholder:text-content-subtle focus:border-brand-secondary-dark focus:outline-none focus-visible:ring-0 focus-visible:ring-offset-0";
 
 const FIELDS = [
   { name: "name", label: "Nombre y apellido", type: "text", autoComplete: "name" },
@@ -93,7 +93,7 @@ export default function QuoteModal({ product, onClose }: Props) {
                   autoComplete={field.autoComplete}
                   required
                   placeholder={`${field.label}*`}
-                  className={fieldClass}
+                  className={`${fieldBaseClass} h-[50px]`}
                 />
               </div>
             ))}
@@ -106,13 +106,13 @@ export default function QuoteModal({ product, onClose }: Props) {
                 name="message"
                 rows={3}
                 placeholder="Cantidad, plazo o consulta adicional"
-                className={`${fieldClass} h-24 resize-none py-3.5`}
+                className={`${fieldBaseClass} h-24 resize-none py-3.5`}
               />
             </div>
           </div>
 
           <div className="flex flex-col gap-3 sm:flex-row">
-            <button type="button" className="btn-primary flex-1">
+            <button type="button" className="btn-primary sm:flex-1">
               Enviar solicitud
             </button>
             {shown.whatsappUrl && (

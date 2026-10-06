@@ -1,7 +1,7 @@
 ---
 import type { GetStaticPaths } from "astro";
-import ProductListing from "../../../components/productos/ProductListing.astro";
-import { getCategories, getProducts } from "../../../lib/woo/store";
+import CatalogPage from "../../../components/productos/CatalogPage.astro";
+import { getCategories } from "../../../lib/woo/store";
 import type { WooCategory } from "../../../lib/woo/types";
 
 export const getStaticPaths = (async () => {
@@ -16,17 +16,11 @@ interface Props {
 }
 
 const { category } = Astro.props;
-const [allProducts, categories] = await Promise.all([getProducts(), getCategories()]);
-const products = allProducts.filter((product) =>
-  product.categories.some((productCategory) => productCategory.id === category.id),
-);
 ---
 
-<ProductListing
+<CatalogPage
   title={category.name}
   seoTitle={`${category.name} — Productos — Medical Digital`}
   seoDescription={`Equipos médicos de ${category.name} de marcas líderes. Solicita tu cotización a Medical Digital.`}
-  products={products}
-  categories={categories}
-  activeSlug={category.slug}
+  category={category}
 />

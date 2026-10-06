@@ -1,14 +1,9 @@
 ---
-import ProductListing from "../../components/productos/ProductListing.astro";
-import { getCategories, getProducts } from "../../lib/woo/store";
-
-const [products, categories] = await Promise.all([getProducts(), getCategories()]);
+import CatalogPage from "../../components/productos/CatalogPage.astro";
 ---
 
-<ProductListing
+<CatalogPage
   title="Nuestros productos"
   seoTitle="Productos — Medical Digital"
   seoDescription="Equipos médicos de marcas líderes para cardiología, diagnóstico respiratorio, emergencia, sala de operaciones y más. Solicita tu cotización."
-  products={products}
-  categories={categories}
 />

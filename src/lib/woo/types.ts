@@ -16,6 +16,7 @@ export interface WooProduct {
   slug: string;
   sku: string;
   brand: string | null;
+  brandSlug: string | null;
   shortDescription: string;
   description: string;
   images: WooImage[];

@@ -1,0 +1,97 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import CatalogReact from "./CatalogReact";
+import ProductCard from "./ProductCard.astro";
+import client from "../../../tina/__generated__/client";
+import { buildCatalog } from "../../lib/woo/catalog";
+import type { WooCategory } from "../../lib/woo/types";
+import { buildAdvisorUrl, buildQuoteUrl } from "../../utils/whatsapp";
+import { CATALOG_PAGE_SIZE } from "../../utils/catalog/types";
+import { withBase } from "../../utils/url";
+
+interface Props {
+  title: string;
+  seoTitle: string;
+  seoDescription: string;
+  category?: WooCategory;
+}
+
+const { title, seoTitle, seoDescription, category } = Astro.props;
+const base = import.meta.env.BASE_URL || "/";
+const siteUrl = new URL(base, Astro.site || "https://medicaldigitalperu.com").href;
+
+let whatsappNumber = "";
+try {
+  const result = await client.queries.global({ relativePath: "index.json" });
+  whatsappNumber = result.data?.global?.whatsapp || "";
+} catch {
+  whatsappNumber = "";
+}
+
+const { products, items, facets } = await buildCatalog(category);
+const EAGER_CARDS = 3;
+const productsHref = withBase("/productos");
+---
+
+<BaseLayout title={seoTitle} description={seoDescription} viewTransitions={false}>
+  <section class="bg-surface-raised">
+    <div class="container-xl flex flex-col gap-2 py-7 md:gap-3 md:py-12">
+      <nav aria-label="Miga de pan">
+        <ol class="flex flex-wrap items-center gap-2 text-body-sm text-content-muted">
+          <li><a href={withBase("/")} class="-my-3 inline-block py-3 hover:text-brand-secondary-dark">Inicio</a></li>
+          <li aria-hidden="true">/</li>
+          {category ? (
+            <>
+              <li><a href={productsHref} class="-my-3 inline-block py-3 hover:text-brand-secondary-dark">Productos</a></li>
+              <li aria-hidden="true">/</li>
+              <li aria-current="page" class="text-brand-secondary-dark">{category.name}</li>
+            </>
+          ) : (
+            <li aria-current="page" class="text-brand-secondary-dark">Productos</li>
+          )}
+        </ol>
+      </nav>
+      <h1 class="text-heading-h2 text-brand-secondary-dark lg:text-heading-h1">{title}</h1>
+    </div>
+  </section>
+
+  {items.length === 0 ? (
+    <section class="container-xl py-12 md:py-16">
+      <div class="rounded-2xl border border-line bg-surface-raised p-10 text-center">
+        <p class="text-heading-h4 text-content">El catálogo todavía no está disponible</p>
+        <p class="mt-2 text-body-md text-content-muted">
+          Este sitio se generó sin conexión a la tienda (WOO_STORE_URL vacía), así que no hay productos que mostrar.
+        </p>
+      </div>
+    </section>
+  ) : (
+    <>
+      <script is:inline>
+        if (/[?&](especialidad|q|marca|orden|pagina)=/.test(window.location.search)) {
+          document.documentElement.setAttribute("data-catalog-pending", "");
+          setTimeout(() => document.documentElement.removeAttribute("data-catalog-pending"), 1500);
+        }
+      </script>
+      <CatalogReact
+        client:load
+        items={items}
+        facets={facets}
+        implicitSpecialty={category?.slug ?? null}
+        productsHref={productsHref}
+        advisorUrl={buildAdvisorUrl(whatsappNumber)}
+      >
+        {products.map((product, index) => (
+          <li data-catalog-item={product.id} hidden={index >= CATALOG_PAGE_SIZE}>
+            <ProductCard
+              product={product}
+              quoteUrl={whatsappNumber ? buildQuoteUrl(whatsappNumber, product, siteUrl) : ""}
+              showSpecialty
+              compactOnMobile
+              eager={index < EAGER_CARDS}
+            />
+          </li>
+        ))}
+      </CatalogReact>
+    </>
+  )}
+</BaseLayout>

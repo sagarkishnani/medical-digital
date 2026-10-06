@@ -140,6 +140,25 @@ proxy, ni fetch a WordPress desde el navegador. Ver `specs/01-catalogo-productos
 
 Rutas: `/productos`, `/productos/categoria/[slug]` y `/productos/[slug]`.
 
+El catálogo (`/productos` y las categorías) comparte `CatalogPage.astro`:
+`src/lib/woo/catalog.ts` arma en build los productos y las facetas, y la isla
+`CatalogReact` filtra en el navegador. El estado vive en la URL (ver
+`specs/05-catalogo-con-filtros.md`):
+
+| Parámetro | Ejemplo | Por defecto (se omite) |
+|---|---|---|
+| `especialidad` | `?especialidad=cardiologia` | ninguna |
+| `q` | `?q=holter` | vacío |
+| `marca` | `?marca=schiller,edan` | ninguna |
+| `orden` | `?orden=a-z` (`relevantes`, `a-z`, `z-a`) | `relevantes` |
+| `pagina` | `?pagina=2` | `1` |
+
+`/productos/categoria/<slug>` es una landing estática con la especialidad
+implícita; cambiar de especialidad desde ahí lleva a `/productos?especialidad=…`.
+"Más relevantes" pone primero los destacados de Woo. El catálogo apaga las view
+transitions (`<BaseLayout viewTransitions={false}>`) para que `ClientRouter` no
+compita con su historial.
+
 ### Modo mantenimiento
 
 `BaseLayout.astro` consulta la colección `maintenance` en build time; con
@@ -154,6 +173,10 @@ componentes existentes. Las clases reutilizables (botones, `card`, `section`,
 `container-xl`, `container-lg`) están en `src/styles/global.css`, que
 **BaseLayout importa** — un CSS que nadie importa no se bundlea y no llega al
 sitio.
+
+La variante `can-hover:` (plugin en `tailwind.config.mjs`) aplica los hover solo
+con mouse (`hover: hover` y `pointer: fine`): úsala en tarjetas y efectos que no
+deben quedar "pegados" al tocar en mobile, p. ej. `can-hover:hover:shadow-lg`.
 
 Iconos: `react-icons`. El UI Kit usa **Phosphor Light** (`react-icons/pi`, sufijo
 `Light`). Excepciones que entregó diseño: los logos de las redes y de WhatsApp van
@@ -170,6 +193,10 @@ Componentes reutilizables (úsalos antes de escribir uno nuevo):
 - `src/components/shared/PageHero.tsx` — cabecera de página interna con
   breadcrumb.
 - `src/components/shared/QuoteModal.tsx` — modal "Solicitar cotización".
+- `src/components/productos/ProductCard.astro` — tarjeta de producto de la home
+  y del catálogo, en Astro puro. Su botón lleva `data-quote-name` y
+  `data-quote-url`: `HeaderReact` escucha esos clics y abre el `QuoteModal`.
+  Cualquier botón con esos atributos abre la cotización sin una isla propia.
 - `src/utils/url.ts` (`withBase`) — rutas internas escritas en el código.
 - `src/utils/scrollLock.ts` — bloquea y libera el scroll de la página (también
   detiene Lenis, expuesto en `window.lenis`). Úsalo en todo panel o modal a
