@@ -3,7 +3,7 @@ import type { GetStaticPaths } from "astro";
 import { Image, getImage } from "astro:assets";
 import { FaWhatsapp } from "react-icons/fa6";
 import { BsFiletypePdf } from "react-icons/bs";
-import { PiCaretDownLight } from "react-icons/pi";
+import { PiCaretDownLight, PiPlayFill } from "react-icons/pi";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import Icon from "../../components/shared/Icon";
 import ProductGalleryReact, { type GalleryImage } from "../../components/productos/ProductGalleryReact";
@@ -236,5 +236,62 @@ const breadcrumbLink = "-my-3 inline-block py-3 hover:text-brand-secondary-dark"
         </div>
       </div>
     </div>
+
+    {extras.video && (
+      <section class="container-xl pb-2 pt-2 lg:pb-24 lg:pt-6" aria-labelledby="video-demo">
+        <div class="grid gap-3.5 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.7fr)] lg:items-center lg:gap-14 lg:border-t lg:border-line lg:pt-14">
+          <div class="flex flex-col gap-3.5 lg:gap-4">
+            <p class="text-caption text-content-subtle lg:text-body-md">Video demo</p>
+            <h2 id="video-demo" class="text-balance text-[22px] font-medium leading-tight text-brand-secondary-dark lg:text-heading-h2">
+              Conoce el equipo en funcionamiento
+            </h2>
+            <p class="hidden text-body-md text-content-muted lg:block">
+              Mira cómo se configura y opera el {product.name}.
+            </p>
+          </div>
+          <div class="relative aspect-video overflow-hidden rounded-[20px] bg-brand-secondary-dark lg:rounded-3xl">
+            {extras.video.kind === "youtube" ? (
+              <button
+                type="button"
+                data-youtube-id={extras.video.id}
+                data-youtube-title={`Video de ${product.name}`}
+                aria-label={`Reproducir el video de ${product.name}`}
+                class="group absolute inset-0 flex h-full w-full items-center justify-center"
+              >
+                <img
+                  src={`https://i.ytimg.com/vi/${extras.video.id}/hqdefault.jpg`}
+                  alt=""
+                  width="480"
+                  height="360"
+                  loading="lazy"
+                  decoding="async"
+                  class="absolute inset-0 h-full w-full object-cover"
+                />
+                <span class="relative flex h-16 w-16 items-center justify-center rounded-full bg-white shadow-lg transition-transform duration-300 can-hover:group-hover:scale-105 motion-reduce:transition-none lg:h-[88px] lg:w-[88px]">
+                  <PiPlayFill aria-hidden="true" className="ml-1 h-[26px] w-[26px] text-accent lg:h-[34px] lg:w-[34px]" />
+                </span>
+              </button>
+            ) : (
+              <video src={extras.video.src} controls preload="none" class="absolute inset-0 h-full w-full bg-brand-secondary-dark" />
+            )}
+          </div>
+        </div>
+      </section>
+    )}
   </article>
 </BaseLayout>
+
+<script>
+  document.addEventListener("click", (event) => {
+    const facade = (event.target as Element | null)?.closest<HTMLButtonElement>("[data-youtube-id]");
+    if (!facade) return;
+    const iframe = document.createElement("iframe");
+    iframe.src = `https://www.youtube-nocookie.com/embed/${facade.dataset.youtubeId}?autoplay=1&rel=0`;
+    iframe.title = facade.dataset.youtubeTitle || "Video del producto";
+    iframe.allow = "accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture";
+    iframe.allowFullscreen = true;
+    iframe.className = "absolute inset-0 h-full w-full";
+    facade.replaceWith(iframe);
+    iframe.focus();
+  });
+</script>
