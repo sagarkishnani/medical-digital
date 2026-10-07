@@ -6,6 +6,7 @@ import { contactCollection } from "./collections/contact";
 import { postCollection } from "./collections/post";
 import { maintenanceCollection } from "./collections/maintenance";
 import { cookieConsentCollection } from "./collections/cookieConsent";
+import { productPageCollection } from "./collections/productPage";
 
 /**
  * TinaCMS schema — the single source of truth for the shape of the content.
@@ -42,6 +43,7 @@ export default defineConfig({
       postCollection,
       maintenanceCollection,
       cookieConsentCollection,
+      productPageCollection,
     ],
   },
 });
