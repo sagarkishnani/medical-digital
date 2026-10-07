@@ -3,6 +3,7 @@ import type { GetStaticPaths } from "astro";
 import { Image } from "astro:assets";
 import { FaWhatsapp } from "react-icons/fa6";
 import { BsFiletypePdf } from "react-icons/bs";
+import { PiCaretDownLight } from "react-icons/pi";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import Icon from "../../components/shared/Icon";
 import client from "../../../tina/__generated__/client";
@@ -66,6 +67,11 @@ const cover = product.images[0];
 const seoDescription =
   product.shortDescription.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim().slice(0, 160) ||
   `${product.name}. Solicita tu cotización a Medical Digital.`;
+const tabs = [
+  { label: "Descripción general", html: product.description },
+  { label: "Especificaciones técnicas", html: extras.specifications },
+  { label: "Accesorios", html: extras.accessories },
+].filter((tab) => tab.html);
 const breadcrumbLink = "-my-3 inline-block py-3 hover:text-brand-secondary-dark";
 ---
 
@@ -203,11 +209,26 @@ const breadcrumbLink = "-my-3 inline-block py-3 hover:text-brand-secondary-dark"
             </a>
           )}
 
-          {product.description && (
-            <section class="border-t border-line pt-6">
-              <h2 class="text-heading-h4 text-brand-secondary-dark">Descripción general</h2>
-              <div class="prose mt-4 max-w-none text-content-muted prose-a:text-accent" set:html={product.description} />
-            </section>
+          {tabs.length > 0 && (
+            <div class="border-t border-line lg:mt-2">
+              {tabs.map((tab, index) => (
+                <details class="group border-b border-line" open={index === 0}>
+                  <summary class="flex min-h-[60px] cursor-pointer list-none items-center justify-between gap-4 text-body-md font-medium text-brand-secondary-dark lg:py-[22px] lg:text-[18px] [&::-webkit-details-marker]:hidden">
+                    {tab.label}
+                    <PiCaretDownLight
+                      aria-hidden="true"
+                      className="h-5 w-5 shrink-0 transition-transform duration-300 group-open:rotate-180 motion-reduce:transition-none lg:h-[22px] lg:w-[22px]"
+                    />
+                  </summary>
+                  <div class="overflow-x-auto pb-5 lg:pb-6">
+                    <div
+                      class="prose max-w-none text-[15px] leading-[1.65] text-content-muted prose-a:text-accent prose-table:my-0 prose-th:text-brand-secondary-dark lg:text-body-md lg:leading-[1.7] [&_table]:min-w-max"
+                      set:html={tab.html}
+                    />
+                  </div>
+                </details>
+              ))}
+            </div>
           )}
         </div>
       </div>
