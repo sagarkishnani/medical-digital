@@ -258,6 +258,10 @@ Pendientes de decisión de diseño: el texto blanco sobre `brand-primary-medium`
 (`btn-primary`, `btn-navigation`) y el hover de `btn-link` quedan en 4.08:1, y
 `btn-sm` mide 32px frente al target táctil de 44×44.
 
+El botón flotante de WhatsApp usa el verde de la referencia (token `whatsapp`,
+`#51C859`) por decisión de diseño: el ícono blanco queda en 2.15:1 frente al
+3:1 que pide el estándar para componentes.
+
 
 ### Panel del CMS
 

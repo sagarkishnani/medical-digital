@@ -116,6 +116,7 @@ export default {
           DEFAULT: '#E5E7EB',
         },
         accent: '#B8242A',
+        whatsapp: '#51C859',
       },
       backgroundImage: {
         'gradient-primary': 'linear-gradient(90deg, #1C2140 0%, #18459A 100%)',
