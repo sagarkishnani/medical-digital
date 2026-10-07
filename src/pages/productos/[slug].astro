@@ -1,11 +1,12 @@
 ---
 import type { GetStaticPaths } from "astro";
-import { Image } from "astro:assets";
+import { Image, getImage } from "astro:assets";
 import { FaWhatsapp } from "react-icons/fa6";
 import { BsFiletypePdf } from "react-icons/bs";
 import { PiCaretDownLight } from "react-icons/pi";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import Icon from "../../components/shared/Icon";
+import ProductGalleryReact, { type GalleryImage } from "../../components/productos/ProductGalleryReact";
 import client from "../../../tina/__generated__/client";
 import { getRankedProducts } from "../../lib/woo/catalog";
 import { extrasFor, getProductExtras } from "../../lib/woo/extras";
@@ -63,7 +64,21 @@ const quoteUrl = whatsappNumber ? buildQuoteUrl(whatsappNumber, product, siteUrl
 const specialty = product.categories[0];
 const specialtyHref = specialty ? withBase(`/productos/categoria/${specialty.slug}`) : "";
 const productsHref = withBase("/productos");
-const cover = product.images[0];
+const galleryImages: GalleryImage[] = await Promise.all(
+  product.images.map(async (image) => {
+    const [main, thumb] = await Promise.all([
+      getImage({ src: image.src, inferSize: true, width: 960, format: "webp" }),
+      getImage({ src: image.src, inferSize: true, width: 192, format: "webp" }),
+    ]);
+    return {
+      src: main.src,
+      thumbSrc: thumb.src,
+      width: Number(main.attributes.width),
+      height: Number(main.attributes.height),
+      alt: image.alt,
+    };
+  }),
+);
 const seoDescription =
   product.shortDescription.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim().slice(0, 160) ||
   `${product.name}. Solicita tu cotización a Medical Digital.`;
@@ -96,19 +111,7 @@ const breadcrumbLink = "-my-3 inline-block py-3 hover:text-brand-secondary-dark"
 
       <div class="mt-4 grid gap-6 lg:mt-7 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] lg:items-start lg:gap-16">
         <div class="lg:sticky lg:top-28">
-          <div class="flex aspect-square items-center justify-center rounded-3xl bg-surface-raised">
-            {cover && (
-              <Image
-                src={cover.src}
-                alt={cover.alt}
-                inferSize
-                width={960}
-                format="webp"
-                loading="eager"
-                class="h-[78%] w-[78%] object-contain mix-blend-multiply"
-              />
-            )}
-          </div>
+          <ProductGalleryReact client:load images={galleryImages} />
         </div>
 
         <div class="flex min-w-0 flex-col gap-4 lg:gap-6">
