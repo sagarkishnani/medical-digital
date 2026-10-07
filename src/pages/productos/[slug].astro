@@ -92,7 +92,7 @@ const tabs = [
 const breadcrumbLink = "-my-3 inline-block py-3 hover:text-brand-secondary-dark";
 ---
 
-<BaseLayout title={`${product.name} — Medical Digital`} description={seoDescription}>
+<BaseLayout title={`${product.name} — Medical Digital`} description={seoDescription} hideWhatsAppButton>
   <article>
     <div class="container-xl pb-12 pt-3.5 lg:pt-8">
       <nav aria-label="Miga de pan">
@@ -304,6 +304,32 @@ const breadcrumbLink = "-my-3 inline-block py-3 hover:text-brand-secondary-dark"
       </div>
     </section>
   )}
+
+  <div
+    data-mobile-bottom-bar
+    class="fixed inset-x-0 bottom-0 z-20 flex gap-2.5 border-t border-line bg-surface px-4 pb-[max(16px,env(safe-area-inset-bottom))] pt-3 lg:hidden"
+  >
+    <button
+      type="button"
+      data-quote-name={product.name}
+      data-quote-url={quoteUrl}
+      aria-haspopup="dialog"
+      class="btn-primary h-[54px] min-w-0 flex-1"
+    >
+      Solicitar cotización
+    </button>
+    {quoteUrl && (
+      <a
+        href={quoteUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label={`Hablar con un asesor por WhatsApp sobre ${product.name}`}
+        class="flex h-[54px] w-[54px] shrink-0 items-center justify-center rounded-full border border-semantics-success text-semantics-success-dark"
+      >
+        <FaWhatsapp aria-hidden="true" className="h-6 w-6" />
+      </a>
+    )}
+  </div>
 </BaseLayout>
 
 <script>

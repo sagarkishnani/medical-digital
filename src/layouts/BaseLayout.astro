@@ -20,9 +20,10 @@ interface Props {
   title?: string;
   description?: string;
   viewTransitions?: boolean;
+  hideWhatsAppButton?: boolean;
 }
 
-const { title, description, viewTransitions = true } = Astro.props;
+const { title, description, viewTransitions = true, hideWhatsAppButton = false } = Astro.props;
 
 const locale = isLocale(Astro.currentLocale) ? Astro.currentLocale : getLocale(Astro.url);
 
@@ -126,7 +127,7 @@ try {
           <slot />
         </main>
         <Footer locale={locale} />
-        {globalData?.whatsappButton?.enabled && globalData?.whatsapp && <WhatsAppButton phone={globalData.whatsapp} />}
+        {globalData?.whatsappButton?.enabled && globalData?.whatsapp && <WhatsAppButton phone={globalData.whatsapp} desktopOnly={hideWhatsAppButton} />}
         <CookieConsent />
       </>
     )}
