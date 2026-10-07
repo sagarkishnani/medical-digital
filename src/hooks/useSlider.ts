@@ -8,6 +8,7 @@ export interface UseSliderOptions {
   loop?: boolean;
   align?: "start" | "center";
   active?: boolean;
+  container?: string;
 }
 
 export interface Slider {
@@ -34,13 +35,14 @@ function usePrefersReducedMotion(): boolean {
 }
 
 export function useSlider(options: UseSliderOptions = {}): Slider {
-  const { loop = true, align = "start", active = true } = options;
+  const { loop = true, align = "start", active = true, container = null } = options;
 
   const reducedMotion = usePrefersReducedMotion();
   const [viewportRef, embla] = useEmblaCarousel({
     loop,
     align,
     active,
+    container,
     duration: reducedMotion ? 1 : SCROLL_DURATION,
   });
 
