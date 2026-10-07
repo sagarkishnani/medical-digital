@@ -117,6 +117,8 @@ Colecciones:
 - `post` — artículos del blog en MDX (`src/content/blog/`).
 - `maintenance` — modo mantenimiento del sitio.
 - `cookieConsent` — textos del banner de cookies.
+- `productPage` — etiqueta ("Uso Profesional Médico") y sellos de la ficha de
+  producto, iguales para todos los productos.
 
 
 ### Catálogo de WooCommerce
@@ -158,6 +160,22 @@ implícita; cambiar de especialidad desde ahí lleva a `/productos?especialidad=
 "Más relevantes" pone primero los destacados de Woo. El catálogo apaga las view
 transitions (`<BaseLayout viewTransitions={false}>`) para que `ClientRouter` no
 compita con su historial.
+
+La ficha (`/productos/[slug]`, ver `specs/06-ficha-producto.md`) suma tres
+fuentes, todas en build:
+
+- `brandLogo`: el logo de la marca, de `products/brands` de la Store API.
+- `src/lib/woo/extras.ts`: los campos de JetEngine (ficha técnica PDF,
+  especificaciones, accesorios y video) desde `/wp/v2/product` (`meta`). Son
+  **opcionales**: si WordPress no expone `meta` ("Show in Rest API" apagado),
+  el build avisa y la ficha sale sin esas secciones. Las reglas puras están en
+  `extrasRules.ts`.
+- `src/lib/woo/related.ts`: hasta 4 relacionados de la misma especialidad
+  (destacados primero) completados con la misma marca.
+
+En mobile la ficha tiene una barra fija (`data-mobile-bottom-bar`): el `body`
+reserva su alto y `BaseLayout hideWhatsAppButton` oculta el botón flotante por
+debajo de `lg`.
 
 ### Modo mantenimiento
 

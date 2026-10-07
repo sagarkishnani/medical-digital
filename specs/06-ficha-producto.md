@@ -386,3 +386,32 @@ Colección singleton en `src/content/product-page/index.json`, sin crear ni borr
 - El `fix/` de entidades HTML (va por separado).
 
 Cada una de esas piezas, si llega, va en su propia spec.
+
+## Notas de implementación
+
+- **`npm run build` necesita TinaCloud.** En local se verificó con `npm run build:local` y `WOO_STORE_URL=https://medicaldigitalperu.com`, la URL pública de la tienda.
+- **Reglas de JetEngine en `extrasRules.ts`.** Las validaciones de PDF, YouTube y archivo de video viven en un módulo sin dependencias de Astro, para probarlas con `node --experimental-strip-types`. `extras.ts` solo descarga y degrada.
+- **`store.ts` reutilizado.** `fetchJson` acepta la API (`wc/store/v1` o `wp/v2`) para compartir el timeout y el reintento, y `sanitizeDescription` se exporta para los campos WYSIWYG.
+- **`useSlider` acepta `container`.** Las tarjetas Astro llegan a la isla dentro de `<astro-slot>`, así que Embla recibe el selector del `<ul>` (`[data-related-track]`) en lugar de tomar el primer hijo del viewport.
+- **Fondo de la galería en cada slide.** Embla mueve el carril con `transform`, que crea un contexto de apilamiento: con el fondo en el viewport, `mix-blend-multiply` dejaba un rectángulo blanco alrededor de la foto.
+- **Columna de la galería con `min-w-0`.** Sin él, la fila de miniaturas ensanchaba la grilla y la página tenía scroll horizontal en mobile.
+- **Relacionados en tablet al 42 %.** La spec fija el 72 % en mobile; entre `sm` y `lg` una tarjeta al 72 % mide más de 500 px, así que desde `sm` va al 42 %.
+- **"Hablar con un asesor" con `btn-secondary`,** como dice la spec: borde rojo del UI Kit. La referencia lo dibuja con borde navy; queda pendiente de decisión de diseño.
+- **Galería sticky.** Queda fija mientras la columna de información sea más alta; sin especificaciones (estado actual) el recorrido es corto.
+- **Relacionados completados con la marca.** Con los datos actuales todas las especialidades tienen 4 o más productos y ninguna marca tiene productos fuera de esas especialidades, así que el relleno por marca no se activa. Se verificó con datos de prueba.
+- **Lock de Tina.** `tina/tina-lock.json` se actualizó con la colección `productPage`.
+- **Póster de YouTube sin `astro:assets`.** Se carga desde `i.ytimg.com` con `loading="lazy"`; no se agrega ese dominio a `image.domains`.
+
+## QA realizada
+
+Build local (`npm run build:local`) con y sin `WOO_STORE_URL` (sin Woo: 7 páginas y ninguna ficha, sin errores). `npm run check:standard`: 0 errores, 2 avisos previos (páginas sin `og:image` y JS de la home en el límite de 150 KB). Playwright sobre `astro preview` el 2026-10-07:
+
+- **Reglas (`node --experimental-strip-types`):** los 4 formatos de YouTube dan el mismo ID; `link` de otro host o `http:` da `null`; `meta` vacío da extras vacíos; los switchers `es_link`/`es_archivo` eligen la fuente. Relacionados: especialidad con destacados primero, relleno por marca, sin el producto actual.
+- **1280 px (Holter Medilog AR):** miga de 4 niveles; 5 miniaturas en columna de 96 px y la 3.ª queda activa al hacer clic; galería fija a 112 px; etiqueta, sellos y logo de Schiller; "Solicitar cotización" abre el modal con el producto; "Hablar con un asesor" abre `wa.me` en otra pestaña con el nombre y la URL; botón flotante visible y barra fija oculta; 4 relacionados de Cardiología en una fila; acordeón abre y cierra con `Enter` y `Espacio`; JSON-LD `Product` y `BreadcrumbList`; un solo H1; sin scroll horizontal.
+- **Hospitalización (Desecador Derm 102):** 3 relacionados de su especialidad (la marca no tiene otros); con una sola foto no hay miniaturas.
+- **320, 360 y 768 px:** sin scroll horizontal; miga Productos / Cardiología; barra fija visible, botón flotante y sellos ocultos; controles de 44 px o más; swipe a la foto 2; carrusel de relacionados; la barra no tapa el final del footer; la barra abre el modal.
+- **`prefers-reduced-motion`:** sin transición en el caret del acordeón.
+- **Campos de JetEngine simulados** (parche temporal en `extras.ts`, no versionado) en Q-Flow, en 1280 y 320 px: "Ficha técnica" y "Descargar ficha técnica" abren el PDF en otra pestaña; la pestaña "Accesorios" con `<p>&nbsp;</p>` no aparece; la tabla de especificaciones pierde `style` y clases y se desplaza en su contenedor sin scroll en la página; sin peticiones a YouTube antes del clic; el clic carga el `iframe` de `youtube-nocookie.com`. `scout-tube` sale sin ficha técnica ni video.
+- Sin errores de JavaScript en consola.
+
+Pendiente de verificar a mano: Safari en el iPhone XR con el preview de Amplify (barra fija, zona del indicador de inicio y modal), swipe en un Android real, edición de los sellos en `/admin`, el validador de schema.org, el recorrido completo con teclado y lector de pantalla, y los campos reales de JetEngine cuando se active "Show in Rest API".
