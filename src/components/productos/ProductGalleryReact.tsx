@@ -22,12 +22,12 @@ export default function ProductGalleryReact({ images }: Props) {
 
   return (
     <div className="flex flex-col gap-2.5 lg:grid lg:grid-cols-[96px_minmax(0,1fr)] lg:gap-4">
-      <div ref={slider.viewportRef} className="overflow-hidden rounded-3xl bg-surface-raised lg:order-2">
+      <div ref={slider.viewportRef} className="overflow-hidden rounded-3xl lg:order-2">
         <ul className="flex touch-pan-y">
           {images.map((image, index) => (
             <li
               key={image.src}
-              className="flex aspect-square min-w-0 flex-[0_0_100%] items-center justify-center"
+              className="flex aspect-square min-w-0 flex-[0_0_100%] items-center justify-center bg-surface-raised"
               aria-hidden={hasThumbnails && index !== slider.activeIndex ? true : undefined}
             >
               <img
