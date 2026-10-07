@@ -170,8 +170,9 @@ fuentes, todas en build:
   **opcionales**: si WordPress no expone `meta` ("Show in Rest API" apagado),
   el build avisa y la ficha sale sin esas secciones. Las reglas puras están en
   `extrasRules.ts`.
-- `src/lib/woo/related.ts`: hasta 4 relacionados de la misma especialidad
-  (destacados primero) completados con la misma marca.
+- `src/lib/woo/productPage.ts` (`buildProductPage`, como en Eres): los paneles
+  del acordeón y hasta 4 relacionados (misma especialidad por destacados,
+  después la misma marca y después destacados).
 
 En mobile la ficha tiene una barra fija (`data-mobile-bottom-bar`): el `body`
 reserva su alto y `BaseLayout hideWhatsAppButton` oculta el botón flotante por

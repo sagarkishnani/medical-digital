@@ -82,7 +82,7 @@ Todos los valores se escriben con tokens, nunca en hex. El layout de dos columna
 
 ### 5. Acordeón
 
-- `<details>`/`<summary>` con `border-t border-line` y un `border-b` por fila. La primera pestaña viene abierta.
+- `<details name="detalles-producto">`/`<summary>` con `border-t border-line` y un `border-b` por fila. La primera pestaña viene abierta y solo hay una abierta a la vez.
 - Fila: padding de 22 px y título de 18 px en desktop; 60 px de alto mínimo y 16 px en mobile. Peso 500 y `PiCaretDownLight`, que rota 180°.
 - Cuerpo: 16 px (15 px en mobile), interlineado 1.7, `text-content-muted`.
 - Pestañas: Descripción general, Especificaciones técnicas y Accesorios.
@@ -125,11 +125,11 @@ Todos los valores se escriben con tokens, nunca en hex. El layout de dos columna
   - "Solicitar cotización" abre el `QuoteModal` con el producto (`data-quote-name` / `data-quote-url`, igual que la tarjeta).
   - "Hablar con un asesor" abre WhatsApp con `buildQuoteUrl` (nombre y URL del producto).
 - **Logo de la marca** leído en build desde `/products/brands`; si falta, el nombre en texto.
-- **Etiqueta y sellos editables en Tina** en una colección singleton `productPage` (patrón `shop` de Eres), con el contenido inicial de la referencia.
+- **Etiqueta y sellos editables en Tina** en una colección singleton `productPage` (equivale a `shop.productPage` de Eres), con el contenido inicial de la referencia.
 - **Sello y enlace "Ficha técnica"** al PDF (`link` de JetEngine), solo cuando existe.
 - **Acordeón:** Descripción general (Woo), Especificaciones técnicas y Accesorios (JetEngine). Una pestaña sin contenido no se muestra.
 - **Video demo** solo cuando existe: YouTube con fachada e `iframe` de `youtube-nocookie.com` al hacer clic; un archivo subido, con `<video controls preload="none">`.
-- **Relacionados:** hasta 4 de la misma especialidad, con los destacados primero, completados con la misma marca. Sin ninguno, no aparece la sección.
+- **Relacionados:** hasta 4 de la misma especialidad, con los destacados primero, completados con la misma marca y después con el resto del catálogo por destacados (como `eres-skin-studio`). Sin ninguno, no aparece la sección.
 - **Lectura de los campos de JetEngine en build** desde `/wp/v2/product` (`meta`), sanitizados con la allowlist de `store.ts`. Si no llegan, la ficha se publica sin esas secciones y el build no falla.
 - **JSON-LD** `Product` (sin `offers`) y `BreadcrumbList` (estándar §SEO).
 - Dos íconos nuevos en `src/lib/icons.ts` para los sellos de la referencia: `truck` ("Entrega") y `graduation-cap` ("Capacitación").
@@ -184,17 +184,41 @@ export interface WooProductExtras {
 - **Degradación:** si `meta` llega vacío o el endpoint responde con error, cada producto queda con los extras vacíos. El build avisa con `console.warn` y **no falla**. A diferencia del catálogo, que falla si Woo no responde (SPEC 01), los extras son opcionales.
 - Un HTML que queda vacío tras sanitizar cuenta como vacío y su pestaña no se muestra.
 
-### Relacionados (`src/lib/woo/related.ts`, solo build)
+### Datos de la ficha (`src/lib/woo/productPage.ts`, solo build)
 
-- `getRelatedProducts(product, products, limit = 4): WooProduct[]`:
-  - primero los de la misma especialidad (`categories[0]`), ordenados por el `rank` de `catalog.ts` (destacados primero);
-  - después los de la misma marca (`brandSlug`) con el mismo orden;
-  - sin el producto actual y sin repetidos.
-- El `rank` se extrae de `catalog.ts` a una función que comparten ambos módulos.
+Mismo patrón que `buildProductPage` en `eres-skin-studio` (SPEC 10):
+
+```ts
+export type DetailKey = "descripcion" | "especificaciones" | "accesorios";
+
+export interface ProductDetail {
+  key: DetailKey;
+  title: string;
+  html: string;
+}
+
+export interface ProductPageData {
+  details: ProductDetail[];
+  related: WooProduct[];
+}
+
+export function buildProductPage(
+  product: WooProduct,
+  rankedProducts: WooProduct[],
+  extras: WooProductExtras,
+): ProductPageData;
+```
+
+- **Detalles:** Descripción general (`description` de Woo), Especificaciones técnicas y Accesorios (JetEngine), en ese orden y sin los vacíos.
+- **Relacionados** (máximo 4, `RELATED_LIMIT`), sin el producto actual y sin repetidos:
+  1. los de la misma especialidad (`categories[0]`), por el rank de destacados;
+  2. los de la misma marca (`brandSlug`);
+  3. el resto del catálogo por destacados.
+- `rankedProducts` sale de `getRankedProducts()` de `catalog.ts`: destacados primero y después el orden de Woo, el mismo rank que "Más relevantes" en la SPEC 05.
 
 ### Tina: `productPage` (`tina/collections/productPage.ts`)
 
-Colección singleton en `src/content/product-page/index.json`, sin crear ni borrar (como `shop` en Eres):
+Colección singleton en `src/content/product-page/index.json`, sin crear ni borrar. Equivale al objeto `shop.productPage` de Eres; aquí es una colección propia porque este sitio no tiene colección `shop`:
 
 ```ts
 {
@@ -209,7 +233,7 @@ Colección singleton en `src/content/product-page/index.json`, sin crear ni borr
 
 ### Ficha (`src/pages/productos/[slug].astro`)
 
-- `getStaticPaths` pasa `product`, `extras` y `related` por props. Los extras y los productos se piden una sola vez para todas las páginas.
+- `getStaticPaths` pasa `product`, `extras` y `page` (`buildProductPage`) por props. Los extras y los productos se piden una sola vez para todas las páginas.
 - **Islas:**
   - `ProductGalleryReact.tsx` (`client:load`, arriba del fold) recibe las imágenes ya optimizadas en Astro con `getImage()` (960 px la principal, 192 px las miniaturas, WebP).
   - `RelatedCarouselReact.tsx` (`client:visible`) recibe las `ProductCard.astro` como *children*. Embla solo se activa por debajo de `lg`; en desktop es una grilla.
@@ -233,9 +257,9 @@ Colección singleton en `src/content/product-page/index.json`, sin crear ni borr
      - los 4 formatos de URL de YouTube dan el mismo ID;
      - un `link` de otro host da `null`;
      - un `meta: []` da extras vacíos sin lanzar error.
-4. **Relacionados.**
-   - Extraer el `rank` de `catalog.ts` a una función compartida y crear `src/lib/woo/related.ts`.
-   - Verificación: un producto de Cardiología devuelve 4 de Cardiología con los destacados primero; uno de una especialidad con menos de 4 completa con su marca.
+4. **Datos de la ficha.**
+   - Extraer el rank de `catalog.ts` a `getRankedProducts()` y crear `src/lib/woo/productPage.ts` con `buildProductPage()`.
+   - Verificación: un producto de Cardiología devuelve 4 de Cardiología con los destacados primero; uno de una especialidad con menos de 5 completa con su marca y después con destacados.
 5. **Colección `productPage`.**
    - Crear `tina/collections/productPage.ts`, registrarla en `tina/config.ts` y crear `src/content/product-page/index.json` con el contenido de la referencia.
    - Agregar `truck` y `graduation-cap` a `src/lib/icons.ts` y `Icon.tsx`.
@@ -280,7 +304,7 @@ Colección singleton en `src/content/product-page/index.json`, sin crear ni borr
 - [ ] Con `meta: []` (estado actual de JetEngine), el build pasa, avisa por consola y las fichas salen sin PDF, especificaciones, accesorios ni video.
 - [ ] `npm run check:standard` pasa.
 - [ ] En las piezas nuevas no hay hex, `text-white/*` ni `bg-white/*`, salvo en el bloque oscuro del video.
-- [ ] `store.ts`, `extras.ts`, `related.ts` y `catalog.ts` no se importan desde ningún `.tsx`.
+- [ ] `store.ts`, `extras.ts`, `productPage.ts` y `catalog.ts` no se importan desde ningún `.tsx`.
 - [ ] El HTML de la ficha trae, sin JavaScript, el H1, la descripción, las pestañas del acordeón y los enlaces de los relacionados.
 
 **Desktop (≥ 1024 px)**
@@ -307,11 +331,12 @@ Colección singleton en `src/content/product-page/index.json`, sin crear ni borr
 **Acordeón**
 
 - [ ] "Descripción general" viene abierta; cada pestaña abre y cierra con clic, `Enter` y `Espacio`.
+- [ ] Abrir una pestaña cierra la que estaba abierta.
 
 **Relacionados**
 
 - [ ] Un producto de Cardiología muestra 4 relacionados de Cardiología, con los destacados primero, y no se incluye a sí mismo.
-- [ ] Un producto de una especialidad con menos de 5 productos completa con productos de su marca.
+- [ ] Un producto de una especialidad con menos de 5 productos completa hasta 4: primero con su marca y después con destacados.
 - [ ] "Solicitar cotización" en una tarjeta relacionada abre el modal con ese producto.
 
 **Mobile y tablet (< 1024 px)**
@@ -344,17 +369,20 @@ Colección singleton en `src/content/product-page/index.json`, sin crear ni borr
 - **Sí: `WooProductExtras` aparte de `WooProduct`.** La home, el catálogo y la búsqueda no cargan HTML de especificaciones que no usan.
 - **Sí: acordeón con Descripción general, Especificaciones técnicas y Accesorios.** Especificaciones reemplaza a Características: es el dato más útil y existe en 44 de 45 productos.
 - **No: pestañas Características y Garantía.** No hay datos en Woo ni en JetEngine (verificado el 2026-10-03). Si el cliente los carga, van en otra spec.
-- **Sí: etiqueta y sellos editables en Tina, en una colección singleton `productPage`.** Es el patrón de "Sellos de confianza" de la colección `shop` en Eres. Respeta la referencia y el cliente puede corregir o quitar una promesa sin tocar código.
+- **Sí: etiqueta y sellos editables en Tina, en una colección singleton `productPage`.** Es el patrón de `shop.productPage` en Eres: los textos fijos de la ficha se editan en Tina. Respeta la referencia y el cliente puede corregir o quitar una promesa sin tocar código.
 - **No: sellos fijos en el código.** Son promesas comerciales ("Capacitación incluida") que el cliente debe poder ajustar.
 - **No: sellos por producto.** No hay un campo que los respalde; si hace falta, va en otra spec junto con JetEngine.
 - **Sí: "Ficha técnica" automático, fuera de Tina.** Depende de que el producto tenga PDF, no de una decisión editorial.
 - **Sí: galería con Embla + `useSlider`, sin lightbox.** Es lo que manda el `CLAUDE.md`. Las fotos de Woo son de producto sobre fondo blanco y suelen venir chicas, y un `<dialog>` más es el patrón que falló en Safari en la SPEC 05.
 - **Sí: video con fachada y `youtube-nocookie.com`.** El estándar pide póster y carga bajo demanda; el `iframe` directo descarga unos 500 KB de JS por ficha.
 - **No: viñetas fijas del video.** Prometen contenido ("Limpieza y mantenimiento") que el video del producto quizá no tiene.
-- **Sí: relacionados de la misma especialidad con los destacados primero, completados con la marca.** La Store API no expone los relacionados de Woo. La especialidad es lo que busca un médico, y completar con la marca evita filas de 1 o 2 tarjetas.
+- **Sí: relacionados de la misma especialidad con los destacados primero, completados con la marca y después con destacados.** La Store API no expone los relacionados de Woo. La especialidad es lo que busca un médico; el último paso, igual que en `eres-skin-studio`, asegura siempre 4 tarjetas si el catálogo las tiene.
+- **No: cross-sells y upsells como primer criterio (como Eres).** Eres los lee de la API REST v3 autenticada; la Store API pública que usa este sitio no los expone.
 - **Sí: "Hablar con un asesor" abre WhatsApp directo.** El ícono promete WhatsApp y "Solicitar cotización" ya abre el modal. En el catálogo abre el modal porque ahí no hay producto en contexto.
 - **Sí: leer el logo de la marca en build.** El dato ya existe en las 11 marcas y la referencia lo muestra.
 - **Sí: acordeón con `<details>` nativo y fachada del video con un `<script>` de Astro.** No tienen estado que justifique React (estándar §2.1).
+- **Sí: una sola pestaña abierta a la vez, con `<details name>`.** Es el comportamiento de `eres-skin-studio`, resuelto por el navegador sin JS. Un navegador sin soporte del atributo deja abrir varias, sin romper nada.
+- **Sí: `buildProductPage()` en `src/lib/woo/productPage.ts`.** La misma estructura que `eres-skin-studio`: la página recibe `details` y `related` ya resueltos en build.
 - **Sí: carrusel de relacionados como isla que recibe las `ProductCard.astro` como *children*.** Reutiliza la tarjeta de la SPEC 05 sin duplicarla en React.
 - **Sí: `Product` sin `offers` en el JSON-LD.** El sitio cotiza y no publica precio. Es válido, aunque Google no muestre resultado enriquecido.
 - **Sí: ocultar el botón flotante de WhatsApp en la ficha por debajo de `lg`.** La barra fija ya tiene WhatsApp y los dos se superponen.
@@ -372,7 +400,7 @@ Colección singleton en `src/content/product-page/index.json`, sin crear ni borr
 | `fix/entidades-html-woo` y esta rama tocan `store.ts` a la vez | Esta rama solo suma la lectura de marcas en `store.ts`; el resto va en módulos nuevos. El conflicto, si aparece, se resuelve al integrar. |
 | La barra fija choca con el `QuoteModal` o con Safari | La barra queda por debajo de los paneles; se prueba en el iPhone XR antes de pedir revisión. |
 | El póster de YouTube (`i.ytimg.com`) no existe en `maxresdefault` | Se usa `hqdefault.jpg`, que siempre existe, con `loading="lazy"`. |
-| Una especialidad con un solo producto y una marca sin otros productos | La sección de relacionados no aparece. |
+| El catálogo tiene un solo producto | La sección de relacionados no aparece. |
 
 ## Qué **no** entra en esta spec
 
@@ -398,7 +426,8 @@ Cada una de esas piezas, si llega, va en su propia spec.
 - **Relacionados en tablet al 42 %.** La spec fija el 72 % en mobile; entre `sm` y `lg` una tarjeta al 72 % mide más de 500 px, así que desde `sm` va al 42 %.
 - **"Hablar con un asesor" con `btn-secondary`,** como dice la spec: borde rojo del UI Kit. La referencia lo dibuja con borde navy; queda pendiente de decisión de diseño.
 - **Galería sticky.** Queda fija mientras la columna de información sea más alta; sin especificaciones (estado actual) el recorrido es corto.
-- **Relacionados completados con la marca.** Con los datos actuales todas las especialidades tienen 4 o más productos y ninguna marca tiene productos fuera de esas especialidades, así que el relleno por marca no se activa. Se verificó con datos de prueba.
+- **Alineado con `eres-skin-studio` tras revisar su SPEC 10.** Se movieron los relacionados a `buildProductPage()` (`productPage.ts`, que reemplaza a `related.ts`), se sumó el relleno por destacados y el acordeón pasó a una pestaña abierta a la vez.
+- **Relleno de relacionados.** Hospitalización (4 productos, marcas sin otros productos) completa la cuarta tarjeta con destacados. El relleno por marca no se activa con los datos actuales; se verificó con datos de prueba.
 - **Lock de Tina.** `tina/tina-lock.json` se actualizó con la colección `productPage`.
 - **Póster de YouTube sin `astro:assets`.** Se carga desde `i.ytimg.com` con `loading="lazy"`; no se agrega ese dominio a `image.domains`.
 
@@ -406,9 +435,9 @@ Cada una de esas piezas, si llega, va en su propia spec.
 
 Build local (`npm run build:local`) con y sin `WOO_STORE_URL` (sin Woo: 7 páginas y ninguna ficha, sin errores). `npm run check:standard`: 0 errores, 2 avisos previos (páginas sin `og:image` y JS de la home en el límite de 150 KB). Playwright sobre `astro preview` el 2026-10-07:
 
-- **Reglas (`node --experimental-strip-types`):** los 4 formatos de YouTube dan el mismo ID; `link` de otro host o `http:` da `null`; `meta` vacío da extras vacíos; los switchers `es_link`/`es_archivo` eligen la fuente. Relacionados: especialidad con destacados primero, relleno por marca, sin el producto actual.
-- **1280 px (Holter Medilog AR):** miga de 4 niveles; 5 miniaturas en columna de 96 px y la 3.ª queda activa al hacer clic; galería fija a 112 px; etiqueta, sellos y logo de Schiller; "Solicitar cotización" abre el modal con el producto; "Hablar con un asesor" abre `wa.me` en otra pestaña con el nombre y la URL; botón flotante visible y barra fija oculta; 4 relacionados de Cardiología en una fila; acordeón abre y cierra con `Enter` y `Espacio`; JSON-LD `Product` y `BreadcrumbList`; un solo H1; sin scroll horizontal.
-- **Hospitalización (Desecador Derm 102):** 3 relacionados de su especialidad (la marca no tiene otros); con una sola foto no hay miniaturas.
+- **Reglas (`node --experimental-strip-types`):** los 4 formatos de YouTube dan el mismo ID; `link` de otro host o `http:` da `null`; `meta` vacío da extras vacíos; los switchers `es_link`/`es_archivo` eligen la fuente. `buildProductPage`: especialidad con destacados primero, relleno por marca y después por destacados, sin el producto actual; detalles en orden y sin los vacíos.
+- **1280 px (Holter Medilog AR):** miga de 4 niveles; 5 miniaturas en columna de 96 px y la 3.ª queda activa al hacer clic; galería fija a 112 px; etiqueta, sellos y logo de Schiller; "Solicitar cotización" abre el modal con el producto; "Hablar con un asesor" abre `wa.me` en otra pestaña con el nombre y la URL; botón flotante visible y barra fija oculta; 4 relacionados de Cardiología en una fila; acordeón abre y cierra con `Enter` y `Espacio`, y abrir una pestaña cierra la otra (verificado con datos simulados); JSON-LD `Product` y `BreadcrumbList`; un solo H1; sin scroll horizontal.
+- **Hospitalización (Desecador Derm 102):** 3 relacionados de su especialidad y el cuarto por destacados; con una sola foto no hay miniaturas.
 - **320, 360 y 768 px:** sin scroll horizontal; miga Productos / Cardiología; barra fija visible, botón flotante y sellos ocultos; controles de 44 px o más; swipe a la foto 2; carrusel de relacionados; la barra no tapa el final del footer; la barra abre el modal.
 - **`prefers-reduced-motion`:** sin transición en el caret del acordeón.
 - **Campos de JetEngine simulados** (parche temporal en `extras.ts`, no versionado) en Q-Flow, en 1280 y 320 px: "Ficha técnica" y "Descargar ficha técnica" abren el PDF en otra pestaña; la pestaña "Accesorios" con `<p>&nbsp;</p>` no aparece; la tabla de especificaciones pierde `style` y clases y se desplaza en su contenedor sin scroll en la página; sin peticiones a YouTube antes del clic; el clic carga el `iframe` de `youtube-nocookie.com`. `scout-tube` sale sin ficha técnica ni video.

@@ -12,27 +12,26 @@ import ProductCard from "../../components/productos/ProductCard.astro";
 import client from "../../../tina/__generated__/client";
 import { getRankedProducts } from "../../lib/woo/catalog";
 import { extrasFor, getProductExtras } from "../../lib/woo/extras";
-import { getRelatedProducts } from "../../lib/woo/related";
+import { buildProductPage, type ProductPageData } from "../../lib/woo/productPage";
 import type { WooProduct, WooProductExtras } from "../../lib/woo/types";
 import { buildQuoteUrl } from "../../utils/whatsapp";
 import { withBase } from "../../utils/url";
 
 export const getStaticPaths = (async () => {
   const [products, extras] = await Promise.all([getRankedProducts(), getProductExtras()]);
-  return products.map((product) => ({
-    params: { slug: product.slug },
-    props: {
-      product,
-      extras: extrasFor(extras, product.id),
-      related: getRelatedProducts(product, products),
-    },
-  }));
+  return products.map((product) => {
+    const productExtras = extrasFor(extras, product.id);
+    return {
+      params: { slug: product.slug },
+      props: { product, extras: productExtras, page: buildProductPage(product, products, productExtras) },
+    };
+  });
 }) satisfies GetStaticPaths;
 
 interface Props {
   product: WooProduct;
   extras: WooProductExtras;
-  related: WooProduct[];
+  page: ProductPageData;
 }
 
 interface LabelWithIcon {
@@ -40,7 +39,8 @@ interface LabelWithIcon {
   icon?: string | null;
 }
 
-const { product, extras, related } = Astro.props;
+const { product, extras, page } = Astro.props;
+const { details, related } = page;
 const base = import.meta.env.BASE_URL || "/";
 const siteUrl = new URL(base, Astro.site || "https://medicaldigitalperu.com").href;
 
@@ -84,11 +84,6 @@ const galleryImages: GalleryImage[] = await Promise.all(
 const seoDescription =
   product.shortDescription.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim().slice(0, 160) ||
   `${product.name}. Solicita tu cotización a Medical Digital.`;
-const tabs = [
-  { label: "Descripción general", html: product.description },
-  { label: "Especificaciones técnicas", html: extras.specifications },
-  { label: "Accesorios", html: extras.accessories },
-].filter((tab) => tab.html);
 const site = Astro.site || "https://medicaldigitalperu.com";
 const absolute = (path: string) => new URL(path, site).href;
 const productUrl = absolute(withBase(`/productos/${product.slug}`));
@@ -243,12 +238,12 @@ const breadcrumbLink = "-my-3 inline-block py-3 hover:text-brand-secondary-dark"
             </a>
           )}
 
-          {tabs.length > 0 && (
+          {details.length > 0 && (
             <div class="border-t border-line lg:mt-2">
-              {tabs.map((tab, index) => (
-                <details class="group border-b border-line" open={index === 0}>
+              {details.map((detail, index) => (
+                <details name="detalles-producto" class="group border-b border-line" open={index === 0}>
                   <summary class="flex min-h-[60px] cursor-pointer list-none items-center justify-between gap-4 text-body-md font-medium text-brand-secondary-dark lg:py-[22px] lg:text-[18px] [&::-webkit-details-marker]:hidden">
-                    {tab.label}
+                    {detail.title}
                     <PiCaretDownLight
                       aria-hidden="true"
                       className="h-5 w-5 shrink-0 transition-transform duration-300 group-open:rotate-180 motion-reduce:transition-none lg:h-[22px] lg:w-[22px]"
@@ -257,7 +252,7 @@ const breadcrumbLink = "-my-3 inline-block py-3 hover:text-brand-secondary-dark"
                   <div class="overflow-x-auto pb-5 lg:pb-6">
                     <div
                       class="prose max-w-none text-[15px] leading-[1.65] text-content-muted prose-a:text-accent prose-table:my-0 prose-th:text-brand-secondary-dark lg:text-body-md lg:leading-[1.7] [&_table]:min-w-max"
-                      set:html={tab.html}
+                      set:html={detail.html}
                     />
                   </div>
                 </details>
