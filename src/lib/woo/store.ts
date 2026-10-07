@@ -35,7 +35,7 @@ function decodeEntities(text: string): string {
   });
 }
 
-function sanitizeDescription(html: string): string {
+export function sanitizeDescription(html: string): string {
   return sanitizeHtml(html, SANITIZE_OPTIONS).replace(LEFTOVER_SHORTCODE, "").trim();
 }
 
@@ -66,6 +66,10 @@ interface StoreApiCategory extends StoreApiTerm {
   count: number;
 }
 
+interface StoreApiBrand extends StoreApiTerm {
+  image?: StoreApiImage | null;
+}
+
 export function getStoreUrl(): string {
   const fromProcess = process.env.WOO_STORE_URL;
   const fromDotEnv = loadEnv(import.meta.env.MODE, process.cwd(), "").WOO_STORE_URL;
@@ -86,8 +90,15 @@ async function fetchOnce(url: string): Promise<Response> {
   return response;
 }
 
-async function fetchJson<T>(storeUrl: string, endpoint: string): Promise<{ body: T; totalPages: number }> {
-  const url = `${storeUrl}/wp-json/wc/store/v1/${endpoint}`;
+const STORE_API = "wc/store/v1";
+export const WP_API = "wp/v2";
+
+export async function fetchJson<T>(
+  storeUrl: string,
+  endpoint: string,
+  api: string = STORE_API,
+): Promise<{ body: T; totalPages: number }> {
+  const url = `${storeUrl}/wp-json/${api}/${endpoint}`;
   let response: Response;
   try {
     response = await fetchOnce(url);
@@ -117,7 +128,18 @@ function projectImages(images: StoreApiImage[], storeUrl: string, fallbackAlt: s
   return projected;
 }
 
-function projectProduct(raw: StoreApiProduct, storeUrl: string): WooProduct | null {
+function projectBrandLogos(brands: StoreApiBrand[], storeUrl: string): Map<string, WooImage> {
+  const logos = new Map<string, WooImage>();
+  for (const brand of brands) {
+    const src = brand.image?.src;
+    if (SLUG_PATTERN.test(brand.slug) && src?.startsWith(`${storeUrl}/`)) {
+      logos.set(brand.slug, { src, alt: decodeEntities(brand.name) });
+    }
+  }
+  return logos;
+}
+
+function projectProduct(raw: StoreApiProduct, storeUrl: string, brandLogos: Map<string, WooImage>): WooProduct | null {
   if (!SLUG_PATTERN.test(raw.slug)) {
     console.warn(`[woo] Producto ${raw.id} descartado: slug inválido "${raw.slug}".`);
     return null;
@@ -128,13 +150,15 @@ function projectProduct(raw: StoreApiProduct, storeUrl: string): WooProduct | nu
     console.warn(`[woo] Producto ${raw.id} descartado: imagen fuera de ${storeUrl}.`);
     return null;
   }
+  const brandSlug = SLUG_PATTERN.test(raw.brands?.[0]?.slug || "") ? raw.brands![0].slug : null;
   return {
     id: raw.id,
     name,
     slug: raw.slug,
     sku: raw.sku || "",
     brand: raw.brands?.[0]?.name ? decodeEntities(raw.brands[0].name) : null,
-    brandSlug: SLUG_PATTERN.test(raw.brands?.[0]?.slug || "") ? raw.brands![0].slug : null,
+    brandSlug,
+    brandLogo: (brandSlug && brandLogos.get(brandSlug)) || null,
     shortDescription: sanitizeDescription(raw.short_description || ""),
     description: sanitizeDescription(raw.description || ""),
     images,
@@ -148,6 +172,7 @@ async function loadProducts(): Promise<WooProduct[]> {
   const storeUrl = getStoreUrl();
   if (!storeUrl) return [];
 
+  const brandLogos = await getBrandLogos();
   const rawProducts: StoreApiProduct[] = [];
   let page = 1;
   let totalPages = 1;
@@ -159,7 +184,7 @@ async function loadProducts(): Promise<WooProduct[]> {
   } while (page <= totalPages);
 
   return rawProducts
-    .map((raw) => projectProduct(raw, storeUrl))
+    .map((raw) => projectProduct(raw, storeUrl, brandLogos))
     .filter((product): product is WooProduct => product !== null);
 }
 
@@ -167,9 +192,10 @@ async function loadFeaturedProducts(limit: number): Promise<WooProduct[]> {
   const storeUrl = getStoreUrl();
   if (!storeUrl) return [];
 
+  const brandLogos = await getBrandLogos();
   const { body } = await fetchJson<StoreApiProduct[]>(storeUrl, `products?featured=true&per_page=${limit}`);
   return body
-    .map((raw) => projectProduct(raw, storeUrl))
+    .map((raw) => projectProduct(raw, storeUrl, brandLogos))
     .filter((product): product is WooProduct => product !== null);
 }
 
@@ -183,9 +209,23 @@ async function loadCategories(): Promise<WooCategory[]> {
     .map(({ id, name, slug, count }) => ({ id, name: decodeEntities(name), slug, count }));
 }
 
+async function loadBrandLogos(): Promise<Map<string, WooImage>> {
+  const storeUrl = getStoreUrl();
+  if (!storeUrl) return new Map();
+
+  const { body } = await fetchJson<StoreApiBrand[]>(storeUrl, `products/brands?per_page=${PAGE_SIZE}`);
+  return projectBrandLogos(body, storeUrl);
+}
+
 let productsPromise: Promise<WooProduct[]> | undefined;
+let brandLogosPromise: Promise<Map<string, WooImage>> | undefined;
 let categoriesPromise: Promise<WooCategory[]> | undefined;
 const featuredPromises = new Map<number, Promise<WooProduct[]>>();
+
+function getBrandLogos(): Promise<Map<string, WooImage>> {
+  brandLogosPromise ??= loadBrandLogos();
+  return brandLogosPromise;
+}
 
 export function getProducts(): Promise<WooProduct[]> {
   productsPromise ??= loadProducts();
