@@ -2,23 +2,43 @@
 import type { GetStaticPaths } from "astro";
 import { Image } from "astro:assets";
 import { FaWhatsapp } from "react-icons/fa6";
+import { BsFiletypePdf } from "react-icons/bs";
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import Icon from "../../components/shared/Icon";
 import client from "../../../tina/__generated__/client";
-import { getProducts } from "../../lib/woo/store";
-import type { WooProduct } from "../../lib/woo/types";
+import { getRankedProducts } from "../../lib/woo/catalog";
+import { extrasFor, getProductExtras } from "../../lib/woo/extras";
+import { getRelatedProducts } from "../../lib/woo/related";
+import type { WooProduct, WooProductExtras } from "../../lib/woo/types";
 import { buildQuoteUrl } from "../../utils/whatsapp";
+import { withBase } from "../../utils/url";
 
 export const getStaticPaths = (async () => {
-  const products = await getProducts();
-  return products.map((product) => ({ params: { slug: product.slug }, props: { product } }));
+  const [products, extras] = await Promise.all([getRankedProducts(), getProductExtras()]);
+  return products.map((product) => ({
+    params: { slug: product.slug },
+    props: {
+      product,
+      extras: extrasFor(extras, product.id),
+      related: getRelatedProducts(product, products),
+    },
+  }));
 }) satisfies GetStaticPaths;
 
 interface Props {
   product: WooProduct;
+  extras: WooProductExtras;
+  related: WooProduct[];
 }
 
-const { product } = Astro.props;
+interface LabelWithIcon {
+  label?: string | null;
+  icon?: string | null;
+}
+
+const { product, extras } = Astro.props;
 const base = import.meta.env.BASE_URL || "/";
+const siteUrl = new URL(base, Astro.site || "https://medicaldigitalperu.com").href;
 
 let whatsappNumber = "";
 try {
@@ -28,89 +48,169 @@ try {
   whatsappNumber = "";
 }
 
-const siteUrl = new URL(base, Astro.site || "https://medicaldigitalperu.com").href;
+let tag: LabelWithIcon | null = null;
+let badges: LabelWithIcon[] = [];
+try {
+  const result = await client.queries.productPage({ relativePath: "index.json" });
+  tag = result.data?.productPage?.tag ?? null;
+  badges = (result.data?.productPage?.badges ?? []).filter((badge): badge is LabelWithIcon => Boolean(badge?.label?.trim()));
+} catch {
+  tag = null;
+}
+
 const quoteUrl = whatsappNumber ? buildQuoteUrl(whatsappNumber, product, siteUrl) : "";
-const [cover, ...gallery] = product.images;
+const specialty = product.categories[0];
+const specialtyHref = specialty ? withBase(`/productos/categoria/${specialty.slug}`) : "";
+const productsHref = withBase("/productos");
+const cover = product.images[0];
 const seoDescription =
   product.shortDescription.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim().slice(0, 160) ||
   `${product.name}. Solicita tu cotización a Medical Digital.`;
+const breadcrumbLink = "-my-3 inline-block py-3 hover:text-brand-secondary-dark";
 ---
 
 <BaseLayout title={`${product.name} — Medical Digital`} description={seoDescription}>
-  <article class="section pt-14">
-    <div class="container-xl">
-      <nav aria-label="Ruta" class="text-body-sm text-content-muted">
-        <a href={`${base}productos`} class="btn-link">Productos</a>
-        {product.categories[0] && (
-          <>
-            <span aria-hidden="true"> / </span>
-            <a href={`${base}productos/categoria/${product.categories[0].slug}`} class="btn-link">
-              {product.categories[0].name}
-            </a>
-          </>
-        )}
+  <article>
+    <div class="container-xl pb-12 pt-3.5 lg:pt-8">
+      <nav aria-label="Miga de pan">
+        <ol class="flex flex-wrap items-center gap-1.5 text-caption text-content-muted lg:gap-2 lg:text-body-sm">
+          <li class="hidden lg:block"><a href={withBase("/")} class={breadcrumbLink}>Inicio</a></li>
+          <li aria-hidden="true" class="hidden lg:block">/</li>
+          <li><a href={productsHref} class={breadcrumbLink}>Productos</a></li>
+          {specialty && (
+            <>
+              <li aria-hidden="true">/</li>
+              <li><a href={specialtyHref} class={breadcrumbLink}>{specialty.name}</a></li>
+            </>
+          )}
+          <li aria-hidden="true" class="hidden lg:block">/</li>
+          <li aria-current="page" class="hidden text-brand-secondary-dark lg:block">{product.name}</li>
+        </ol>
       </nav>
 
-      <div class="mt-8 grid gap-12 lg:grid-cols-2">
-        <div>
-          {cover && (
-            <div class="flex aspect-square items-center justify-center rounded-xl border border-line bg-surface p-8">
-              <Image src={cover.src} alt={cover.alt} inferSize width={960} loading="eager" class="max-h-full w-auto object-contain" />
-            </div>
-          )}
-          {gallery.length > 0 && (
-            <ul class="mt-4 grid grid-cols-3 gap-4 sm:grid-cols-4">
-              {gallery.map((image) => (
-                <li class="flex aspect-square items-center justify-center rounded-lg border border-line bg-surface p-3">
-                  <Image src={image.src} alt={image.alt} inferSize width={480} class="max-h-full w-auto object-contain" />
-                </li>
-              ))}
-            </ul>
-          )}
+      <div class="mt-4 grid gap-6 lg:mt-7 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] lg:items-start lg:gap-16">
+        <div class="lg:sticky lg:top-28">
+          <div class="flex aspect-square items-center justify-center rounded-3xl bg-surface-raised">
+            {cover && (
+              <Image
+                src={cover.src}
+                alt={cover.alt}
+                inferSize
+                width={960}
+                format="webp"
+                loading="eager"
+                class="h-[78%] w-[78%] object-contain mix-blend-multiply"
+              />
+            )}
+          </div>
         </div>
 
-        <div>
-          {product.brand && <p class="text-overline uppercase text-accent">{product.brand}</p>}
-          <h1 class="mt-2 text-heading-h1 text-content">{product.name}</h1>
-
-          <dl class="mt-6 flex flex-wrap gap-x-8 gap-y-2 text-body-sm">
-            {product.sku && (
-              <div class="flex gap-2">
-                <dt class="text-content-muted">SKU</dt>
-                <dd class="text-content">{product.sku}</dd>
-              </div>
-            )}
-            {product.categories.length > 0 && (
-              <div class="flex gap-2">
-                <dt class="text-content-muted">Categoría</dt>
-                <dd class="flex flex-wrap gap-2">
-                  {product.categories.map((category) => (
-                    <a href={`${base}productos/categoria/${category.slug}`} class="btn-link">{category.name}</a>
-                  ))}
-                </dd>
-              </div>
-            )}
-          </dl>
-
-          {product.shortDescription && (
-            <div class="prose mt-6 max-w-none text-body-lg text-content-muted" set:html={product.shortDescription} />
+        <div class="flex min-w-0 flex-col gap-4 lg:gap-6">
+          {(tag?.label?.trim() || specialty) && (
+            <div class="flex flex-wrap gap-1.5 lg:gap-2">
+              {tag?.label?.trim() && (
+                <span class="inline-flex h-[30px] items-center gap-1.5 rounded-pill bg-greyscale-lightest px-3 text-caption font-medium text-content-muted lg:h-8 lg:px-3.5 lg:text-body-sm">
+                  <Icon name={tag.icon} className="h-4 w-4 shrink-0" />
+                  {tag.label}
+                </span>
+              )}
+              {specialty && (
+                <a
+                  href={specialtyHref}
+                  class="inline-flex h-[30px] items-center rounded-pill bg-brand-tertiary-lightest px-3 text-caption font-medium text-brand-tertiary-dark lg:h-8 lg:px-3.5 lg:text-body-sm"
+                >
+                  {specialty.name}
+                </a>
+              )}
+            </div>
           )}
 
-          {quoteUrl && (
-            <a href={quoteUrl} target="_blank" rel="noopener noreferrer" class="btn-primary mt-8">
-              <FaWhatsapp aria-hidden="true" />
+          <div class="flex flex-col gap-2 lg:gap-2.5">
+            {(product.brandLogo || product.brand) && (
+              <div class="flex h-[34px] items-center lg:h-10">
+                {product.brandLogo ? (
+                  <Image
+                    src={product.brandLogo.src}
+                    alt={product.brandLogo.alt}
+                    inferSize
+                    width={340}
+                    format="webp"
+                    loading="eager"
+                    class="h-auto max-h-[30px] w-auto max-w-[140px] object-contain mix-blend-multiply lg:max-h-9 lg:max-w-[170px]"
+                  />
+                ) : (
+                  <span class="text-[19px] font-semibold text-brand-secondary-dark lg:text-[22px]">{product.brand}</span>
+                )}
+              </div>
+            )}
+            <h1 class="text-balance text-heading-h2 text-brand-secondary-dark lg:text-heading-h1">{product.name}</h1>
+            {product.shortDescription && (
+              <div class="text-body-md text-content-muted lg:text-body-lg [&_p+p]:mt-3" set:html={product.shortDescription} />
+            )}
+          </div>
+
+          <div class="hidden gap-3 lg:flex">
+            <button
+              type="button"
+              data-quote-name={product.name}
+              data-quote-url={quoteUrl}
+              aria-haspopup="dialog"
+              class="btn-primary h-14 flex-1"
+            >
               Solicitar cotización
+            </button>
+            {quoteUrl && (
+              <a href={quoteUrl} target="_blank" rel="noopener noreferrer" class="btn-secondary h-14 flex-1 gap-2.5">
+                <FaWhatsapp aria-hidden="true" className="h-5 w-5 shrink-0 text-semantics-success-dark" />
+                Hablar con un asesor
+              </a>
+            )}
+          </div>
+
+          {(badges.length > 0 || extras.datasheetUrl) && (
+            <ul class="hidden flex-wrap gap-x-6 gap-y-3 text-body-sm text-content-muted lg:flex">
+              {badges.map((badge) => (
+                <li class="flex items-center gap-2">
+                  <Icon name={badge.icon} className="h-5 w-5 shrink-0" />
+                  {badge.label}
+                </li>
+              ))}
+              {extras.datasheetUrl && (
+                <li>
+                  <a
+                    href={extras.datasheetUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="-my-3 flex items-center gap-2 py-3 text-brand-secondary-dark underline-offset-4 hover:underline"
+                  >
+                    <BsFiletypePdf aria-hidden="true" className="h-5 w-5 shrink-0 text-accent" />
+                    Ficha técnica
+                  </a>
+                </li>
+              )}
+            </ul>
+          )}
+
+          {extras.datasheetUrl && (
+            <a
+              href={extras.datasheetUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="flex min-h-11 items-center gap-2 self-start text-body-sm font-medium text-brand-secondary-dark lg:hidden"
+            >
+              <BsFiletypePdf aria-hidden="true" className="h-5 w-5 shrink-0 text-accent" />
+              Descargar ficha técnica
             </a>
+          )}
+
+          {product.description && (
+            <section class="border-t border-line pt-6">
+              <h2 class="text-heading-h4 text-brand-secondary-dark">Descripción general</h2>
+              <div class="prose mt-4 max-w-none text-content-muted prose-a:text-accent" set:html={product.description} />
+            </section>
           )}
         </div>
       </div>
-
-      {product.description && (
-        <section class="mt-16 border-t border-line pt-12">
-          <h2 class="text-heading-h2 text-content">Descripción</h2>
-          <div class="prose mt-6 max-w-3xl prose-headings:font-heading prose-a:text-accent" set:html={product.description} />
-        </section>
-      )}
     </div>
   </article>
 </BaseLayout>
