@@ -25,7 +25,7 @@ export default function HomeAboutReact({ query, variables, data: initialData }: 
               width={740}
               height={415}
               loading="lazy"
-              className="h-full w-full object-cover object-left"
+              className="h-full w-full object-cover object-right"
               data-tina-field={tinaField(about, "image")}
             />
           )}
