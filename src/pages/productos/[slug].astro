@@ -89,10 +89,39 @@ const tabs = [
   { label: "Especificaciones técnicas", html: extras.specifications },
   { label: "Accesorios", html: extras.accessories },
 ].filter((tab) => tab.html);
+const site = Astro.site || "https://medicaldigitalperu.com";
+const absolute = (path: string) => new URL(path, site).href;
+const productUrl = absolute(withBase(`/productos/${product.slug}`));
+const plainShortDescription = product.shortDescription.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+const structuredData = [
+  {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: product.name,
+    url: productUrl,
+    image: product.images.map((image) => image.src),
+    ...(product.sku ? { sku: product.sku } : {}),
+    ...(plainShortDescription ? { description: plainShortDescription } : {}),
+    ...(product.brand ? { brand: { "@type": "Brand", name: product.brand } } : {}),
+    ...(specialty ? { category: specialty.name } : {}),
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { name: "Inicio", item: absolute(withBase("/")) },
+      { name: "Productos", item: absolute(productsHref) },
+      ...(specialty ? [{ name: specialty.name, item: absolute(specialtyHref) }] : []),
+      { name: product.name, item: productUrl },
+    ].map((crumb, index) => ({ "@type": "ListItem", position: index + 1, ...crumb })),
+  },
+];
+const structuredDataJson = JSON.stringify(structuredData).replace(/</g, "\\u003c");
 const breadcrumbLink = "-my-3 inline-block py-3 hover:text-brand-secondary-dark";
 ---
 
-<BaseLayout title={`${product.name} — Medical Digital`} description={seoDescription} hideWhatsAppButton>
+<BaseLayout title={`${product.name} — Medical Digital`} description={seoDescription} ogImage={product.images[0]?.src} hideWhatsAppButton>
+  <script type="application/ld+json" set:html={structuredDataJson} />
   <article>
     <div class="container-xl pb-12 pt-3.5 lg:pt-8">
       <nav aria-label="Miga de pan">
