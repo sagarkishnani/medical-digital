@@ -98,7 +98,8 @@
     "address": "Las Palomas 392 #86\nSurquillo, Lima – Perú",
     "phone": "(+51) 1 222-0571",
     "emails": ["info@medicaldigitalperu.com", "ventas@medicaldigitalperu.com"],
-    "hours": "Lunes a viernes · 8:30 a 18:00"
+    "hours": "Lunes a viernes · 8:30 a 18:00",
+    "serviceEmail": "servicio.tecnico@medicaldigitalperu.com"
   },
   "seo": {
     "title": "Medical Digital",

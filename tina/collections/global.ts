@@ -213,6 +213,7 @@ export const globalCollection: Collection = {
         { name: "phone", label: "Teléfono", description: "Con código de país, tal como se muestra. Ej.: (+51) 1 222-0571", type: "string" },
         { name: "emails", label: "Correos", type: "string", list: true },
         { name: "hours", label: "Horario", type: "string" },
+        { name: "serviceEmail", label: "Correo de servicio técnico", description: "Lo usa la página de Servicio técnico. Vacío, no se muestra.", type: "string" },
       ],
     },
     {
