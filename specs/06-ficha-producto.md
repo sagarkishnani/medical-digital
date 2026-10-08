@@ -1,6 +1,6 @@
 # SPEC 06 — Ficha de producto
 
-> **Status:** Aprobado
+> **Status:** Implementado
 > **Depends on:** SPEC 01, SPEC 03, SPEC 05
 > **Date:** 2026-10-06
 > **Objective:** Rehacer `/productos/<slug>` según la referencia (desktop y mobile), con galería, cotización, WhatsApp, ficha técnica, especificaciones, accesorios, video y productos relacionados.
