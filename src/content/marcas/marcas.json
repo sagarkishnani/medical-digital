@@ -1,0 +1,13 @@
+{
+  "hero": {
+    "title": "Marcas aliadas que respaldan cada equipo",
+    "image": "/uploads/marcas/hero-marcas-alianza.webp"
+  },
+  "logos": { "enabled": true },
+  "brands": { "enabled": true, "title": "Nuestras marcas", "linkLabel": "Ver productos" },
+  "testimonials": { "enabled": true },
+  "seo": {
+    "title": "Marcas aliadas de equipos médicos | Medical Digital",
+    "description": "Conoce las marcas de equipos médicos que Medical Digital representa en Perú: Schiller, Baxter, Edan, Bovie, Merivaara y más, con respaldo y servicio técnico."
+  }
+}
