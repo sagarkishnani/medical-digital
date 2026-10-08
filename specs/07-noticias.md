@@ -31,7 +31,7 @@ La referencia (`Medical Digital Desktop.html` y `Medical Digital Mobile.html`) d
 
 ## Referencia de diseño (valores extraídos del bundle)
 
-Todos los valores se escriben con tokens, nunca en hex.
+Todos los valores se escriben con tokens, nunca en hex. Los px de esta sección son los de la referencia; en el código se usa el token más cercano de la escala del UI Kit (ver Decisiones).
 
 **Breakpoints:**
 
@@ -504,6 +504,9 @@ La rama `feat/spec-07-noticias` sale de `staging` actualizado, **después del me
 - **Sí: componentes de `TinaMarkdown` en vez de `prose`.** Así los tamaños salen exactos de la referencia.
 - **Sí: los 6 posts de la referencia, con sus imágenes extraídas del bundle.** Sin ellos no se validan el destacado, las pestañas ni "Sigue leyendo". Se reemplazan antes del go-live.
 - **Sí: la carpeta sigue siendo `src/content/blog/`.** La URL no depende de la carpeta, y moverla cambia el índice de TinaCloud sin ganar nada.
+- **Sí: escala del UI Kit en vez de los px de la referencia.** El estándar §2.4 prohíbe tamaños sueltos. Equivalencias: 48/46 px → `heading-h1`; 32/28 px → `heading-h2`; 28/24 px en el cuerpo → `heading-h3`; 22/20 px → `heading-h4`; 21/19/18 px → `body-lg`; 17/16 px → `body-md` o `body-lg`; 15/14 px → `body-sm`; 13/12 px → `caption`; radios de 18–22 px → `rounded-xl`, y de 24–28 px → `rounded-2xl`; botones y campo del boletín en `btn-lg` (48 px). Mismo criterio que la SPEC 06.
+- **No: `useTina` en las páginas de noticias.** Los textos de `news` y de los posts se editan en `/admin` y se ven al reconstruir, como el Skin Journal de Eres. La edición visual en vivo no compensa una isla más por sección.
+- **Sí: el artículo recibe el post y los relacionados por `getStaticPaths`.** Una sola consulta de posts por build (estándar §2.3); la página solo consulta `global` para el WhatsApp, igual que `CatalogPage`.
 - **Sí: transiciones de 300 ms como máximo.** La referencia usa 450 y 800 ms; el estándar §4 manda.
 - **No: RSS, paginación, etiquetas ni Anterior / Siguiente.** No están en la referencia ni en el estándar, y se pueden agregar después sin tocar esta spec.
 
@@ -518,6 +521,7 @@ La rama `feat/spec-07-noticias` sale de `staging` actualizado, **después del me
 | El editor sube una portada con otra proporción y la OG sale recortada por cada red | La descripción del campo pide 1200×630. Si se vuelve un problema, se propone el recorte en build con `sharp`. |
 | Alguna red no lee WebP en `og:image` | Las portadas son WebP por la regla de imágenes del proyecto. Se valida con los depuradores de Facebook y LinkedIn sobre el preview. |
 | El cuerpo del MDX cambia de estructura y `readingMinutes` cuenta de menos | Recorre todos los nodos de texto del AST; se verifica con un post de longitud conocida. |
+| El boletín se ve pero no envía (estándar §8: validación en servidor, honeypot, consentimiento Ley 29733 y estados de envío) | Decisión del usuario: queda visible. Se conecta en la SPEC 12 o se apaga desde Tina (`newsletter.enabled`) antes del go-live (SPEC 13). |
 | `navigator.share` o el portapapeles no existen (HTTP, navegadores viejos) | Si no hay `navigator.share`, se copia al portapapeles. Si tampoco hay portapapeles, el botón se oculta. |
 
 ## Notas de implementación / QA realizada
@@ -536,4 +540,6 @@ La rama `feat/spec-07-noticias` sale de `staging` actualizado, **después del me
 - El tiempo de lectura calculado da 1 min en los 6 posts de ejemplo porque sus cuerpos son cortos; la referencia muestra 3–7 min como texto fijo.
 - `grep -rn "/blog" src` devuelve la importación de `src/components/blog/PostBody.tsx`, que la spec mantiene en esa carpeta. No queda ningún enlace a `/blog`.
 - `og:url` se agregó a `BaseLayout` junto con las demás meta de Open Graph, y `og:image` ahora se emite siempre como URL absoluta.
+- Tras el `/pre-pr`: tamaños y radios pasados a la escala del UI Kit, el artículo usa una sola consulta de posts y las tarjetas del listado son `h2` (no se salta de `h1` a `h3` en mobile).
+- El boletín queda visible sin envío por decisión del usuario (ver Riesgos).
 - Falta validar en el preview de Amplify: Rich Results Test, depuradores de Facebook y LinkedIn y la hoja nativa de compartir en iPhone.
