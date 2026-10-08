@@ -310,7 +310,8 @@ const breadcrumbLink = "-my-3 inline-block py-3";
     <dialog
       data-video-dialog
       aria-label={`Video de ${product.name}`}
-      class="w-[calc(100%-2rem)] max-w-[1100px] overflow-visible bg-transparent p-0 backdrop:bg-brand-secondary-darkest/85 open:animate-modal-in open:backdrop:animate-fade-in data-[closing]:animate-modal-out data-[closing]:backdrop:animate-fade-out"
+      tabindex="-1"
+      class="w-[calc(100%-2rem)] max-w-[1100px] overflow-visible bg-transparent p-0 outline-none focus-visible:ring-0 focus-visible:ring-offset-0 backdrop:bg-brand-secondary-darkest/85 open:animate-modal-in open:backdrop:animate-fade-in data-[closing]:animate-modal-out data-[closing]:backdrop:animate-fade-out"
     >
       <div class="flex flex-col items-end gap-3">
         <button
@@ -482,6 +483,7 @@ const breadcrumbLink = "-my-3 inline-block py-3";
     if (!trigger || !dialog || !frame) return;
     frame.replaceChildren(playerFor(trigger));
     dialog.showModal();
+    dialog.focus();
     lockScroll();
   });
 
