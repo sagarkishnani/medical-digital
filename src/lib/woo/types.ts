@@ -22,6 +22,8 @@ export interface WooProduct {
   description: string;
   images: WooImage[];
   categories: Pick<WooCategory, "id" | "name" | "slug">[];
+  crossSellIds: number[];
+  upsellIds: number[];
 }
 
 export type WooVideo = { kind: "youtube"; id: string } | { kind: "file"; src: string };

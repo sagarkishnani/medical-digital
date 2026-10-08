@@ -33,10 +33,15 @@ function buildRelated(product: WooProduct, rankedProducts: WooProduct[]): WooPro
     ? rankedProducts.filter((candidate) => candidate.brandSlug === product.brandSlug)
     : [];
 
+  const byId = new Map(rankedProducts.map((candidate) => [candidate.id, candidate]));
+  const linked = [...product.crossSellIds, ...product.upsellIds]
+    .map((id) => byId.get(id))
+    .filter((candidate): candidate is WooProduct => candidate !== undefined);
+
   const chosen = new Map<number, WooProduct>();
-  for (const candidate of [...sameSpecialty, ...sameBrand, ...rankedProducts]) {
+  for (const candidate of [...linked, ...sameSpecialty, ...sameBrand, ...rankedProducts]) {
     if (chosen.size >= RELATED_LIMIT) break;
-    if (candidate.id === product.id) continue;
+    if (candidate.id === product.id || chosen.has(candidate.id)) continue;
     chosen.set(candidate.id, candidate);
   }
   return [...chosen.values()];

@@ -1,16 +1,9 @@
-import { fetchJson, getStoreUrl, sanitizeDescription, WP_API } from "./store";
-import { EMPTY_EXTRAS, parseVideoFileUrl, projectExtras, videoAttachmentId, type JetEngineMeta } from "./extrasRules";
+import { fetchJson, getProductMeta, getStoreUrl, sanitizeDescription, WP_API } from "./store";
+import { EMPTY_EXTRAS, JET_ENGINE_KEYS, parseVideoFileUrl, projectExtras, videoAttachmentId } from "./extrasRules";
 import type { WooProductExtras } from "./types";
 
 if (!import.meta.env.SSR) {
   throw new Error("src/lib/woo/extras.ts solo puede ejecutarse en build. Desde una isla no se importa.");
-}
-
-const PAGE_SIZE = 100;
-
-interface WpProduct {
-  id: number;
-  meta?: JetEngineMeta | unknown[];
 }
 
 interface WpMedia {
@@ -35,41 +28,23 @@ async function loadProductExtras(): Promise<Map<number, WooProductExtras>> {
   const extras = new Map<number, WooProductExtras>();
   if (!storeUrl) return extras;
 
-  const rawProducts: WpProduct[] = [];
-  try {
-    let page = 1;
-    let totalPages = 1;
-    do {
-      const result = await fetchJson<WpProduct[]>(
-        storeUrl,
-        `product?per_page=${PAGE_SIZE}&page=${page}&_fields=id,meta`,
-        WP_API,
-      );
-      rawProducts.push(...result.body);
-      totalPages = result.totalPages;
-      page++;
-    } while (page <= totalPages);
-  } catch (error) {
-    console.warn(`[woo] Sin campos de JetEngine: ${(error as Error).message.split("\n")[0]}`);
-    return extras;
-  }
-
-  let withMeta = 0;
-  for (const raw of rawProducts) {
-    if (!raw.meta || Array.isArray(raw.meta)) continue;
-    withMeta++;
-    const attachmentId = videoAttachmentId(raw.meta);
+  const metaByProduct = await getProductMeta();
+  let withFields = 0;
+  for (const [productId, meta] of metaByProduct) {
+    if (!JET_ENGINE_KEYS.some((key) => key in meta)) continue;
+    withFields++;
+    const attachmentId = videoAttachmentId(meta);
     const resolvedVideo = attachmentId ? await resolveVideoFile(storeUrl, attachmentId) : null;
-    const projected = projectExtras(raw.meta, storeUrl, sanitizeDescription, resolvedVideo);
-    extras.set(raw.id, {
+    const projected = projectExtras(meta, storeUrl, sanitizeDescription, resolvedVideo);
+    extras.set(productId, {
       ...projected,
       specifications: hasHtml(projected.specifications) ? projected.specifications : "",
       accessories: hasHtml(projected.accessories) ? projected.accessories : "",
     });
   }
 
-  if (withMeta === 0) {
-    console.warn('[woo] /wp/v2/product no expone "meta": la ficha se publica sin PDF, especificaciones, accesorios ni video.');
+  if (metaByProduct.size > 0 && withFields === 0) {
+    console.warn("[woo] Ningún producto trae campos de JetEngine en meta_data: la ficha se publica sin PDF, especificaciones, accesorios ni video.");
   }
   return extras;
 }

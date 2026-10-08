@@ -2,6 +2,8 @@ import type { WooProductExtras, WooVideo } from "./types";
 
 export type JetEngineMeta = Record<string, unknown>;
 
+export const JET_ENGINE_KEYS = ["link", "especificaciones_tecnicas", "accesorios", "es_link", "video_link", "es_archivo", "video"];
+
 export const EMPTY_EXTRAS: WooProductExtras = {
   datasheetUrl: null,
   specifications: "",
