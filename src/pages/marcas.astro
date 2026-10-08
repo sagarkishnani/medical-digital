@@ -1,0 +1,21 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { getProducts } from "../lib/woo/store";
+import client from "../../tina/__generated__/client";
+
+const brandsPage = await client.queries.brandsPage({ relativePath: "marcas.json" });
+const home = await client.queries.home({ relativePath: "index.json" });
+const seo = brandsPage.data.brandsPage.seo;
+
+const productCounts: Record<string, number> = {};
+for (const product of await getProducts()) {
+  if (product.brandSlug) productCounts[product.brandSlug] = (productCounts[product.brandSlug] ?? 0) + 1;
+}
+for (const brand of home.data.home.brands ?? []) {
+  if (brand?.name && brand.slug && !productCounts[brand.slug]) {
+    console.warn(`[marcas] ${brand.name} (${brand.slug}) no tiene productos en Woo: se oculta «Ver productos».`);
+  }
+}
+---
+
+<BaseLayout title={seo?.title} description={seo?.description} />
