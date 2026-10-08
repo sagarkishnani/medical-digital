@@ -49,19 +49,19 @@
     ]
   },
   "brands": [
-    { "name": "Schiller", "logo": "/uploads/home/marcas/logo-schiller.webp" },
-    { "name": "Bovie", "logo": "/uploads/home/marcas/logo-bovie.webp" },
-    { "name": "Merivaara", "logo": "/uploads/home/marcas/logo-merivaara.webp" },
-    { "name": "Health o meter", "logo": "/uploads/home/marcas/logo-health-o-meter.webp" },
-    { "name": "Ganshorn", "logo": "/uploads/home/marcas/logo-ganshorn.webp" },
-    { "name": "Midmark", "logo": "/uploads/home/marcas/logo-midmark.webp" },
-    { "name": "Edan", "logo": "/uploads/home/marcas/logo-edan.webp" },
-    { "name": "Baxter", "logo": "/uploads/home/marcas/logo-baxter.webp" },
-    { "name": "Beacon", "logo": "/uploads/home/marcas/logo-beacon.webp" },
-    { "name": "Jansen", "logo": "/uploads/home/marcas/logo-jansen.svg" },
-    { "name": "Medicapture", "logo": "/uploads/home/marcas/logo-medicapture.webp" },
-    { "name": "Trackmaster", "logo": "/uploads/home/marcas/logo-trackmaster.webp" },
-    { "name": "Vivachek", "logo": "/uploads/home/marcas/logo-vivachek.webp" }
+    { "name": "Schiller", "logo": "/uploads/home/marcas/logo-schiller.webp", "slug": "schiller", "desc": "Compañía suiza fundada en 1974, líder en diagnóstico cardiopulmonar, desfibrilación, monitoreo de pacientes y software clínico. Comenzó con un electrocardiógrafo de bolsillo para emergencias." },
+    { "name": "Bovie", "logo": "/uploads/home/marcas/logo-bovie.webp", "slug": "bovie", "desc": "Empresa estadounidense especializada en electrocirugía desde 1982. Desarrolla generadores electroquirúrgicos, accesorios y tecnología avanzada como J-Plasma para clínicas y hospitales de todo el mundo." },
+    { "name": "Merivaara", "logo": "/uploads/home/marcas/logo-merivaara.webp", "slug": "merivaara", "desc": "Fundada en 1901, es referente en diseño industrial y tecnología para la atención médica. Sus soluciones para salas de cirugía mejoran la seguridad del paciente y la eficiencia de cada operación." },
+    { "name": "Health o meter", "logo": "/uploads/home/marcas/logo-health-o-meter.webp", "slug": "health-o-meter", "desc": "Con orígenes en 1919, creó la primera balanza de platina para médicos. Desde hace más de un siglo lidera el mercado de básculas médicas profesionales en Norteamérica." },
+    { "name": "Ganshorn", "logo": "/uploads/home/marcas/logo-ganshorn.webp", "slug": "ganshorn", "desc": "Empresa alemana especializada en función pulmonar desde 1982: espirómetros, pletismógrafos corporales y ergoespirometría con tecnología Made in Germany. Forma parte del Grupo Schiller desde 2014." },
+    { "name": "Midmark", "logo": "/uploads/home/marcas/logo-midmark.webp", "slug": "midmark", "desc": "Empresa estadounidense fundada en 1915 que fabrica productos médicos, dentales y veterinarios, y ofrece los servicios relacionados." },
+    { "name": "Edan", "logo": "/uploads/home/marcas/logo-edan.webp", "slug": "edan", "desc": "Fabricante de dispositivos médicos fundado en 1995, con soluciones de monitoreo, diagnóstico, imagenología, ultrasonido y pruebas en el punto de atención presentes en más de 170 países." },
+    { "name": "Baxter", "logo": "/uploads/home/marcas/logo-baxter.webp", "slug": "baxter", "desc": "Empresa global de tecnología médica fundada en 1931 en Estados Unidos. Desarrolla soluciones en diálisis, terapias intravenosas, nutrición clínica, anestesia y productos quirúrgicos en más de 100 países." },
+    { "name": "Beacon", "logo": "/uploads/home/marcas/logo-beacon.webp", "slug": "beacon", "desc": "Compañía global especializada en equipos de imagen médica usados: resonancia, PET/CT, tomografía, rayos X, ultrasonido y mamografía. Ofrece evaluación, venta, instalación y logística." },
+    { "name": "Jansen", "logo": "/uploads/home/marcas/logo-jansen.svg", "slug": "jansen", "desc": "Empresa europea que desde 1971 diseña y fabrica muebles modulares, carros, soportes y sistemas a medida para equipos médicos en salas de tratamiento y quirófanos." },
+    { "name": "Medicapture", "logo": "/uploads/home/marcas/logo-medicapture.webp", "slug": "medicapture", "desc": "Empresa estadounidense fundada en 2002, especializada en grabadoras de video médico HD y 4K para endoscopia, laparoscopia y cirugía general, integradas a los sistemas hospitalarios." },
+    { "name": "Trackmaster", "logo": "/uploads/home/marcas/logo-trackmaster.webp", "slug": "track-master", "desc": "Fabricante estadounidense de cintas para pruebas médicas y rehabilitación cardiovascular desde 1983. Sus equipos, precisos y silenciosos, cumplen las normas ISO 13485, FDA, CE y CSA." },
+    { "name": "Vivachek", "logo": "/uploads/home/marcas/logo-vivachek.webp", "slug": "vivachek", "desc": "Empresa china fundada en 2013, especializada en diagnóstico clínico inmediato (POCT): monitoreo de glucosa, pruebas rápidas y analizadores de orina, con distribución en más de 120 países." }
   ],
   "testimonials": {
     "title": "La confianza de más de 18 años con profesionales de la salud",

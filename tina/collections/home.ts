@@ -74,13 +74,24 @@ export const homeCollection: Collection = {
     {
       type: "object",
       name: "brands",
-      label: "Marcas",
+      label: "Marcas (se muestran en la Home y en /marcas)",
       list: true,
       ui: { itemProps: (item) => ({ label: item?.name || "Marca" }) },
       fields: [
         { name: "name", label: "Nombre", type: "string", required: true },
         { name: "logo", label: "Logo", description: "Sin logo se muestra el nombre.", type: "image" },
         { name: "url", label: "URL", type: "string" },
+        {
+          name: "slug",
+          label: "Slug",
+          description: "Slug de la marca en WooCommerce. Vacío o sin productos: no se muestra «Ver productos».",
+          type: "string",
+          ui: {
+            validate: (value) =>
+              value && !/^[a-z0-9-]+$/.test(value) ? "Solo minúsculas, números y guiones." : undefined,
+          },
+        },
+        { name: "desc", label: "Descripción", type: "string", ui: { component: "textarea" } },
       ],
     },
     {
