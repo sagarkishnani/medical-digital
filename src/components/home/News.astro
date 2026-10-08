@@ -25,9 +25,8 @@ const posts: NewsPost[] = (Astro.props.posts.postConnection?.edges || [])
     title: post.title,
     excerpt: post.excerpt || "",
     image: post.coverImage ? mediaUrl(post.coverImage) : "",
-    tag: post.tags?.find(Boolean) || "",
+    tag: post.category || "",
     date: post.date ? dateFormat.format(new Date(post.date)) : "",
-    readTime: post.readTime || "",
   }));
 ---
 
