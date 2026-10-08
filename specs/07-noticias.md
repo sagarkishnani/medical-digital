@@ -190,7 +190,7 @@ Todos los valores se escriben con tokens, nunca en hex.
 - **SEO del artículo:**
   - title desde `seo.title`, o "{title} | Medical Digital" si está vacío; description desde `seo.description`, o el `excerpt`; canonical;
   - `og:type="article"`, `article:published_time` y `article:section`;
-  - `og:image` y `twitter:image` con la portada recortada a 1200×630 en JPG en build, o la imagen OG global si no hay portada;
+  - `og:image` y `twitter:image` con la portada tal cual (URL absoluta), como la SPEC 06, o la imagen OG global si no hay portada;
   - JSON-LD `BlogPosting` (el autor es `Person` si `author` tiene valor, y `Organization` si no) y `BreadcrumbList`.
 - **SEO del listado:** title y description desde `news.seo`, y JSON-LD `BreadcrumbList`.
 - **Contenido:**
@@ -351,7 +351,7 @@ interface Props {
     "@type": "BlogPosting",
     "headline": "{title}",
     "description": "{seo.description || excerpt}",
-    "image": "{URL absoluta de la OG 1200×630}",
+    "image": "{URL absoluta de la portada}",
     "datePublished": "{date}",
     "author": { "@type": "Person", "name": "{author}" },
     "publisher": { "@type": "Organization", "name": "Medical Digital", "logo": "{logo absoluto}" },
@@ -397,7 +397,7 @@ La rama `feat/spec-07-noticias` sale de `staging` actualizado, **después del me
    - Verificación: las páginas existentes no cambian su `<head>` salvo `twitter:image`.
 5. **Artículo sin islas.**
    - Crear `src/pages/noticias/[slug].astro`: miga, chip, H1, franja del autor, portada, lead, cuerpo, CTA y "Sigue leyendo".
-   - La OG de 1200×630 se genera con `getImage()` de `astro:assets` en JPG.
+   - `og:image` es la portada tal cual, en URL absoluta (mismo criterio que la SPEC 06).
    - Además: JSON-LD `BlogPosting` y `BreadcrumbList`, y `og:type="article"`.
    - Reescribir `src/components/blog/PostBody.tsx` con componentes de `TinaMarkdown` (`p`, `h2`, `h3`, `blockquote`, `a`, `ul`, `ol`, `li`), sin `prose`.
    - El CTA usa un botón genérico que abre `QuoteModal` sin producto, por el mecanismo que ya escucha `HeaderReact`.
@@ -463,7 +463,8 @@ La rama `feat/spec-07-noticias` sale de `staging` actualizado, **después del me
 **SEO**
 - [ ] El title de `/noticias` y el de cada post de ejemplo miden entre 50 y 60 caracteres, y sus descriptions entre 140 y 160.
 - [ ] Un post sin `seo` usa "{title} | Medical Digital" y el `excerpt`.
-- [ ] Cada post tiene `og:type="article"`, `article:published_time`, canonical y `og:image` / `twitter:image` de 1200×630 en JPG.
+- [ ] Cada post tiene `og:type="article"`, `article:published_time`, canonical y `og:image` / `twitter:image` con la URL absoluta de la portada.
+- [ ] Las 6 portadas de ejemplo miden 1200×630 o más, en proporción 1.91:1.
 - [ ] Un post sin portada usa la OG global.
 - [ ] El JSON-LD de un post pasa el Rich Results Test sin errores como `Article` y como `Breadcrumb`.
 - [ ] `/noticias` y los 6 posts aparecen en el sitemap.
@@ -494,7 +495,8 @@ La rama `feat/spec-07-noticias` sale de `staging` actualizado, **después del me
 - **Sí: `seo` opcional por post, con `title` + " | Medical Digital" y el `excerpt` como respaldo.** Cumple el §6.1 sin alargar los extractos de las tarjetas.
 - **Sí: el boletín se maqueta detrás de `newsletter.enabled`, apagado.** Nunca se publica un formulario que no envía nada. El envío va en la SPEC 12.
 - **Sí: compartir fiel a la referencia.** En desktop, LinkedIn y WhatsApp son enlaces sin JS. Solo "copiar" y la hoja nativa de mobile necesitan una isla chica.
-- **Sí: OG recortada a 1200×630 en JPG en build.** El editor sube una sola imagen y el resultado siempre cumple el estándar. JPG porque algunas redes no leen WebP en `og:image`.
+- **Sí: `og:image` = la portada tal cual, como la SPEC 06.** El 1200×630 del estándar se cumple por contenido: el campo lo pide y las portadas de ejemplo se exportan en esa proporción.
+- **No: recortar la OG en build.** `getImage()` no procesa imágenes de `public/` (verificado: devuelve la misma ruta), y hacerlo con `sharp` agrega una dependencia que se aparta de lo aprobado en la 06. Queda como propuesta para la revisión.
 - **No: campo `ogImage` aparte.** Duplica la portada.
 - **Sí: JSON-LD `BlogPosting` + `BreadcrumbList`.** Lo piden el brief y el §6.2, y se valida en el Rich Results Test.
 - **Sí: lead = `excerpt` y la cita es el `>` del MDX,** como Eres. Una sola fuente para el extracto y el lead, y la cita no necesita un campo aparte.
@@ -511,7 +513,9 @@ La rama `feat/spec-07-noticias` sale de `staging` actualizado, **después del me
 | TinaCloud indexa por rama y el schema de `post` cambia | Después del merge, compilar y desplegar `staging` y `main` con su `TINA_BRANCH`, como indica `CLAUDE.md`. |
 | La SPEC 06 no está mergeada y esta spec usa su prop `ogImage` | La rama sale de `staging` después del merge de la 06. Si se adelanta, el paso 4 agrega la prop y se resuelve el conflicto al rebasear. |
 | El HTML estático es "Todos" y `?categoria=` se aplica al hidratar | La isla va con `client:load` y lee la query en su primer render. El salto es breve y no mueve el layout, porque destacado y grilla tienen alturas parecidas. |
-| Una imagen del bundle es chica o de baja calidad para la OG de 1200×630 | Se verifica al extraerla. Si no alcanza, se usa el recorte disponible y se anota para que diseño la reemplace. |
+| Una imagen del bundle es chica o de baja calidad para 1200×630 | Se verifica al extraerla. Si no alcanza, se usa el recorte disponible y se anota para que diseño la reemplace. |
+| El editor sube una portada con otra proporción y la OG sale recortada por cada red | La descripción del campo pide 1200×630. Si se vuelve un problema, se propone el recorte en build con `sharp`. |
+| Alguna red no lee WebP en `og:image` | Las portadas son WebP por la regla de imágenes del proyecto. Se valida con los depuradores de Facebook y LinkedIn sobre el preview. |
 | El cuerpo del MDX cambia de estructura y `readingMinutes` cuenta de menos | Recorre todos los nodos de texto del AST; se verifica con un post de longitud conocida. |
 | `navigator.share` o el portapapeles no existen (HTTP, navegadores viejos) | Si no hay `navigator.share`, se copia al portapapeles. Si tampoco hay portapapeles, el botón se oculta. |
 
