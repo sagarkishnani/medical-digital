@@ -74,7 +74,7 @@ Todos los valores se escriben con tokens, nunca en hex. El layout de dos columna
 - **Descripción corta:** `body-lg` (`body-md` en mobile), `text-content-muted`.
 - **CTA en desktop:** dos botones `flex-1` de 56 px (la referencia usa 58 px).
   - "Solicitar cotización" (`btn-primary`) abre el `QuoteModal`.
-  - "Hablar con un asesor" (`btn-secondary`, con `FaWhatsapp`) abre WhatsApp.
+  - "Hablar con un asesor" (`btn-secondary` con los colores de la referencia: borde y texto `brand-secondary-dark`, fondo `surface` y hover `surface-raised`; `FaWhatsapp` en `semantics-success-dark`) abre WhatsApp.
   - En mobile no van en el cuerpo: están en la barra fija.
 - **Sellos en desktop:** fila con gap de 24 px, texto de 14 px e íconos de 20 px.
   - Primero los `badges` de Tina; al final "Ficha técnica" (`BsFiletypePdf` en `text-accent`), solo si hay PDF.
@@ -425,7 +425,7 @@ Cada una de esas piezas, si llega, va en su propia spec.
 - **Fondo de la galería en cada slide.** Embla mueve el carril con `transform`, que crea un contexto de apilamiento: con el fondo en el viewport, `mix-blend-multiply` dejaba un rectángulo blanco alrededor de la foto.
 - **Columna de la galería con `min-w-0`.** Sin él, la fila de miniaturas ensanchaba la grilla y la página tenía scroll horizontal en mobile.
 - **Relacionados en tablet al 42 %.** La spec fija el 72 % en mobile; entre `sm` y `lg` una tarjeta al 72 % mide más de 500 px, así que desde `sm` va al 42 %.
-- **"Hablar con un asesor" con `btn-secondary`,** como dice la spec: borde rojo del UI Kit. La referencia lo dibuja con borde navy; queda pendiente de decisión de diseño.
+- **"Hablar con un asesor" con el borde navy de la referencia** en lugar del rojo de `btn-secondary`. Dos botones rojos juntos compiten; el navy deja a "Solicitar cotización" como la acción principal. Conserva la forma, el foco y los estados de `btn-secondary`.
 - **Galería sticky.** Queda fija mientras la columna de información sea más alta; sin especificaciones (estado actual) el recorrido es corto.
 - **Alineado con `eres-skin-studio` tras revisar su SPEC 10.** Se movieron los relacionados a `buildProductPage()` (`productPage.ts`, que reemplaza a `related.ts`), se sumó el relleno por destacados y el acordeón pasó a una pestaña abierta a la vez.
 - **Relleno de relacionados.** Hospitalización (4 productos, marcas sin otros productos) completa la cuarta tarjeta con destacados. El relleno por marca no se activa con los datos actuales; se verificó con datos de prueba.
