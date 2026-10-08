@@ -2,6 +2,7 @@
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import PostBody from "../../components/blog/PostBody";
 import NewsCard from "../../components/noticias/NewsCard";
+import ShareButtonsReact from "../../components/noticias/ShareButtonsReact";
 import { toNewsCard } from "../../components/noticias/buildNewsCards";
 import client from "../../../tina/__generated__/client";
 import { mediaUrl } from "../../utils/mediaUrl";
@@ -124,6 +125,7 @@ const jsonLd = [
             </span>
           </div>
         </div>
+        <ShareButtonsReact client:visible url={canonical} title={post.title} />
       </div>
     </header>
 
