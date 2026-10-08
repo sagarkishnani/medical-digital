@@ -19,7 +19,7 @@ export interface Slider {
   canNext: boolean;
   next: () => void;
   prev: () => void;
-  goTo: (index: number) => void;
+  goTo: (index: number, jump?: boolean) => void;
 }
 
 function usePrefersReducedMotion(): boolean {
@@ -76,7 +76,7 @@ export function useSlider(options: UseSliderOptions = {}): Slider {
   const next = useCallback(() => embla?.scrollNext(reducedMotion), [embla, reducedMotion]);
   const prev = useCallback(() => embla?.scrollPrev(reducedMotion), [embla, reducedMotion]);
   const goTo = useCallback(
-    (index: number) => embla?.scrollTo(index, reducedMotion),
+    (index: number, jump = reducedMotion) => embla?.scrollTo(index, jump),
     [embla, reducedMotion]
   );
 

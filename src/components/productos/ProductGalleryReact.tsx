@@ -22,37 +22,42 @@ const roundButtonClass =
 
 function ZoomDialog({
   images,
-  index,
-  onNavigate,
+  openAt,
+  onIndexChange,
   onClose,
 }: {
   images: GalleryImage[];
-  index: number | null;
-  onNavigate: (index: number) => void;
+  openAt: number | null;
+  onIndexChange: (index: number) => void;
   onClose: () => void;
 }) {
   const dialogRef = useRef<HTMLDialogElement>(null);
   const [closing, setClosing] = useState(false);
-  const open = index !== null;
-  const shownIndex = useRef(0);
-  if (index !== null) shownIndex.current = index;
-  const current = shownIndex.current;
-  const image = images[current];
+  const [everOpened, setEverOpened] = useState(false);
+  const open = openAt !== null;
   const multiple = images.length > 1;
+  const slider = useSlider({ loop: false, align: "center", active: multiple });
+  const current = slider.activeIndex;
 
   useEffect(() => {
     const dialog = dialogRef.current;
     if (!dialog) return;
     if (open && !dialog.open) {
       setClosing(false);
+      setEverOpened(true);
       dialog.showModal();
       // showModal enfoca el primer botón y Safari le dibuja el anillo de teclado aunque se abrió con un toque.
       dialog.focus();
       lockScroll();
+      slider.goTo(openAt, true);
     } else if (!open && dialog.open) {
       setClosing(true);
     }
   }, [open]);
+
+  useEffect(() => {
+    if (open) onIndexChange(current);
+  }, [current]);
 
   useEffect(() => () => unlockScroll(), []);
 
@@ -63,7 +68,7 @@ function ZoomDialog({
     setClosing(false);
   };
 
-  const step = (direction: 1 | -1) => onNavigate((current + direction + images.length) % images.length);
+  const step = (direction: 1 | -1) => slider.goTo((current + direction + images.length) % images.length);
 
   return (
     <dialog
@@ -80,46 +85,59 @@ function ZoomDialog({
         if (event.key === "ArrowRight") step(1);
         if (event.key === "ArrowLeft") step(-1);
       }}
+      onClick={(event) => {
+        if (!(event.target as Element).closest("img, button, [data-zoom-counter]")) onClose();
+      }}
       onAnimationEnd={finishClosing}
       className={`m-0 h-full max-h-none w-full max-w-none bg-surface-raised p-0 text-brand-secondary-dark outline-none backdrop:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 ${
         closing ? "animate-fade-out" : "open:animate-fade-in"
       }`}
     >
-      {image && (
-        <div className="flex h-full flex-col">
-          <div className="flex justify-end p-4">
-            <button type="button" onClick={onClose} aria-label="Cerrar" className={`${roundButtonClass} h-12 w-12`}>
-              <PiXLight aria-hidden="true" className="h-[22px] w-[22px]" />
-            </button>
-          </div>
-          <div className="flex min-h-0 flex-1 items-center justify-center px-3 sm:px-[clamp(12px,6vw,96px)]">
-            <img
-              key={image.zoomSrc}
-              src={image.zoomSrc}
-              alt={image.alt}
-              width={image.width}
-              height={image.height}
-              decoding="async"
-              className="h-full max-h-full w-full animate-modal-in object-contain mix-blend-multiply"
-            />
-          </div>
-          <div className="flex items-center justify-center gap-3.5 p-5">
-            {multiple && (
-              <>
-                <button type="button" onClick={() => step(-1)} aria-label="Foto anterior" className={roundButtonClass}>
-                  <PiCaretLeftLight aria-hidden="true" className="h-4 w-4" />
-                </button>
-                <p aria-live="polite" className="min-w-[3.5rem] text-center text-body-sm tabular-nums">
-                  {current + 1} / {images.length}
-                </p>
-                <button type="button" onClick={() => step(1)} aria-label="Foto siguiente" className={roundButtonClass}>
-                  <PiCaretRightLight aria-hidden="true" className="h-4 w-4" />
-                </button>
-              </>
-            )}
-          </div>
+      <div className="flex h-full flex-col">
+        <div className="flex justify-end p-4">
+          <button type="button" onClick={onClose} aria-label="Cerrar" className={`${roundButtonClass} h-12 w-12`}>
+            <PiXLight aria-hidden="true" className="h-[22px] w-[22px]" />
+          </button>
         </div>
-      )}
+        <div ref={slider.viewportRef} className="min-h-0 flex-1 overflow-hidden">
+          <ul className="flex h-full touch-pan-y">
+            {images.map((image, index) => (
+              <li
+                key={image.zoomSrc}
+                className="flex h-full min-w-0 flex-[0_0_100%] items-center justify-center bg-surface-raised px-3 sm:px-[clamp(12px,6vw,96px)]"
+                aria-hidden={index !== current ? true : undefined}
+              >
+                {everOpened && (
+                  <img
+                    src={image.zoomSrc}
+                    alt={image.alt}
+                    width={image.width}
+                    height={image.height}
+                    decoding="async"
+                    draggable={false}
+                    className="h-auto max-h-full w-auto max-w-full object-contain mix-blend-multiply"
+                  />
+                )}
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div className="flex items-center justify-center gap-3.5 p-5">
+          {multiple && (
+            <>
+              <button type="button" onClick={() => step(-1)} aria-label="Foto anterior" className={roundButtonClass}>
+                <PiCaretLeftLight aria-hidden="true" className="h-4 w-4" />
+              </button>
+              <p data-zoom-counter aria-live="polite" className="min-w-[3.5rem] text-center text-body-sm tabular-nums">
+                {current + 1} / {images.length}
+              </p>
+              <button type="button" onClick={() => step(1)} aria-label="Foto siguiente" className={roundButtonClass}>
+                <PiCaretRightLight aria-hidden="true" className="h-4 w-4" />
+              </button>
+            </>
+          )}
+        </div>
+      </div>
     </dialog>
   );
 }
@@ -127,16 +145,11 @@ function ZoomDialog({
 export default function ProductGalleryReact({ images }: Props) {
   const hasThumbnails = images.length > 1;
   const slider = useSlider({ loop: false, active: hasThumbnails });
-  const [zoomIndex, setZoomIndex] = useState<number | null>(null);
+  const [zoomStart, setZoomStart] = useState<number | null>(null);
 
   if (images.length === 0) {
     return <div className="aspect-square rounded-3xl bg-surface-raised" />;
   }
-
-  const navigateZoom = (index: number) => {
-    setZoomIndex(index);
-    slider.goTo(index);
-  };
 
   return (
     <div className="flex flex-col gap-2.5 lg:grid lg:grid-cols-[96px_minmax(0,1fr)] lg:gap-4">
@@ -165,7 +178,7 @@ export default function ProductGalleryReact({ images }: Props) {
         </div>
         <button
           type="button"
-          onClick={() => setZoomIndex(hasThumbnails ? slider.activeIndex : 0)}
+          onClick={() => setZoomStart(hasThumbnails ? slider.activeIndex : 0)}
           aria-label="Ampliar foto"
           aria-haspopup="dialog"
           className="absolute bottom-3.5 right-3.5 flex h-11 w-11 items-center justify-center rounded-full bg-surface text-brand-secondary-dark shadow-sm transition-transform duration-200 can-hover:hover:scale-[1.08] lg:bottom-[18px] lg:right-[18px]"
@@ -205,7 +218,7 @@ export default function ProductGalleryReact({ images }: Props) {
         </ul>
       )}
 
-      <ZoomDialog images={images} index={zoomIndex} onNavigate={navigateZoom} onClose={() => setZoomIndex(null)} />
+      <ZoomDialog images={images} openAt={zoomStart} onIndexChange={slider.goTo} onClose={() => setZoomStart(null)} />
     </div>
   );
 }
