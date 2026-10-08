@@ -92,7 +92,7 @@ Todos los valores se escriben con tokens, nunca en hex. El layout de dos columna
 - Apertura animada como en la referencia: la pestaña crece y la que estaba abierta se cierra a la vez (alto con la Web Animations API, 300 ms `ease-in-out`). Sin JS, el `<details>` abre y cierra igual, sin animación.
 - Cuerpo: 16 px (15 px en mobile), interlineado 1.7, `text-content-muted`.
 - Pestañas: Descripción general, Especificaciones técnicas y Accesorios.
-- Especificaciones y Accesorios son HTML de un WYSIWYG y se dibujan como `prose`. Las tablas van dentro de un contenedor con `overflow-x-auto`.
+- Especificaciones y Accesorios son HTML de un WYSIWYG y se dibujan como `prose`. Las tablas van dentro de un contenedor con `overflow-x-auto` (enfocable con teclado), ocupan el ancho, sus celdas parten línea y el texto baja a 14 px. La primera columna mide al menos 9rem y, por debajo de `lg`, la tabla al menos 34rem.
 - La grilla de tarjetas de Accesorios de la referencia no se aplica: el dato es HTML libre, no una lista.
 
 ### 6. Video demo (solo si hay video)
@@ -443,6 +443,7 @@ Build local (`npm run build:local`) con y sin `WOO_STORE_URL` (sin Woo: 7 págin
 - **Hospitalización (Desecador Derm 102):** 3 relacionados de su especialidad y el cuarto por destacados; con una sola foto no hay miniaturas.
 - **320, 360 y 768 px:** sin scroll horizontal; miga Productos / Cardiología; barra fija visible, botón flotante y sellos ocultos; controles de 44 px o más; swipe a la foto 2; carrusel de relacionados; la barra no tapa el final del footer; la barra abre el modal.
 - **`prefers-reduced-motion`:** el acordeón abre y cierra sin animar el alto ni el caret.
+- **Datos reales por la v3 (2026-10-08):** 45 fichas; 28 con ficha técnica, 44 con especificaciones, 0 con accesorios y 10 con video de YouTube; 43 con logo de marca. Q-Flow abre `Q-Flow-Spanish.pdf`, tiene 4 relacionados y no pide nada a YouTube antes del clic. Ninguna de las 45 fichas tiene scroll horizontal de página en 1280 y 360 px; solo la tabla de 7 columnas de Q-Flow se desplaza en desktop (5 tablas en mobile), dentro de su contenedor.
 - **Zoom (Chromium, 1280 y 360 px):** abre en la foto activa (3 / 5), → pasa a 4 / 5, `Tab` no sale del `<dialog>`, `Esc` cierra, devuelve el foco a la lupa y deja la galería en la foto 4; la página no hace scroll ni tiene desborde horizontal; sin errores de consola.
 - **Animación del acordeón (Chromium):** a los 120 ms las dos pestañas están a mitad de camino (164 px y 134 px); a los 300 ms queda una sola abierta. `Enter` anima igual, un doble clic rápido revierte sin saltos y no hay errores de consola.
 - **Campos de JetEngine simulados** (parche temporal en `extras.ts`, no versionado) en Q-Flow, en 1280 y 320 px: "Ficha técnica" y "Descargar ficha técnica" abren el PDF en otra pestaña; la pestaña "Accesorios" con `<p>&nbsp;</p>` no aparece; la tabla de especificaciones pierde `style` y clases y se desplaza en su contenedor sin scroll en la página; sin peticiones a YouTube antes del clic; el clic carga el `iframe` de `youtube-nocookie.com`. `scout-tube` sale sin ficha técnica ni video.

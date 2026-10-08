@@ -251,9 +251,9 @@ const breadcrumbLink = "-my-3 inline-block py-3";
                       className="h-5 w-5 shrink-0 transition-transform duration-300 ease-in-out motion-reduce:transition-none lg:h-[22px] lg:w-[22px] [details[open]:not([data-closing])_&]:rotate-180"
                     />
                   </summary>
-                  <div class="overflow-x-auto pb-5 lg:pb-6">
+                  <div class="overflow-x-auto pb-5 lg:pb-6" tabindex="0" role="region" aria-label={detail.title}>
                     <div
-                      class="prose max-w-none text-[15px] leading-[1.65] text-content-muted prose-a:text-accent prose-table:my-0 prose-th:text-brand-secondary-dark lg:text-body-md lg:leading-[1.7] [&_table]:min-w-max"
+                      class="prose max-w-none text-[15px] leading-[1.65] text-content-muted prose-a:text-accent prose-table:my-0 prose-th:align-bottom prose-th:text-brand-secondary-dark prose-td:align-top prose-table:text-body-sm lg:text-body-md lg:leading-[1.7] [&_table]:w-full [&_td:first-child]:min-w-[9rem] max-lg:[&_table]:min-w-[34rem]"
                       set:html={detail.html}
                     />
                   </div>
