@@ -46,6 +46,8 @@ function ZoomDialog({
     if (open && !dialog.open) {
       setClosing(false);
       dialog.showModal();
+      // showModal enfoca el primer botón y Safari le dibuja el anillo de teclado aunque se abrió con un toque.
+      dialog.focus();
       lockScroll();
     } else if (!open && dialog.open) {
       setClosing(true);
@@ -67,6 +69,7 @@ function ZoomDialog({
     <dialog
       ref={dialogRef}
       aria-label="Fotos del producto"
+      tabIndex={-1}
       data-lenis-prevent
       onCancel={(event) => {
         event.preventDefault();
@@ -78,7 +81,7 @@ function ZoomDialog({
         if (event.key === "ArrowLeft") step(-1);
       }}
       onAnimationEnd={finishClosing}
-      className={`m-0 h-full max-h-none w-full max-w-none bg-surface-raised p-0 text-brand-secondary-dark backdrop:bg-transparent ${
+      className={`m-0 h-full max-h-none w-full max-w-none bg-surface-raised p-0 text-brand-secondary-dark outline-none backdrop:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 ${
         closing ? "animate-fade-out" : "open:animate-fade-in"
       }`}
     >
