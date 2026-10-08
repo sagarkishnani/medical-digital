@@ -83,6 +83,8 @@ const jsonLd = {
   ...(orgSocials.length ? { sameAs: orgSocials } : {}),
 };
 
+const serializeJsonLd = (data: object) => JSON.stringify(data).replace(/</g, "\\u003c");
+
 // ─── Maintenance mode ───
 // When enabled, the whole page body is replaced by a branded notice. Checked at
 // build time, so flipping it in the CMS takes effect on the next publish.
@@ -115,8 +117,8 @@ try {
     <meta name="twitter:card" content="summary_large_image" />
     {ogImage && <meta name="twitter:image" content={ogImage} />}
 
-    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
-    {pageJsonLd.map((data) => <script type="application/ld+json" set:html={JSON.stringify(data)} />)}
+    <script type="application/ld+json" set:html={serializeJsonLd(jsonLd)} />
+    {pageJsonLd.map((data) => <script type="application/ld+json" set:html={serializeJsonLd(data)} />)}
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
