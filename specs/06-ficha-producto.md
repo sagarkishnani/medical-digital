@@ -31,7 +31,7 @@ Estado de los datos al redactar (verificado contra la Store API, las páginas p�
 | Video | JetEngine `video_link` / `video` | 2 de 45 (YouTube) |
 | Características, garantía | — | No existen |
 
-Los campos de JetEngine tienen apagado "Show in Rest API" (`/wp/v2/product` devuelve `meta: []`). Esta spec asume que se activa (decisión pendiente del revisor, ver Decisiones). Mientras tanto, la ficha se publica sin esas secciones.
+Los campos de JetEngine tienen apagado "Show in Rest API" (`/wp/v2/product` devuelve `meta: []`). Por decisión del revisor, el catálogo pasa a la REST API v3 con una clave de solo lectura, como Eres: su `meta_data` trae los campos de JetEngine sin tocar WordPress (ver Decisiones).
 
 ## Referencia de diseño (valores extraídos del bundle)
 
@@ -142,7 +142,6 @@ Todos los valores se escriben con tokens, nunca en hex. El layout de dos columna
 
 **Fuera de alcance (para specs futuras):**
 
-- Activar "Show in Rest API" en JetEngine o crear el mu-plugin alternativo: es un cambio en el WordPress de producción que decide el revisor, fuera de este repo.
 - Pestañas Características y Garantía, y el sello "N años de garantía" en los relacionados: no hay datos.
 - Viñetas fijas del video ("Puesta en marcha"…).
 - Precio, stock y `offers` en el JSON-LD: el sitio cotiza, no vende.
@@ -171,12 +170,12 @@ export interface WooProductExtras {
 }
 ```
 
-- `brandLogo` sale de `products/brands` de la Store API, cruzado por el slug de la marca. Sin imagen, `null`.
+- `brandLogo` sale de `products/brands` (v3), cruzado por el slug de la marca. Sin imagen, `null`.
 - `WooProductExtras` va aparte de `WooProduct`: la home, el catálogo y la búsqueda no cargan campos que solo usa la ficha.
 
 ### Campos de JetEngine (`src/lib/woo/extras.ts`, solo build)
 
-`getProductExtras(): Promise<Map<number, WooProductExtras>>` lee `/wp-json/wp/v2/product?per_page=100&page=N&_fields=id,meta`, con el mismo timeout y reintento que `store.ts`.
+`getProductExtras(): Promise<Map<number, WooProductExtras>>` toma el `meta_data` de los productos que ya descargó `store.ts` (`getProductMeta()`, sin las claves que empiezan con `_`). No hace otra descarga del catálogo.
 
 | Meta key | Campo | Regla |
 |---|---|---|
@@ -306,7 +305,8 @@ Colección singleton en `src/content/product-page/index.json`, sin crear ni borr
 **Build y estándar**
 
 - [ ] `npm run build:local` termina sin errores con y sin `WOO_STORE_URL`, y genera una ficha por producto (45).
-- [ ] Con `meta: []` (estado actual de JetEngine), el build pasa, avisa por consola y las fichas salen sin PDF, especificaciones, accesorios ni video.
+- [ ] Si ningún producto trae campos de JetEngine, el build pasa, avisa por consola y las fichas salen sin PDF, especificaciones, accesorios ni video.
+- [ ] Con `WOO_STORE_URL` y sin `WOO_CONSUMER_KEY`/`WOO_CONSUMER_SECRET`, el build falla con un mensaje que explica cómo crear la clave.
 - [ ] `npm run check:standard` pasa.
 - [ ] En las piezas nuevas no hay hex, `text-white/*` ni `bg-white/*`, salvo en el bloque oscuro del video.
 - [ ] `store.ts`, `extras.ts`, `productPage.ts` y `catalog.ts` no se importan desde ningún `.tsx`.
@@ -324,7 +324,7 @@ Colección singleton en `src/content/product-page/index.json`, sin crear ni borr
 - [ ] Se ven los sellos "Entrega e instalación" y "Capacitación incluida".
 - [ ] Al quitar un sello en `/admin`, desaparece en el siguiente build sin dejar hueco.
 
-**Datos de JetEngine (después de activar "Show in Rest API")**
+**Datos de JetEngine (leídos por la v3)**
 
 - [ ] Q-Flow muestra "Ficha técnica" y el enlace abre `Q-Flow-Spanish.pdf` en otra pestaña.
 - [ ] `scout-tube` no muestra el sello ni el enlace de ficha técnica.
@@ -369,8 +369,8 @@ Colección singleton en `src/content/product-page/index.json`, sin crear ni borr
 
 ## Decisiones
 
-- **Sí: leer los campos de JetEngine con "Show in Rest API" desde `/wp/v2/product`.** Se resuelve con un clic por campo y no deja código que mantener en WordPress. **Pendiente de aprobación del revisor**, porque toca el WordPress de producción. Si elige el mu-plugin, solo cambia la lectura de `extras.ts`.
-- **No: un mu-plugin que sume los campos a la Store API (como Eres).** Funciona, pero deja PHP en el servidor del cliente que alguien tiene que mantener.
+- **Sí: catálogo y campos de JetEngine desde la REST API v3 con clave de solo lectura, como Eres.** Decisión del revisor. El `meta_data` trae los campos sin activar "Show in Rest API" ni dejar PHP en WordPress, y la misma respuesta trae cross-sells y upsells. Reemplaza la Store API pública de SPEC 01. La clave va por cabecera, nunca en la URL, y solo existe en el build.
+- **No: "Show in Rest API" en JetEngine ni un mu-plugin.** Dependen de cambiar la configuración de WordPress campo por campo o de mantener PHP en el servidor del cliente.
 - **Sí: extras opcionales en el build.** La ficha se publica sin ellos si no llegan. El catálogo sí debe fallar sin Woo (SPEC 01), pero perder un PDF no justifica no publicar.
 - **Sí: `WooProductExtras` aparte de `WooProduct`.** La home, el catálogo y la búsqueda no cargan HTML de especificaciones que no usan.
 - **Sí: acordeón con Descripción general, Especificaciones técnicas y Accesorios.** Especificaciones reemplaza a Características: es el dato más útil y existe en 44 de 45 productos.
@@ -382,8 +382,7 @@ Colección singleton en `src/content/product-page/index.json`, sin crear ni borr
 - **Sí: galería con Embla + `useSlider`, sin lightbox.** Es lo que manda el `CLAUDE.md`. Las fotos de Woo son de producto sobre fondo blanco y suelen venir chicas, y un `<dialog>` más es el patrón que falló en Safari en la SPEC 05.
 - **Sí: video con fachada y `youtube-nocookie.com`.** El estándar pide póster y carga bajo demanda; el `iframe` directo descarga unos 500 KB de JS por ficha.
 - **No: viñetas fijas del video.** Prometen contenido ("Limpieza y mantenimiento") que el video del producto quizá no tiene.
-- **Sí: relacionados de la misma especialidad con los destacados primero, completados con la marca y después con destacados.** La Store API no expone los relacionados de Woo. La especialidad es lo que busca un médico; el último paso, igual que en `eres-skin-studio`, asegura siempre 4 tarjetas si el catálogo las tiene.
-- **No: cross-sells y upsells como primer criterio (como Eres).** Eres los lee de la API REST v3 autenticada; la Store API pública que usa este sitio no los expone.
+- **Sí: relacionados con los cross-sells y upsells de Woo primero (como Eres), después la misma especialidad con los destacados primero, la marca y los destacados.** La especialidad es lo que busca un médico; el último paso, igual que en `eres-skin-studio`, asegura siempre 4 tarjetas si el catálogo las tiene.
 - **Sí: "Hablar con un asesor" abre WhatsApp directo.** El ícono promete WhatsApp y "Solicitar cotización" ya abre el modal. En el catálogo abre el modal porque ahí no hay producto en contexto.
 - **Sí: leer el logo de la marca en build.** El dato ya existe en las 11 marcas y la referencia lo muestra.
 - **Sí: acordeón con `<details>` nativo y fachada del video con un `<script>` de Astro.** No tienen estado que justifique React (estándar §2.1).
@@ -399,18 +398,17 @@ Colección singleton en `src/content/product-page/index.json`, sin crear ni borr
 
 | Riesgo | Mitigación |
 |---|---|
-| El revisor no aprueba activar la REST API, o tarda | La ficha se publica sin extras y el build no falla. Si elige el mu-plugin, solo cambia `extras.ts`. |
+| Amplify no tiene las claves cuando se integra la rama | El build falla con un mensaje claro. Las variables se cargan en Amplify antes del merge. |
+| La clave se filtra | Es de solo lectura, vive solo en las variables de Amplify y del `.env`, viaja por cabecera y `store.ts` lanza un error si llega al navegador. |
+| La v3 devuelve borradores, privados u ocultos | Se pide `status=publish` y se descartan los de `catalog_visibility: hidden`. |
 | El HTML de especificaciones trae estilos en línea o tablas anchas del WYSIWYG | La allowlist de `store.ts` descarta `style` y clases; las tablas van dentro de `overflow-x-auto`. |
-| El campo `video` de JetEngine llega como ID de adjunto y no como URL | `extras.ts` lo resuelve con `/wp/v2/media/<id>`. Se confirma al activar la REST API. |
-| `/wp/v2/product` pagina distinto que la Store API o tiene otro límite | Se lee con `_fields=id,meta` y se pagina con `X-WP-TotalPages`, como `store.ts`. |
-| `fix/entidades-html-woo` y esta rama tocan `store.ts` a la vez | Esta rama solo suma la lectura de marcas en `store.ts`; el resto va en módulos nuevos. El conflicto, si aparece, se resuelve al integrar. |
+| El campo `video` de JetEngine llega como ID de adjunto y no como URL | `extras.ts` lo resuelve con `/wp/v2/media/<id>` (público, sin clave). |
 | La barra fija choca con el `QuoteModal` o con Safari | La barra queda por debajo de los paneles; se prueba en el iPhone XR antes de pedir revisión. |
 | El póster de YouTube (`i.ytimg.com`) no existe en `maxresdefault` | Se usa `hqdefault.jpg`, que siempre existe, con `loading="lazy"`. |
 | El catálogo tiene un solo producto | La sección de relacionados no aparece. |
 
 ## Qué **no** entra en esta spec
 
-- Activar "Show in Rest API" o crear el mu-plugin en WordPress.
 - Pestañas Características y Garantía, y el sello de garantía.
 - Viñetas fijas del video.
 - Precio, stock y `offers`.
@@ -424,7 +422,7 @@ Cada una de esas piezas, si llega, va en su propia spec.
 
 - **`npm run build` necesita TinaCloud.** En local se verificó con `npm run build:local` y `WOO_STORE_URL=https://medicaldigitalperu.com`, la URL pública de la tienda.
 - **Reglas de JetEngine en `extrasRules.ts`.** Las validaciones de PDF, YouTube y archivo de video viven en un módulo sin dependencias de Astro, para probarlas con `node --experimental-strip-types`. `extras.ts` solo descarga y degrada.
-- **`store.ts` reutilizado.** `fetchJson` acepta la API (`wc/store/v1` o `wp/v2`) para compartir el timeout y el reintento, y `sanitizeDescription` se exporta para los campos WYSIWYG.
+- **`store.ts` sobre la v3.** `fetchJson` usa `wc/v3` con la clave por defecto y `wp/v2` sin clave (para resolver adjuntos de video), con el mismo timeout y reintento; `sanitizeDescription` se exporta para los campos WYSIWYG. La rama se rebasó sobre `staging` con el fix de entidades HTML (#15).
 - **`useSlider` acepta `container`.** Las tarjetas Astro llegan a la isla dentro de `<astro-slot>`, así que Embla recibe el selector del `<ul>` (`[data-related-track]`) en lugar de tomar el primer hijo del viewport.
 - **Fondo de la galería en cada slide.** Embla mueve el carril con `transform`, que crea un contexto de apilamiento: con el fondo en el viewport, `mix-blend-multiply` dejaba un rectángulo blanco alrededor de la foto.
 - **Columna de la galería con `min-w-0`.** Sin él, la fila de miniaturas ensanchaba la grilla y la página tenía scroll horizontal en mobile.
