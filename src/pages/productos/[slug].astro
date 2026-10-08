@@ -241,12 +241,12 @@ const breadcrumbLink = "-my-3 inline-block py-3 hover:text-brand-secondary-dark"
           {details.length > 0 && (
             <div class="border-t border-line lg:mt-2">
               {details.map((detail, index) => (
-                <details name="detalles-producto" class="group border-b border-line" open={index === 0}>
+                <details name="detalles-producto" class="border-b border-line" open={index === 0} data-accordion>
                   <summary class="flex min-h-[60px] cursor-pointer list-none items-center justify-between gap-4 text-body-md font-medium text-brand-secondary-dark lg:py-[22px] lg:text-[18px] [&::-webkit-details-marker]:hidden">
                     {detail.title}
                     <PiCaretDownLight
                       aria-hidden="true"
-                      className="h-5 w-5 shrink-0 transition-transform duration-300 group-open:rotate-180 motion-reduce:transition-none lg:h-[22px] lg:w-[22px]"
+                      className="h-5 w-5 shrink-0 transition-transform duration-300 ease-in-out motion-reduce:transition-none lg:h-[22px] lg:w-[22px] [details[open]:not([data-closing])_&]:rotate-180"
                     />
                   </summary>
                   <div class="overflow-x-auto pb-5 lg:pb-6">
@@ -355,6 +355,65 @@ const breadcrumbLink = "-my-3 inline-block py-3 hover:text-brand-secondary-dark"
     )}
   </div>
 </BaseLayout>
+
+<script>
+  const ACCORDION_DURATION_MS = 300;
+  const animations = new WeakMap<HTMLDetailsElement, Animation>();
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+  function closedHeight(details: HTMLDetailsElement) {
+    const summary = details.querySelector("summary")!;
+    return summary.offsetHeight + details.offsetHeight - details.clientHeight;
+  }
+
+  function setExpanded(details: HTMLDetailsElement, expand: boolean) {
+    animations.get(details)?.cancel();
+    if (reducedMotion.matches) {
+      details.open = expand;
+      return;
+    }
+    const startHeight = details.offsetHeight;
+    if (expand) {
+      details.open = true;
+      delete details.dataset.closing;
+    } else {
+      details.dataset.closing = "";
+    }
+    const endHeight = expand ? details.offsetHeight : closedHeight(details);
+    details.style.overflow = "hidden";
+    const animation = details.animate(
+      { height: [`${startHeight}px`, `${endHeight}px`] },
+      { duration: ACCORDION_DURATION_MS, easing: "ease-in-out" },
+    );
+    animations.set(details, animation);
+    animation.onfinish = () => {
+      if (!expand) details.open = false;
+      delete details.dataset.closing;
+      details.style.overflow = "";
+      animations.delete(details);
+    };
+  }
+
+  document.addEventListener("click", (event) => {
+    const summary = (event.target as Element | null)?.closest("[data-accordion] > summary");
+    if (!summary) return;
+    event.preventDefault();
+    const details = summary.parentElement as HTMLDetailsElement;
+    // Sin el atributo, el navegador no cierra de golpe la pestaña hermana mientras se anima.
+    const group = details.getAttribute("name") || details.dataset.group;
+    document.querySelectorAll<HTMLDetailsElement>(`[data-accordion][name="${group}"]`).forEach((item) => {
+      item.dataset.group = group!;
+      item.removeAttribute("name");
+    });
+    const expand = !details.open || details.dataset.closing !== undefined;
+    if (expand) {
+      document
+        .querySelectorAll<HTMLDetailsElement>(`[data-accordion][data-group="${group}"]`)
+        .forEach((item) => item !== details && item.open && setExpanded(item, false));
+    }
+    setExpanded(details, expand);
+  });
+</script>
 
 <script>
   document.addEventListener("click", (event) => {

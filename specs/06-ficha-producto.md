@@ -84,6 +84,7 @@ Todos los valores se escriben con tokens, nunca en hex. El layout de dos columna
 
 - `<details name="detalles-producto">`/`<summary>` con `border-t border-line` y un `border-b` por fila. La primera pestaña viene abierta y solo hay una abierta a la vez.
 - Fila: padding de 22 px y título de 18 px en desktop; 60 px de alto mínimo y 16 px en mobile. Peso 500 y `PiCaretDownLight`, que rota 180°.
+- Apertura animada como en la referencia: la pestaña crece y la que estaba abierta se cierra a la vez (alto con la Web Animations API, 300 ms `ease-in-out`). Sin JS, el `<details>` abre y cierra igual, sin animación.
 - Cuerpo: 16 px (15 px en mobile), interlineado 1.7, `text-content-muted`.
 - Pestañas: Descripción general, Especificaciones técnicas y Accesorios.
 - Especificaciones y Accesorios son HTML de un WYSIWYG y se dibujan como `prose`. Las tablas van dentro de un contenedor con `overflow-x-auto`.
@@ -439,7 +440,8 @@ Build local (`npm run build:local`) con y sin `WOO_STORE_URL` (sin Woo: 7 págin
 - **1280 px (Holter Medilog AR):** miga de 4 niveles; 5 miniaturas en columna de 96 px y la 3.ª queda activa al hacer clic; galería fija a 112 px; etiqueta, sellos y logo de Schiller; "Solicitar cotización" abre el modal con el producto; "Hablar con un asesor" abre `wa.me` en otra pestaña con el nombre y la URL; botón flotante visible y barra fija oculta; 4 relacionados de Cardiología en una fila; acordeón abre y cierra con `Enter` y `Espacio`, y abrir una pestaña cierra la otra (verificado con datos simulados); JSON-LD `Product` y `BreadcrumbList`; un solo H1; sin scroll horizontal.
 - **Hospitalización (Desecador Derm 102):** 3 relacionados de su especialidad y el cuarto por destacados; con una sola foto no hay miniaturas.
 - **320, 360 y 768 px:** sin scroll horizontal; miga Productos / Cardiología; barra fija visible, botón flotante y sellos ocultos; controles de 44 px o más; swipe a la foto 2; carrusel de relacionados; la barra no tapa el final del footer; la barra abre el modal.
-- **`prefers-reduced-motion`:** sin transición en el caret del acordeón.
+- **`prefers-reduced-motion`:** el acordeón abre y cierra sin animar el alto ni el caret.
+- **Animación del acordeón (Chromium):** a los 120 ms las dos pestañas están a mitad de camino (164 px y 134 px); a los 300 ms queda una sola abierta. `Enter` anima igual, un doble clic rápido revierte sin saltos y no hay errores de consola.
 - **Campos de JetEngine simulados** (parche temporal en `extras.ts`, no versionado) en Q-Flow, en 1280 y 320 px: "Ficha técnica" y "Descargar ficha técnica" abren el PDF en otra pestaña; la pestaña "Accesorios" con `<p>&nbsp;</p>` no aparece; la tabla de especificaciones pierde `style` y clases y se desplaza en su contenedor sin scroll en la página; sin peticiones a YouTube antes del clic; el clic carga el `iframe` de `youtube-nocookie.com`. `scout-tube` sale sin ficha técnica ni video.
 - Sin errores de JavaScript en consola.
 
