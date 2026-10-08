@@ -15,7 +15,7 @@ export default function ShareButtonsReact({ url, title }: Props) {
   const [copied, setCopied] = useState(false);
   const [canCopy, setCanCopy] = useState(true);
   const [canShare, setCanShare] = useState(true);
-  const timer = useRef<number>();
+  const timer = useRef<number | undefined>(undefined);
 
   useEffect(() => {
     setCanCopy(Boolean(navigator.clipboard?.writeText));
