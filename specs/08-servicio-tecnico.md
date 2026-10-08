@@ -263,3 +263,13 @@ Rama `feat/spec-08-servicio-tecnico`, creada desde `staging` actualizado.
 - Enlace "Marcas y reseñas" en el header (SPEC 10).
 
 Si alguna de estas cosas se hace, va en su propia spec.
+
+## Notas de implementación
+
+- El title mide 53 caracteres y la description 149 (la spec estimaba 52 y 150); los dos quedan en rango.
+- Los datos de contacto van en una `<ul>`: un `<dl>` no admite el ícono como hijo del grupo `dt`/`dd`.
+- El mensaje del incidente lleva `aria-describedby` hacia la nota `(**)` cuando existe.
+- La tarjeta del ☰ es un recorte de 240×208 (9 KB) del slide 2, del mismo tamaño que las otras dos, con su `imageAlt`. Va entre Productos y Noticias, y "Soporte técnico" antes de Contacto, en el orden de la referencia.
+- Las tres islas de la página son `client:tina`, igual que en Contacto. El header (`client:load`) y el banner de cookies (`client:idle`) cargan React en todas las páginas, así que el runtime sí se descarga en `/servicio-tecnico`. La página no agrega JS propio.
+- `ContactFormReact` tiene el mismo choque de alturas que se corrigió aquí (`h-[52px]` contra `h-[130px]` en el textarea). Queda fuera de alcance.
+- Sin credenciales de TinaCloud, el build se verifica con `npm run build:local`.
