@@ -21,7 +21,7 @@ const nodes = (Astro.props.posts.postConnection?.edges || [])
 const posts: NewsPost[] = sortByDate(nodes)
   .slice(0, 3)
   .map((post) => ({
-    href: withBase(`/blog/${post._sys.filename}`),
+    href: withBase(`/noticias/${post._sys.filename}`),
     title: post.title,
     excerpt: post.excerpt || "",
     image: post.coverImage ? mediaUrl(post.coverImage) : "",
