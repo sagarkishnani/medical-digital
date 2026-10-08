@@ -179,7 +179,7 @@ Todos los valores se escriben con tokens, nunca en hex.
   - cabecera, pestañas, destacado, grilla, estado vacío y boletín, según la referencia desktop y mobile;
   - el filtro va en `?categoria=` con `history.replaceState`, en una isla `NewsListReact`;
   - el HTML estático es la vista "Todos".
-- **Boletín:** solo maqueta, oculto mientras `newsletter.enabled` sea `false` (el valor por defecto). El botón no envía nada; el envío va en la SPEC 12.
+- **Boletín:** maqueta visible con `newsletter.enabled: true` (el valor por defecto, por decisión del usuario). El botón todavía no envía nada; el envío va en la SPEC 12.
 - **Artículo:**
   - cabecera, franja del autor, portada, lead, cuerpo, cita, CTA "Hablar con un asesor" con `QuoteModal` y "Sigue leyendo" (los 3 posts más recientes, sin contar el actual);
   - el cuerpo se renderiza con componentes de `TinaMarkdown`, sin `prose`.
@@ -282,7 +282,7 @@ Es una colección singleton (`allowedActions: { create: false, delete: false }`)
   "intro": "Productos, actividades, capacitaciones y novedades del sector salud.",
   "emptyText": "Pronto publicaremos noticias en esta categoría.",
   "newsletter": {
-    "enabled": false,
+    "enabled": true,
     "title": "Suscríbete al boletín",
     "text": "Novedades de productos y capacitaciones, una vez al mes."
   },
@@ -493,7 +493,8 @@ La rama `feat/spec-07-noticias` sale de `staging` actualizado, **después del me
 - **No: conservarlos sin uso, como Eres.** Son ruido en el panel.
 - **Sí: colección singleton `news`.** Mismo patrón que `journal` de Eres, y `global` no crece.
 - **Sí: `seo` opcional por post, con `title` + " | Medical Digital" y el `excerpt` como respaldo.** Cumple el §6.1 sin alargar los extractos de las tarjetas.
-- **Sí: el boletín se maqueta detrás de `newsletter.enabled`, apagado.** Nunca se publica un formulario que no envía nada. El envío va en la SPEC 12.
+- **Sí: el boletín se maqueta detrás de `newsletter.enabled`, encendido por defecto.** Lo decidió el usuario para que el listado se vea como la referencia. El interruptor permite apagarlo desde Tina, y el envío va en la SPEC 12.
+- **Riesgo aceptado: el formulario no envía hasta la SPEC 12.** Hay que conectarlo o apagarlo antes del go-live (SPEC 13).
 - **Sí: compartir fiel a la referencia.** En desktop, LinkedIn y WhatsApp son enlaces sin JS. Solo "copiar" y la hoja nativa de mobile necesitan una isla chica.
 - **Sí: `og:image` = la portada tal cual, como la SPEC 06.** El 1200×630 del estándar se cumple por contenido: el campo lo pide y las portadas de ejemplo se exportan en esa proporción.
 - **No: recortar la OG en build.** `getImage()` no procesa imágenes de `public/` (verificado: devuelve la misma ruta), y hacerlo con `sharp` agrega una dependencia que se aparta de lo aprobado en la 06. Queda como propuesta para la revisión.

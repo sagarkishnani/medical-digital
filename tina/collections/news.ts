@@ -15,7 +15,7 @@ export const newsCollection: Collection = {
       name: "newsletter",
       label: "Boletín",
       fields: [
-        { name: "enabled", label: "Mostrar el boletín", description: "Déjalo apagado hasta conectar el envío de suscripciones.", type: "boolean" },
+        { name: "enabled", label: "Mostrar el boletín", description: "Muestra el bloque de suscripción en el listado. El envío se conecta en la SPEC 12.", type: "boolean" },
         { name: "title", label: "Título", type: "string" },
         { name: "text", label: "Texto", type: "string" },
       ],

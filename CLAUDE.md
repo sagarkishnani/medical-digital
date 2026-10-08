@@ -122,7 +122,7 @@ Colecciones:
   `seo` opcional (vacío usa "{título} | Medical Digital" y el extracto). El
   tiempo de lectura se calcula en build (`readingMinutes`, 200 palabras/min).
 - `news` — textos y SEO de `/noticias` y el boletín (`newsletter.enabled`,
-  apagado hasta conectar el envío).
+  encendido; el envío todavía no está conectado, va en la SPEC 12).
 - `maintenance` — modo mantenimiento del sitio.
 - `cookieConsent` — textos del banner de cookies.
 - `productPage` — etiqueta ("Uso Profesional Médico") y sellos de la ficha de

@@ -3,7 +3,7 @@
   "intro": "Productos, actividades, capacitaciones y novedades del sector salud.",
   "emptyText": "Pronto publicaremos noticias en esta categoría.",
   "newsletter": {
-    "enabled": false,
+    "enabled": true,
     "title": "Suscríbete al boletín",
     "text": "Novedades de productos y capacitaciones, una vez al mes."
   },
