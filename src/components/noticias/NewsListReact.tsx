@@ -49,7 +49,7 @@ export default function NewsListReact({ title, intro, posts, categories, emptyTe
 
   return (
     <div className="flex flex-col gap-0 md:gap-10">
-      <div className="flex flex-col gap-0 md:flex-row md:items-end md:justify-between md:gap-6">
+      <div className="flex flex-col gap-0 md:gap-6 lg:flex-row lg:items-end lg:justify-between">
         <div className="flex flex-col gap-2 px-4 pb-4 pt-7 md:gap-3 md:p-0">
           <nav aria-label="Miga de pan">
             <ol className="flex flex-wrap items-center gap-2 text-[13px] text-content-subtle md:text-body-sm">
