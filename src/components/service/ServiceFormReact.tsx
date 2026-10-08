@@ -8,7 +8,8 @@ interface Props {
 
 const labelClass = "flex flex-col gap-2 text-body-sm text-content-muted";
 const controlClass =
-  "h-[50px] w-full rounded-xl border border-line bg-surface-raised px-4 text-body-md text-brand-secondary-dark focus:border-brand-secondary-dark focus:bg-surface focus:outline-none md:h-[52px]";
+  "w-full rounded-xl border border-line bg-surface-raised px-4 text-body-md text-brand-secondary-dark focus:border-brand-secondary-dark focus:bg-surface focus:outline-none";
+const inputClass = `${controlClass} h-[50px] md:h-[52px]`;
 
 const TEXT_FIELDS = [
   { name: "firstName", label: "Nombres", type: "text", autoComplete: "given-name", span: "md:col-span-3" },
@@ -37,7 +38,7 @@ export default function ServiceFormReact({ query, variables, data: initialData }
               {field.label}
               <span aria-hidden="true">*</span>
             </span>
-            <input name={field.name} type={field.type} autoComplete={field.autoComplete} required className={controlClass} />
+            <input name={field.name} type={field.type} autoComplete={field.autoComplete} required className={inputClass} />
           </label>
         ))}
 
