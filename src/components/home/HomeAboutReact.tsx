@@ -17,7 +17,7 @@ export default function HomeAboutReact({ query, variables, data: initialData }: 
   return (
     <section className="container-xl flex flex-col gap-8 pb-12 md:gap-16 md:pb-24">
       <div className="grid overflow-hidden rounded-2xl bg-gradient-primary md:grid-cols-[1.15fr_1fr]">
-        <div className="h-[230px] bg-brand-secondary-medium md:h-auto md:min-h-[415px]">
+        <div className="h-[230px] md:h-auto md:min-h-[415px]">
           {about.image && (
             <img
               src={mediaUrl(about.image)}
@@ -25,7 +25,7 @@ export default function HomeAboutReact({ query, variables, data: initialData }: 
               width={740}
               height={415}
               loading="lazy"
-              className="h-full w-full object-cover object-left"
+              className="h-full w-full object-cover object-right"
               data-tina-field={tinaField(about, "image")}
             />
           )}
