@@ -17,4 +17,6 @@ export const ICON_OPTIONS = [
   { value: "lightbulb", label: "Idea" },
   { value: "headset", label: "Soporte" },
   { value: "medal", label: "Medalla" },
+  { value: "truck", label: "Entrega" },
+  { value: "graduation-cap", label: "Capacitación" },
 ];

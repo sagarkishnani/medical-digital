@@ -1,24 +1,48 @@
 ---
 import type { GetStaticPaths } from "astro";
-import { Image } from "astro:assets";
+import { Image, getImage } from "astro:assets";
 import { FaWhatsapp } from "react-icons/fa6";
+import { BsFiletypePdf } from "react-icons/bs";
+import { PiCaretDownLight, PiPlayFill, PiXLight } from "react-icons/pi";
 import BaseLayout from "../../layouts/BaseLayout.astro";
+import Icon from "../../components/shared/Icon";
+import ProductGalleryReact, { type GalleryImage } from "../../components/productos/ProductGalleryReact";
+import RelatedCarouselReact from "../../components/productos/RelatedCarouselReact";
+import ProductCard from "../../components/productos/ProductCard.astro";
 import client from "../../../tina/__generated__/client";
-import { getProducts } from "../../lib/woo/store";
-import type { WooProduct } from "../../lib/woo/types";
+import { getRankedProducts } from "../../lib/woo/catalog";
+import { extrasFor, getProductExtras } from "../../lib/woo/extras";
+import { buildProductPage, type ProductPageData } from "../../lib/woo/productPage";
+import type { WooProduct, WooProductExtras } from "../../lib/woo/types";
 import { buildQuoteUrl } from "../../utils/whatsapp";
+import { withBase } from "../../utils/url";
 
 export const getStaticPaths = (async () => {
-  const products = await getProducts();
-  return products.map((product) => ({ params: { slug: product.slug }, props: { product } }));
+  const [products, extras] = await Promise.all([getRankedProducts(), getProductExtras()]);
+  return products.map((product) => {
+    const productExtras = extrasFor(extras, product.id);
+    return {
+      params: { slug: product.slug },
+      props: { product, extras: productExtras, page: buildProductPage(product, products, productExtras) },
+    };
+  });
 }) satisfies GetStaticPaths;
 
 interface Props {
   product: WooProduct;
+  extras: WooProductExtras;
+  page: ProductPageData;
 }
 
-const { product } = Astro.props;
+interface LabelWithIcon {
+  label?: string | null;
+  icon?: string | null;
+}
+
+const { product, extras, page } = Astro.props;
+const { details, related } = page;
 const base = import.meta.env.BASE_URL || "/";
+const siteUrl = new URL(base, Astro.site || "https://medicaldigitalperu.com").href;
 
 let whatsappNumber = "";
 try {
@@ -28,89 +52,448 @@ try {
   whatsappNumber = "";
 }
 
-const siteUrl = new URL(base, Astro.site || "https://medicaldigitalperu.com").href;
+let tag: LabelWithIcon | null = null;
+let badges: LabelWithIcon[] = [];
+try {
+  const result = await client.queries.productPage({ relativePath: "index.json" });
+  tag = result.data?.productPage?.tag ?? null;
+  badges = (result.data?.productPage?.badges ?? []).filter((badge): badge is LabelWithIcon => Boolean(badge?.label?.trim()));
+} catch {
+  tag = null;
+}
+
 const quoteUrl = whatsappNumber ? buildQuoteUrl(whatsappNumber, product, siteUrl) : "";
-const [cover, ...gallery] = product.images;
+const specialty = product.categories[0];
+const specialtyHref = specialty ? withBase(`/productos/categoria/${specialty.slug}`) : "";
+const productsHref = withBase("/productos");
+const galleryImages: GalleryImage[] = await Promise.all(
+  product.images.map(async (image) => {
+    const [main, thumb, zoom] = await Promise.all([
+      getImage({ src: image.src, inferSize: true, width: 960, format: "webp" }),
+      getImage({ src: image.src, inferSize: true, width: 192, format: "webp" }),
+      getImage({ src: image.src, inferSize: true, width: 1600, format: "webp" }),
+    ]);
+    return {
+      src: main.src,
+      thumbSrc: thumb.src,
+      zoomSrc: zoom.src,
+      width: Number(main.attributes.width),
+      height: Number(main.attributes.height),
+      alt: image.alt,
+    };
+  }),
+);
 const seoDescription =
   product.shortDescription.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim().slice(0, 160) ||
   `${product.name}. Solicita tu cotización a Medical Digital.`;
+const site = Astro.site || "https://medicaldigitalperu.com";
+const absolute = (path: string) => new URL(path, site).href;
+const productUrl = absolute(withBase(`/productos/${product.slug}`));
+const plainShortDescription = product.shortDescription.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+const structuredData = [
+  {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: product.name,
+    url: productUrl,
+    image: product.images.map((image) => image.src),
+    ...(product.sku ? { sku: product.sku } : {}),
+    ...(plainShortDescription ? { description: plainShortDescription } : {}),
+    ...(product.brand ? { brand: { "@type": "Brand", name: product.brand } } : {}),
+    ...(specialty ? { category: specialty.name } : {}),
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { name: "Inicio", item: absolute(withBase("/")) },
+      { name: "Productos", item: absolute(productsHref) },
+      ...(specialty ? [{ name: specialty.name, item: absolute(specialtyHref) }] : []),
+      { name: product.name, item: productUrl },
+    ].map((crumb, index) => ({ "@type": "ListItem", position: index + 1, ...crumb })),
+  },
+];
+const structuredDataJson = JSON.stringify(structuredData).replace(/</g, "\\u003c");
+const breadcrumbLink = "-my-3 inline-block py-3";
 ---
 
-<BaseLayout title={`${product.name} — Medical Digital`} description={seoDescription}>
-  <article class="section pt-14">
-    <div class="container-xl">
-      <nav aria-label="Ruta" class="text-body-sm text-content-muted">
-        <a href={`${base}productos`} class="btn-link">Productos</a>
-        {product.categories[0] && (
-          <>
-            <span aria-hidden="true"> / </span>
-            <a href={`${base}productos/categoria/${product.categories[0].slug}`} class="btn-link">
-              {product.categories[0].name}
-            </a>
-          </>
-        )}
+<BaseLayout title={`${product.name} — Medical Digital`} description={seoDescription} ogImage={product.images[0]?.src} hideWhatsAppButton>
+  <script type="application/ld+json" set:html={structuredDataJson} />
+  <article>
+    <div class="container-xl pb-12 pt-3.5 lg:pt-8">
+      <nav aria-label="Miga de pan">
+        <ol class="flex flex-wrap items-center gap-1.5 text-caption text-content-muted lg:gap-2 lg:text-body-sm">
+          <li class="hidden lg:block"><a href={withBase("/")} class={breadcrumbLink}>Inicio</a></li>
+          <li aria-hidden="true" class="hidden lg:block">/</li>
+          <li><a href={productsHref} class={breadcrumbLink}>Productos</a></li>
+          {specialty && (
+            <>
+              <li aria-hidden="true">/</li>
+              <li><a href={specialtyHref} class={breadcrumbLink}>{specialty.name}</a></li>
+            </>
+          )}
+          <li aria-hidden="true" class="hidden lg:block">/</li>
+          <li aria-current="page" class="hidden text-brand-secondary-dark lg:block">{product.name}</li>
+        </ol>
       </nav>
 
-      <div class="mt-8 grid gap-12 lg:grid-cols-2">
-        <div>
-          {cover && (
-            <div class="flex aspect-square items-center justify-center rounded-xl border border-line bg-surface p-8">
-              <Image src={cover.src} alt={cover.alt} inferSize width={960} loading="eager" class="max-h-full w-auto object-contain" />
-            </div>
-          )}
-          {gallery.length > 0 && (
-            <ul class="mt-4 grid grid-cols-3 gap-4 sm:grid-cols-4">
-              {gallery.map((image) => (
-                <li class="flex aspect-square items-center justify-center rounded-lg border border-line bg-surface p-3">
-                  <Image src={image.src} alt={image.alt} inferSize width={480} class="max-h-full w-auto object-contain" />
-                </li>
-              ))}
-            </ul>
-          )}
+      <div class="mt-4 grid gap-6 lg:mt-7 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,1fr)] lg:items-start lg:gap-16">
+        <div class="min-w-0 lg:sticky lg:top-28">
+          <ProductGalleryReact client:load images={galleryImages} />
         </div>
 
-        <div>
-          {product.brand && <p class="text-overline uppercase text-accent">{product.brand}</p>}
-          <h1 class="mt-2 text-heading-h1 text-content">{product.name}</h1>
-
-          <dl class="mt-6 flex flex-wrap gap-x-8 gap-y-2 text-body-sm">
-            {product.sku && (
-              <div class="flex gap-2">
-                <dt class="text-content-muted">SKU</dt>
-                <dd class="text-content">{product.sku}</dd>
-              </div>
-            )}
-            {product.categories.length > 0 && (
-              <div class="flex gap-2">
-                <dt class="text-content-muted">Categoría</dt>
-                <dd class="flex flex-wrap gap-2">
-                  {product.categories.map((category) => (
-                    <a href={`${base}productos/categoria/${category.slug}`} class="btn-link">{category.name}</a>
-                  ))}
-                </dd>
-              </div>
-            )}
-          </dl>
-
-          {product.shortDescription && (
-            <div class="prose mt-6 max-w-none text-body-lg text-content-muted" set:html={product.shortDescription} />
+        <div class="flex min-w-0 flex-col gap-4 lg:gap-6">
+          {(tag?.label?.trim() || specialty) && (
+            <div class="flex flex-wrap gap-1.5 lg:gap-2">
+              {tag?.label?.trim() && (
+                <span class="inline-flex h-[30px] items-center gap-1.5 rounded-pill bg-greyscale-lightest px-3 text-caption font-medium text-content-muted lg:h-8 lg:px-3.5 lg:text-body-sm">
+                  <Icon name={tag.icon} className="h-4 w-4 shrink-0" />
+                  {tag.label}
+                </span>
+              )}
+              {specialty && (
+                <a
+                  href={specialtyHref}
+                  class="inline-flex h-[30px] items-center rounded-pill bg-brand-tertiary-lightest px-3 text-caption font-medium text-brand-tertiary-dark lg:h-8 lg:px-3.5 lg:text-body-sm"
+                >
+                  {specialty.name}
+                </a>
+              )}
+            </div>
           )}
 
-          {quoteUrl && (
-            <a href={quoteUrl} target="_blank" rel="noopener noreferrer" class="btn-primary mt-8">
-              <FaWhatsapp aria-hidden="true" />
+          <div class="flex flex-col gap-2 lg:gap-2.5">
+            {(product.brandLogo || product.brand) && (
+              <div class="flex h-[34px] items-center lg:h-10">
+                {product.brandLogo ? (
+                  <Image
+                    src={product.brandLogo.src}
+                    alt={product.brandLogo.alt}
+                    inferSize
+                    width={340}
+                    format="webp"
+                    loading="eager"
+                    class="h-auto max-h-[30px] w-auto max-w-[140px] object-contain mix-blend-multiply lg:max-h-9 lg:max-w-[170px]"
+                  />
+                ) : (
+                  <span class="text-[19px] font-semibold text-brand-secondary-dark lg:text-[22px]">{product.brand}</span>
+                )}
+              </div>
+            )}
+            <h1 class="text-balance text-heading-h2 text-brand-secondary-dark lg:text-heading-h1">{product.name}</h1>
+            {product.shortDescription && (
+              <div class="text-body-md text-content-muted lg:text-body-lg [&_p+p]:mt-3" set:html={product.shortDescription} />
+            )}
+          </div>
+
+          <div class="hidden gap-3 lg:flex">
+            <button
+              type="button"
+              data-quote-name={product.name}
+              data-quote-url={quoteUrl}
+              aria-haspopup="dialog"
+              class="btn-primary h-14 flex-1"
+            >
               Solicitar cotización
+            </button>
+            {quoteUrl && (
+              <a href={quoteUrl} target="_blank" rel="noopener noreferrer" class="btn-secondary h-14 flex-1 gap-2.5 border-brand-secondary-dark bg-surface text-brand-secondary-dark hover:bg-surface-raised active:border-brand-secondary-dark active:bg-greyscale-lightest active:text-brand-secondary-dark">
+                <FaWhatsapp aria-hidden="true" className="h-5 w-5 shrink-0 text-semantics-success-dark" />
+                Hablar con un asesor
+              </a>
+            )}
+          </div>
+
+          {(badges.length > 0 || extras.datasheetUrl) && (
+            <ul class="hidden flex-wrap gap-x-6 gap-y-3 text-body-sm text-content-muted lg:flex">
+              {badges.map((badge) => (
+                <li class="flex items-center gap-2">
+                  <Icon name={badge.icon} className="h-5 w-5 shrink-0" />
+                  {badge.label}
+                </li>
+              ))}
+              {extras.datasheetUrl && (
+                <li>
+                  <a
+                    href={extras.datasheetUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="-my-3 flex items-center gap-2 py-3 text-brand-secondary-dark"
+                  >
+                    <BsFiletypePdf aria-hidden="true" className="h-5 w-5 shrink-0 text-accent" />
+                    Ficha técnica
+                  </a>
+                </li>
+              )}
+            </ul>
+          )}
+
+          {extras.datasheetUrl && (
+            <a
+              href={extras.datasheetUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="flex min-h-11 items-center gap-2 self-start text-body-sm font-medium text-brand-secondary-dark lg:hidden"
+            >
+              <BsFiletypePdf aria-hidden="true" className="h-5 w-5 shrink-0 text-accent" />
+              Descargar ficha técnica
             </a>
+          )}
+
+          {details.length > 0 && (
+            <div class="border-t border-line lg:mt-2">
+              {details.map((detail, index) => (
+                <details name="detalles-producto" class="border-b border-line" open={index === 0} data-accordion>
+                  <summary class="flex min-h-[60px] cursor-pointer list-none items-center justify-between gap-4 text-body-md font-medium text-brand-secondary-dark lg:py-[22px] lg:text-[18px] [&::-webkit-details-marker]:hidden">
+                    {detail.title}
+                    <PiCaretDownLight
+                      aria-hidden="true"
+                      className="h-5 w-5 shrink-0 transition-transform duration-300 ease-in-out motion-reduce:transition-none lg:h-[22px] lg:w-[22px] [details[open]:not([data-closing])_&]:rotate-180"
+                    />
+                  </summary>
+                  <div class="overflow-x-auto pb-5 lg:pb-6" tabindex="0" role="region" aria-label={detail.title}>
+                    <div
+                      class="prose max-w-none text-[15px] leading-[1.65] text-content-muted prose-a:text-accent prose-table:my-0 prose-th:align-bottom prose-th:text-brand-secondary-dark prose-td:align-top prose-table:text-body-sm lg:text-body-md lg:leading-[1.7] [&_table]:w-full [&_td:first-child]:min-w-[9rem] max-lg:[&_table]:min-w-[34rem]"
+                      set:html={detail.html}
+                    />
+                  </div>
+                </details>
+              ))}
+            </div>
           )}
         </div>
       </div>
-
-      {product.description && (
-        <section class="mt-16 border-t border-line pt-12">
-          <h2 class="text-heading-h2 text-content">Descripción</h2>
-          <div class="prose mt-6 max-w-3xl prose-headings:font-heading prose-a:text-accent" set:html={product.description} />
-        </section>
-      )}
     </div>
+
+    {extras.video && (
+      <section class="container-xl pb-2 pt-2 lg:pb-24 lg:pt-6" aria-labelledby="video-demo">
+        <div class="grid gap-3.5 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.7fr)] lg:items-center lg:gap-14 lg:border-t lg:border-line lg:pt-14">
+          <div class="flex flex-col gap-3.5 lg:gap-4">
+            <p class="text-caption text-content-subtle lg:text-body-md">Video demo</p>
+            <h2 id="video-demo" class="text-balance text-[22px] font-medium leading-tight text-brand-secondary-dark lg:text-heading-h2">
+              Conoce el equipo en funcionamiento
+            </h2>
+            <p class="hidden text-body-md text-content-muted lg:block">
+              Mira cómo se configura y opera el {product.name}.
+            </p>
+          </div>
+          <button
+            type="button"
+            data-video-open
+            data-video-title={`Video de ${product.name}`}
+            {...(extras.video.kind === "youtube" ? { "data-youtube-id": extras.video.id } : { "data-video-src": extras.video.src })}
+            aria-label={`Reproducir el video de ${product.name}`}
+            aria-haspopup="dialog"
+            class="group relative flex aspect-video w-full items-center justify-center overflow-hidden rounded-[20px] bg-brand-secondary-dark lg:rounded-3xl"
+          >
+            {extras.video.kind === "youtube" && (
+              <img
+                src={`https://i.ytimg.com/vi/${extras.video.id}/hqdefault.jpg`}
+                alt=""
+                width="480"
+                height="360"
+                loading="lazy"
+                decoding="async"
+                class="absolute inset-0 h-full w-full object-cover"
+              />
+            )}
+            <span class="relative flex h-16 w-16 items-center justify-center rounded-full bg-white shadow-lg transition-transform duration-300 can-hover:group-hover:scale-105 motion-reduce:transition-none lg:h-[88px] lg:w-[88px]">
+              <PiPlayFill aria-hidden="true" className="ml-1 h-[26px] w-[26px] text-accent lg:h-[34px] lg:w-[34px]" />
+            </span>
+          </button>
+        </div>
+      </section>
+    )}
   </article>
+
+  {extras.video && (
+    <dialog
+      data-video-dialog
+      aria-label={`Video de ${product.name}`}
+      tabindex="-1"
+      class="w-[calc(100%-2rem)] max-w-[1100px] overflow-visible bg-transparent p-0 outline-none focus-visible:ring-0 focus-visible:ring-offset-0 backdrop:bg-brand-secondary-darkest/85 open:animate-modal-in open:backdrop:animate-fade-in data-[closing]:animate-modal-out data-[closing]:backdrop:animate-fade-out"
+    >
+      <div class="flex flex-col items-end gap-3">
+        <button
+          type="button"
+          data-video-close
+          aria-label="Cerrar video"
+          class="flex h-12 w-12 items-center justify-center rounded-full bg-surface text-brand-secondary-dark transition-colors duration-200 can-hover:hover:bg-greyscale-lightest"
+        >
+          <PiXLight aria-hidden="true" className="h-[22px] w-[22px]" />
+        </button>
+        <div data-video-frame class="relative aspect-video w-full overflow-hidden rounded-[20px] bg-brand-secondary-darkest lg:rounded-3xl"></div>
+      </div>
+    </dialog>
+  )}
+
+  {related.length > 0 && (
+    <section class="bg-surface-raised py-8 pb-10 lg:py-[88px]" aria-labelledby="productos-relacionados">
+      <div class="container-xl flex flex-col gap-[18px] lg:gap-8">
+        <h2 id="productos-relacionados" class="text-[22px] font-medium leading-tight text-brand-secondary-dark lg:text-heading-h2">
+          Productos relacionados
+        </h2>
+        <RelatedCarouselReact client:visible>
+          <ul data-related-track class="flex gap-3 lg:grid lg:grid-cols-4 lg:gap-5">
+            {related.map((relatedProduct) => (
+              <li class="min-w-0 flex-[0_0_72%] sm:flex-[0_0_42%] lg:flex-none">
+                <ProductCard
+                  product={relatedProduct}
+                  quoteUrl={whatsappNumber ? buildQuoteUrl(whatsappNumber, relatedProduct, siteUrl) : ""}
+                  showSpecialty
+                />
+              </li>
+            ))}
+          </ul>
+        </RelatedCarouselReact>
+      </div>
+    </section>
+  )}
+
+  <div
+    data-mobile-bottom-bar
+    class="fixed inset-x-0 bottom-0 z-20 flex gap-2.5 border-t border-line bg-surface px-4 pb-[max(16px,env(safe-area-inset-bottom))] pt-3 lg:hidden"
+  >
+    <button
+      type="button"
+      data-quote-name={product.name}
+      data-quote-url={quoteUrl}
+      aria-haspopup="dialog"
+      class="btn-primary h-[54px] min-w-0 flex-1"
+    >
+      Solicitar cotización
+    </button>
+    {quoteUrl && (
+      <a
+        href={quoteUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label={`Hablar con un asesor por WhatsApp sobre ${product.name}`}
+        class="flex h-[54px] w-[54px] shrink-0 items-center justify-center rounded-full border border-semantics-success text-semantics-success-dark"
+      >
+        <FaWhatsapp aria-hidden="true" className="h-6 w-6" />
+      </a>
+    )}
+  </div>
 </BaseLayout>
+
+<script>
+  const ACCORDION_DURATION_MS = 300;
+  const animations = new WeakMap<HTMLDetailsElement, Animation>();
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+
+  function closedHeight(details: HTMLDetailsElement) {
+    const summary = details.querySelector("summary")!;
+    return summary.offsetHeight + details.offsetHeight - details.clientHeight;
+  }
+
+  function setExpanded(details: HTMLDetailsElement, expand: boolean) {
+    animations.get(details)?.cancel();
+    if (reducedMotion.matches) {
+      details.open = expand;
+      return;
+    }
+    const startHeight = details.offsetHeight;
+    if (expand) {
+      details.open = true;
+      delete details.dataset.closing;
+    } else {
+      details.dataset.closing = "";
+    }
+    const endHeight = expand ? details.offsetHeight : closedHeight(details);
+    details.style.overflow = "hidden";
+    const animation = details.animate(
+      { height: [`${startHeight}px`, `${endHeight}px`] },
+      { duration: ACCORDION_DURATION_MS, easing: "ease-in-out" },
+    );
+    animations.set(details, animation);
+    animation.onfinish = () => {
+      if (!expand) details.open = false;
+      delete details.dataset.closing;
+      details.style.overflow = "";
+      animations.delete(details);
+    };
+  }
+
+  document.addEventListener("click", (event) => {
+    const summary = (event.target as Element | null)?.closest("[data-accordion] > summary");
+    if (!summary) return;
+    event.preventDefault();
+    const details = summary.parentElement as HTMLDetailsElement;
+    // Sin el atributo, el navegador no cierra de golpe la pestaña hermana mientras se anima.
+    const group = details.getAttribute("name") || details.dataset.group;
+    document.querySelectorAll<HTMLDetailsElement>(`[data-accordion][name="${group}"]`).forEach((item) => {
+      item.dataset.group = group!;
+      item.removeAttribute("name");
+    });
+    const expand = !details.open || details.dataset.closing !== undefined;
+    if (expand) {
+      document
+        .querySelectorAll<HTMLDetailsElement>(`[data-accordion][data-group="${group}"]`)
+        .forEach((item) => item !== details && item.open && setExpanded(item, false));
+    }
+    setExpanded(details, expand);
+  });
+</script>
+
+<script>
+  import { lockScroll, unlockScroll } from "../../utils/scrollLock";
+
+  const dialog = document.querySelector<HTMLDialogElement>("[data-video-dialog]");
+  const frame = dialog?.querySelector<HTMLElement>("[data-video-frame]");
+
+  function playerFor(trigger: HTMLElement): HTMLElement {
+    const title = trigger.dataset.videoTitle || "Video del producto";
+    if (trigger.dataset.youtubeId) {
+      const iframe = document.createElement("iframe");
+      iframe.src = `https://www.youtube-nocookie.com/embed/${trigger.dataset.youtubeId}?autoplay=1&rel=0`;
+      iframe.title = title;
+      iframe.allow = "accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture";
+      iframe.allowFullscreen = true;
+      iframe.className = "absolute inset-0 h-full w-full";
+      return iframe;
+    }
+    const video = document.createElement("video");
+    video.src = trigger.dataset.videoSrc || "";
+    video.title = title;
+    video.controls = true;
+    video.autoplay = true;
+    video.playsInline = true;
+    video.className = "absolute inset-0 h-full w-full";
+    return video;
+  }
+
+  function closeVideo() {
+    if (!dialog?.open || dialog.dataset.closing !== undefined) return;
+    dialog.dataset.closing = "";
+    dialog.addEventListener(
+      "animationend",
+      () => {
+        dialog.close();
+        delete dialog.dataset.closing;
+        frame?.replaceChildren();
+        unlockScroll();
+      },
+      { once: true },
+    );
+  }
+
+  document.addEventListener("click", (event) => {
+    const trigger = (event.target as Element | null)?.closest<HTMLElement>("[data-video-open]");
+    if (!trigger || !dialog || !frame) return;
+    frame.replaceChildren(playerFor(trigger));
+    dialog.showModal();
+    dialog.focus();
+    lockScroll();
+  });
+
+  dialog?.addEventListener("cancel", (event) => {
+    event.preventDefault();
+    closeVideo();
+  });
+
+  dialog?.addEventListener("click", (event) => {
+    const target = event.target as Element;
+    if (target.closest("[data-video-close]") || !target.closest("[data-video-frame]")) closeVideo();
+  });
+</script>

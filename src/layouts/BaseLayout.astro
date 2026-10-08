@@ -20,9 +20,11 @@ interface Props {
   title?: string;
   description?: string;
   viewTransitions?: boolean;
+  hideWhatsAppButton?: boolean;
+  ogImage?: string;
 }
 
-const { title, description, viewTransitions = true } = Astro.props;
+const { title, description, viewTransitions = true, hideWhatsAppButton = false, ogImage: pageOgImage } = Astro.props;
 
 const locale = isLocale(Astro.currentLocale) ? Astro.currentLocale : getLocale(Astro.url);
 
@@ -38,7 +40,7 @@ try {
 const seoTitle = title || tField(globalData?.seo, "title", locale) || "Medical Digital";
 const seoDescription =
   description || tField(globalData?.seo, "description", locale) || "Medical Digital cuida la salud del Perú con tecnología médica de marcas líderes en diagnóstico y soporte vital.";
-const ogImage = globalData?.seo?.ogImage || "";
+const ogImage = pageOgImage || globalData?.seo?.ogImage || "";
 const injectHead = globalData?.codeInjection?.head || "";
 const injectBodyEnd = globalData?.codeInjection?.bodyEnd || "";
 
@@ -126,7 +128,7 @@ try {
           <slot />
         </main>
         <Footer locale={locale} />
-        {globalData?.whatsappButton?.enabled && globalData?.whatsapp && <WhatsAppButton phone={globalData.whatsapp} />}
+        {globalData?.whatsappButton?.enabled && globalData?.whatsapp && <WhatsAppButton phone={globalData.whatsapp} desktopOnly={hideWhatsAppButton} />}
         <CookieConsent />
       </>
     )}

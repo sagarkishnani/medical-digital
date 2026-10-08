@@ -3,6 +3,7 @@
 > **Status:** Aprobado
 > **Depends on:** — (proyecto base: Astro 5 + TinaCMS)
 > **Date:** 2026-09-26
+> **Nota:** SPEC 06 cambia la lectura a la REST API v3 con clave de solo lectura (decisión del revisor). Lo que esta spec dice de la Store API pública queda como historia.
 > **Objective:** Generar en build un catálogo estático de productos (listado filtrable por categoría y ficha con "Solicitar cotización" por WhatsApp) leyendo la Store API pública de WooCommerce, sin claves ni endpoints nuevos expuestos.
 
 ## Por qué existe esta spec
