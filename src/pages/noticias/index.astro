@@ -1,0 +1,77 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import NewsListReact from "../../components/noticias/NewsListReact";
+import { toNewsCard } from "../../components/noticias/buildNewsCards";
+import client from "../../../tina/__generated__/client";
+import { NEWS_CATEGORIES } from "../../../tina/collections/post";
+import { categorySlug, sortByDate } from "../../utils/news";
+import { withBase } from "../../utils/url";
+
+const [newsResult, connectionResult] = await Promise.all([
+  client.queries.news({ relativePath: "index.json" }),
+  client.queries.postConnection(),
+]);
+
+const news = newsResult.data.news;
+const posts = sortByDate(
+  (connectionResult.data?.postConnection?.edges || [])
+    .map((edge) => edge?.node)
+    .filter((node): node is NonNullable<typeof node> => Boolean(node)),
+).map(toNewsCard);
+
+const categories = NEWS_CATEGORIES.map((label) => ({ label, slug: categorySlug(label) }));
+const newsletter = news.newsletter?.enabled ? news.newsletter : null;
+
+const siteUrl = Astro.site || "https://medicaldigitalperu.com";
+const breadcrumb = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Inicio", item: new URL(withBase("/"), siteUrl).href },
+    { "@type": "ListItem", position: 2, name: news.title },
+  ],
+};
+---
+
+<BaseLayout
+  title={news.seo?.title || `${news.title} | Medical Digital`}
+  description={news.seo?.description || news.intro || undefined}
+  viewTransitions={false}
+  jsonLd={[breadcrumb]}
+>
+  <section class="mx-auto flex w-full max-w-[1280px] flex-col gap-8 pb-12 md:gap-10 md:px-8 md:pb-24 md:pt-12">
+    <NewsListReact
+      client:load
+      title={news.title}
+      intro={news.intro || ""}
+      posts={posts}
+      categories={categories}
+      emptyText={news.emptyText || "Pronto publicaremos noticias en esta categoría."}
+      homeHref={withBase("/")}
+    />
+
+    {newsletter && (
+      <form
+        class="mx-4 flex flex-col gap-3 rounded-[22px] bg-brand-secondary-dark p-6 text-white md:mx-0 md:rounded-[28px] md:px-12 md:py-10 lg:flex-row lg:items-center lg:justify-between lg:gap-8"
+        onsubmit="event.preventDefault()"
+      >
+        <div class="flex flex-col gap-1.5">
+          <p class="text-heading-h4 lg:text-heading-h3">{newsletter.title}</p>
+          {newsletter.text && <p class="text-body-sm text-brand-tertiary-light">{newsletter.text}</p>}
+        </div>
+        <div class="flex flex-col gap-2.5 md:flex-row lg:max-w-[480px] lg:flex-1">
+          <label for="newsletter-email" class="sr-only">Correo electrónico</label>
+          <input
+            id="newsletter-email"
+            type="email"
+            name="email"
+            autocomplete="email"
+            placeholder="Tu correo electrónico"
+            class="h-[50px] min-w-0 flex-1 rounded-pill border border-brand-secondary-medium bg-transparent px-[18px] text-body-md text-white outline-none placeholder:text-brand-tertiary-light focus:border-white md:h-[52px] md:px-5 md:text-body-sm"
+          />
+          <button type="submit" class="btn-primary h-[50px] whitespace-nowrap md:h-[52px]">Suscribirme</button>
+        </div>
+      </form>
+    )}
+  </section>
+</BaseLayout>
