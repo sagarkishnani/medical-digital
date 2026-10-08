@@ -57,7 +57,13 @@
     { "name": "Ganshorn", "logo": "/uploads/home/marcas/logo-ganshorn.webp" },
     { "name": "Midmark", "logo": "/uploads/home/marcas/logo-midmark.webp" },
     { "name": "Edan", "logo": "/uploads/home/marcas/logo-edan.webp" },
-    { "name": "Suntech" }
+    { "name": "Suntech" },
+    { "name": "Baxter", "logo": "/uploads/home/marcas/logo-baxter.webp" },
+    { "name": "Beacon", "logo": "/uploads/home/marcas/logo-beacon.webp" },
+    { "name": "Jansen", "logo": "/uploads/home/marcas/logo-jansen.svg" },
+    { "name": "Medicapture", "logo": "/uploads/home/marcas/logo-medicapture.webp" },
+    { "name": "Trackmaster", "logo": "/uploads/home/marcas/logo-trackmaster.webp" },
+    { "name": "Vivachek", "logo": "/uploads/home/marcas/logo-vivachek.webp" }
   ],
   "testimonials": {
     "title": "La confianza de más de 18 años con profesionales de la salud",
