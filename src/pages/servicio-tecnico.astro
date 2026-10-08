@@ -1,6 +1,7 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
 import ServiceHero from "../components/service/ServiceHero.astro";
+import ServiceInfo from "../components/service/ServiceInfo.astro";
 import client from "../../tina/__generated__/client";
 
 const [service, global] = await Promise.all([
@@ -9,12 +10,14 @@ const [service, global] = await Promise.all([
 ]);
 const seo = service.data.service.seo;
 const serviceSection = { query: service.query, variables: service.variables, data: service.data };
+const globalSection = { query: global.query, variables: global.variables, data: global.data };
 ---
 
 <BaseLayout title={seo?.title} description={seo?.description}>
   <section class="bg-surface-raised">
     <div class="mx-auto flex w-full max-w-[1120px] flex-col gap-6 px-4 pb-12 pt-7 md:gap-10 md:px-8 md:pb-24 md:pt-16">
       <ServiceHero {...serviceSection} />
+      <ServiceInfo {...globalSection} />
     </div>
   </section>
 </BaseLayout>
