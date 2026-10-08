@@ -52,6 +52,7 @@ Todos los valores se escriben con tokens, nunca en hex. El layout de dos columna
 
 - Desktop: Inicio / Productos / Especialidad / Nombre, 14 px `text-content-muted`; el último ítem en `brand-secondary-dark`.
 - Mobile: Productos / Especialidad, 12 px.
+- Sin hover en los enlaces, como la referencia; el foco visible global se mantiene.
 
 ### 2. Layout desktop (≥ `lg`)
 

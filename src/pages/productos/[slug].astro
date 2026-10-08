@@ -112,7 +112,7 @@ const structuredData = [
   },
 ];
 const structuredDataJson = JSON.stringify(structuredData).replace(/</g, "\\u003c");
-const breadcrumbLink = "-my-3 inline-block py-3 hover:text-brand-secondary-dark";
+const breadcrumbLink = "-my-3 inline-block py-3";
 ---
 
 <BaseLayout title={`${product.name} — Medical Digital`} description={seoDescription} ogImage={product.images[0]?.src} hideWhatsAppButton>
