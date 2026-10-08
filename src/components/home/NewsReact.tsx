@@ -9,6 +9,7 @@ export interface NewsPost {
   image: string;
   tag: string;
   date: string;
+  readTime: string;
 }
 
 interface Props {
@@ -47,6 +48,7 @@ export default function NewsReact({ query, variables, data: initialData, posts }
                   <span className="rounded-pill bg-brand-tertiary-lightest px-3 py-1 font-medium text-brand-tertiary-dark">{post.tag}</span>
                 )}
                 {post.date}
+                <span className="hidden md:inline">· {post.readTime}</span>
               </p>
               <h3 className="text-body-lg font-medium text-brand-secondary-dark md:text-heading-h4 text-pretty group-hover:underline">{post.title}</h3>
               {post.excerpt && <p className="hidden text-body-md text-content-subtle md:block">{post.excerpt}</p>}
