@@ -3,7 +3,7 @@ import type { GetStaticPaths } from "astro";
 import { Image, getImage } from "astro:assets";
 import { FaWhatsapp } from "react-icons/fa6";
 import { BsFiletypePdf } from "react-icons/bs";
-import { PiCaretDownLight, PiPlayFill } from "react-icons/pi";
+import { PiCaretDownLight, PiPlayFill, PiXLight } from "react-icons/pi";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import Icon from "../../components/shared/Icon";
 import ProductGalleryReact, { type GalleryImage } from "../../components/productos/ProductGalleryReact";
@@ -277,36 +277,54 @@ const breadcrumbLink = "-my-3 inline-block py-3";
               Mira cómo se configura y opera el {product.name}.
             </p>
           </div>
-          <div class="relative aspect-video overflow-hidden rounded-[20px] bg-brand-secondary-dark lg:rounded-3xl">
-            {extras.video.kind === "youtube" ? (
-              <button
-                type="button"
-                data-youtube-id={extras.video.id}
-                data-youtube-title={`Video de ${product.name}`}
-                aria-label={`Reproducir el video de ${product.name}`}
-                class="group absolute inset-0 flex h-full w-full items-center justify-center"
-              >
-                <img
-                  src={`https://i.ytimg.com/vi/${extras.video.id}/hqdefault.jpg`}
-                  alt=""
-                  width="480"
-                  height="360"
-                  loading="lazy"
-                  decoding="async"
-                  class="absolute inset-0 h-full w-full object-cover"
-                />
-                <span class="relative flex h-16 w-16 items-center justify-center rounded-full bg-white shadow-lg transition-transform duration-300 can-hover:group-hover:scale-105 motion-reduce:transition-none lg:h-[88px] lg:w-[88px]">
-                  <PiPlayFill aria-hidden="true" className="ml-1 h-[26px] w-[26px] text-accent lg:h-[34px] lg:w-[34px]" />
-                </span>
-              </button>
-            ) : (
-              <video src={extras.video.src} controls preload="none" class="absolute inset-0 h-full w-full bg-brand-secondary-dark" />
+          <button
+            type="button"
+            data-video-open
+            data-video-title={`Video de ${product.name}`}
+            {...(extras.video.kind === "youtube" ? { "data-youtube-id": extras.video.id } : { "data-video-src": extras.video.src })}
+            aria-label={`Reproducir el video de ${product.name}`}
+            aria-haspopup="dialog"
+            class="group relative flex aspect-video w-full items-center justify-center overflow-hidden rounded-[20px] bg-brand-secondary-dark lg:rounded-3xl"
+          >
+            {extras.video.kind === "youtube" && (
+              <img
+                src={`https://i.ytimg.com/vi/${extras.video.id}/hqdefault.jpg`}
+                alt=""
+                width="480"
+                height="360"
+                loading="lazy"
+                decoding="async"
+                class="absolute inset-0 h-full w-full object-cover"
+              />
             )}
-          </div>
+            <span class="relative flex h-16 w-16 items-center justify-center rounded-full bg-white shadow-lg transition-transform duration-300 can-hover:group-hover:scale-105 motion-reduce:transition-none lg:h-[88px] lg:w-[88px]">
+              <PiPlayFill aria-hidden="true" className="ml-1 h-[26px] w-[26px] text-accent lg:h-[34px] lg:w-[34px]" />
+            </span>
+          </button>
         </div>
       </section>
     )}
   </article>
+
+  {extras.video && (
+    <dialog
+      data-video-dialog
+      aria-label={`Video de ${product.name}`}
+      class="w-[calc(100%-2rem)] max-w-[1100px] overflow-visible bg-transparent p-0 backdrop:bg-brand-secondary-darkest/85 open:animate-modal-in open:backdrop:animate-fade-in data-[closing]:animate-modal-out data-[closing]:backdrop:animate-fade-out"
+    >
+      <div class="flex flex-col items-end gap-3">
+        <button
+          type="button"
+          data-video-close
+          aria-label="Cerrar video"
+          class="flex h-12 w-12 items-center justify-center rounded-full bg-surface text-brand-secondary-dark transition-colors duration-200 can-hover:hover:bg-greyscale-lightest"
+        >
+          <PiXLight aria-hidden="true" className="h-[22px] w-[22px]" />
+        </button>
+        <div data-video-frame class="relative aspect-video w-full overflow-hidden rounded-[20px] bg-brand-secondary-darkest lg:rounded-3xl"></div>
+      </div>
+    </dialog>
+  )}
 
   {related.length > 0 && (
     <section class="bg-surface-raised py-8 pb-10 lg:py-[88px]" aria-labelledby="productos-relacionados">
@@ -418,16 +436,62 @@ const breadcrumbLink = "-my-3 inline-block py-3";
 </script>
 
 <script>
+  import { lockScroll, unlockScroll } from "../../utils/scrollLock";
+
+  const dialog = document.querySelector<HTMLDialogElement>("[data-video-dialog]");
+  const frame = dialog?.querySelector<HTMLElement>("[data-video-frame]");
+
+  function playerFor(trigger: HTMLElement): HTMLElement {
+    const title = trigger.dataset.videoTitle || "Video del producto";
+    if (trigger.dataset.youtubeId) {
+      const iframe = document.createElement("iframe");
+      iframe.src = `https://www.youtube-nocookie.com/embed/${trigger.dataset.youtubeId}?autoplay=1&rel=0`;
+      iframe.title = title;
+      iframe.allow = "accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture";
+      iframe.allowFullscreen = true;
+      iframe.className = "absolute inset-0 h-full w-full";
+      return iframe;
+    }
+    const video = document.createElement("video");
+    video.src = trigger.dataset.videoSrc || "";
+    video.title = title;
+    video.controls = true;
+    video.autoplay = true;
+    video.playsInline = true;
+    video.className = "absolute inset-0 h-full w-full";
+    return video;
+  }
+
+  function closeVideo() {
+    if (!dialog?.open || dialog.dataset.closing !== undefined) return;
+    dialog.dataset.closing = "";
+    dialog.addEventListener(
+      "animationend",
+      () => {
+        dialog.close();
+        delete dialog.dataset.closing;
+        frame?.replaceChildren();
+        unlockScroll();
+      },
+      { once: true },
+    );
+  }
+
   document.addEventListener("click", (event) => {
-    const facade = (event.target as Element | null)?.closest<HTMLButtonElement>("[data-youtube-id]");
-    if (!facade) return;
-    const iframe = document.createElement("iframe");
-    iframe.src = `https://www.youtube-nocookie.com/embed/${facade.dataset.youtubeId}?autoplay=1&rel=0`;
-    iframe.title = facade.dataset.youtubeTitle || "Video del producto";
-    iframe.allow = "accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture";
-    iframe.allowFullscreen = true;
-    iframe.className = "absolute inset-0 h-full w-full";
-    facade.replaceWith(iframe);
-    iframe.focus();
+    const trigger = (event.target as Element | null)?.closest<HTMLElement>("[data-video-open]");
+    if (!trigger || !dialog || !frame) return;
+    frame.replaceChildren(playerFor(trigger));
+    dialog.showModal();
+    lockScroll();
+  });
+
+  dialog?.addEventListener("cancel", (event) => {
+    event.preventDefault();
+    closeVideo();
+  });
+
+  dialog?.addEventListener("click", (event) => {
+    const target = event.target as Element;
+    if (target.closest("[data-video-close]") || !target.closest("[data-video-frame]")) closeVideo();
   });
 </script>
