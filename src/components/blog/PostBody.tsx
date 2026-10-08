@@ -9,7 +9,7 @@ const components: Components<{}> = {
     <h3 className="mt-2.5 text-[19px] font-medium leading-[1.3] text-brand-secondary-dark md:mt-4 md:text-[22px]">{props?.children}</h3>
   ),
   blockquote: (props) => (
-    <blockquote className="my-1.5 rounded-2xl bg-surface-raised px-4 py-5 md:my-3 md:rounded-[20px] md:px-8 md:py-7 [&_p]:text-[18px] [&_p]:leading-[1.5] [&_p]:text-brand-secondary-dark md:[&_p]:text-[20px] md:[&_p]:leading-[1.55] [&_p]:before:content-['“'] [&_p]:after:content-['”']">
+    <blockquote className="my-1.5 rounded-2xl bg-surface-raised px-4 py-5 text-[18px] leading-[1.5] text-brand-secondary-dark before:content-['“'] after:content-['”'] md:my-3 md:rounded-[20px] md:px-8 md:py-7 md:text-[20px] md:leading-[1.55] [&_p]:inline [&_p]:[color:inherit] [&_p]:[font-size:inherit] [&_p]:[line-height:inherit]">
       {props?.children}
     </blockquote>
   ),
