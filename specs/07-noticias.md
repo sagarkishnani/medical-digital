@@ -521,4 +521,18 @@ La rama `feat/spec-07-noticias` sale de `staging` actualizado, **después del me
 
 ## Notas de implementación / QA realizada
 
-_Se completa al terminar la implementación._
+**QA local (build de Tina en modo local + Playwright Chromium, 2026-10-08):**
+
+- `npm run build:local`, `npm run typecheck` (0 errores) y `npm run check:standard` (0 errores; avisos de `og:image` en páginas sin imagen global y JS de la home en 151 KB) pasan.
+- Listado: "Todos" muestra el destacado más 5 tarjetas; "Capacitaciones" muestra 1 destacado y 1 tarjeta y escribe `?categoria=capacitaciones`; `?categoria=actividades` abre con la pestaña activa; `?categoria=inexistente` se ve como "Todos" y se limpia de la URL.
+- La grilla tiene 1 columna a 360 px, 2 a 768 px y 3 a 1024 px, sin scroll horizontal a 360, 768, 1024 ni 1440 px.
+- Artículo: la cita sale en 18/20 px navy con comillas; "Sigue leyendo" se muestra solo desde `md` y el ícono único de compartir solo en mobile. En desktop, LinkedIn, WhatsApp y "copiar" generan las URL esperadas y anuncian "Enlace copiado".
+- Los 6 posts tienen title de 54–59 caracteres y description de 145–155.
+
+**Desvíos y pendientes:**
+
+- Solo 2 de las 6 portadas del bundle llegan a 1200×630 (congreso y mantenimiento). Las otras 4 se recortaron a 1.91:1 al tamaño disponible, sin agrandarlas (554×291, 587×308, 589×309 y 1140×599). Diseño debe reemplazarlas.
+- El tiempo de lectura calculado da 1 min en los 6 posts de ejemplo porque sus cuerpos son cortos; la referencia muestra 3–7 min como texto fijo.
+- `grep -rn "/blog" src` devuelve la importación de `src/components/blog/PostBody.tsx`, que la spec mantiene en esa carpeta. No queda ningún enlace a `/blog`.
+- `og:url` se agregó a `BaseLayout` junto con las demás meta de Open Graph, y `og:image` ahora se emite siempre como URL absoluta.
+- Falta validar en el preview de Amplify: Rich Results Test, depuradores de Facebook y LinkedIn y la hoja nativa de compartir en iPhone.
