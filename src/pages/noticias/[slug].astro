@@ -1,4 +1,5 @@
 ---
+import type { InferGetStaticPropsType } from "astro";
 import BaseLayout from "../../layouts/BaseLayout.astro";
 import PostBody from "../../components/blog/PostBody";
 import NewsCard from "../../components/noticias/NewsCard";
@@ -11,36 +12,33 @@ import { buildAdvisorUrl } from "../../utils/whatsapp";
 import { NEWS_AUTHOR, categorySlug, formatNewsDate, readingMinutes, sortByDate } from "../../utils/news";
 
 export async function getStaticPaths() {
+  const RELATED_COUNT = 3;
   const result = await client.queries.postConnection();
-  return (result.data?.postConnection?.edges || [])
-    .map((edge) => edge?.node)
-    .filter((node): node is NonNullable<typeof node> => Boolean(node))
-    .map((post) => ({ params: { slug: post._sys.filename } }));
+  const posts = sortByDate(
+    (result.data?.postConnection?.edges || [])
+      .map((edge) => edge?.node)
+      .filter((node): node is NonNullable<typeof node> => Boolean(node)),
+  );
+  return posts.map((post) => ({
+    params: { slug: post._sys.filename },
+    props: {
+      post,
+      related: posts
+        .filter((item) => item._sys.filename !== post._sys.filename)
+        .slice(0, RELATED_COUNT)
+        .map(toNewsCard),
+    },
+  }));
 }
 
-const RELATED_COUNT = 3;
-const { slug } = Astro.params;
+type Props = InferGetStaticPropsType<typeof getStaticPaths>;
 
-const [postResult, connectionResult, globalResult] = await Promise.all([
-  client.queries.post({ relativePath: `${slug}.mdx` }),
-  client.queries.postConnection(),
-  client.queries.global({ relativePath: "index.json" }).catch(() => null),
-]);
+const { post, related } = Astro.props;
 
-const post = postResult.data.post;
+const globalResult = await client.queries.global({ relativePath: "index.json" }).catch(() => null);
 const global = globalResult?.data?.global;
 const siteUrl = Astro.site || "https://medicaldigitalperu.com";
 const canonical = new URL(Astro.url.pathname, siteUrl).href;
-
-const allPosts = sortByDate(
-  (connectionResult.data?.postConnection?.edges || [])
-    .map((edge) => edge?.node)
-    .filter((node): node is NonNullable<typeof node> => Boolean(node)),
-);
-const related = allPosts
-  .filter((item) => item._sys.filename !== slug)
-  .slice(0, RELATED_COUNT)
-  .map(toNewsCard);
 
 const category = post.category || "";
 const author = post.author?.trim() || NEWS_AUTHOR;
