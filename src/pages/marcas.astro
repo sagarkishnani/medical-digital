@@ -1,14 +1,22 @@
 ---
 import BaseLayout from "../layouts/BaseLayout.astro";
+import BrandsHero from "../components/marcas/BrandsHero.astro";
+import BrandGrid from "../components/marcas/BrandGrid.astro";
+import Brands from "../components/home/Brands.astro";
+import Testimonials from "../components/home/Testimonials.astro";
 import { getProducts } from "../lib/woo/store";
+import { withBase } from "../utils/url";
 import client from "../../tina/__generated__/client";
 
-const brandsPage = await client.queries.brandsPage({ relativePath: "marcas.json" });
-const home = await client.queries.home({ relativePath: "index.json" });
-const seo = brandsPage.data.brandsPage.seo;
+const [brandsPage, home, products] = await Promise.all([
+  client.queries.brandsPage({ relativePath: "marcas.json" }),
+  client.queries.home({ relativePath: "index.json" }),
+  getProducts(),
+]);
+const page = brandsPage.data.brandsPage;
 
 const productCounts: Record<string, number> = {};
-for (const product of await getProducts()) {
+for (const product of products) {
   if (product.brandSlug) productCounts[product.brandSlug] = (productCounts[product.brandSlug] ?? 0) + 1;
 }
 for (const brand of home.data.home.brands ?? []) {
@@ -16,6 +24,21 @@ for (const brand of home.data.home.brands ?? []) {
     console.warn(`[marcas] ${brand.name} (${brand.slug}) no tiene productos en Woo: se oculta «Ver productos».`);
   }
 }
+
+const siteUrl = Astro.site || "https://medicaldigitalperu.com";
+const breadcrumb = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Inicio", item: new URL(withBase("/"), siteUrl).href },
+    { "@type": "ListItem", position: 2, name: "Marcas y reseñas" },
+  ],
+};
 ---
 
-<BaseLayout title={seo?.title} description={seo?.description} />
+<BaseLayout title={page.seo?.title} description={page.seo?.description} jsonLd={[breadcrumb]}>
+  <BrandsHero {...brandsPage} />
+  {page.logos?.enabled && <Brands {...home} />}
+  {page.brands?.enabled && <BrandGrid page={brandsPage} home={home} productCounts={productCounts} />}
+  {page.testimonials?.enabled && <Testimonials {...home} />}
+</BaseLayout>
