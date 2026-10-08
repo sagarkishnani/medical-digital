@@ -52,7 +52,7 @@ export default function NewsListReact({ title, intro, posts, categories, emptyTe
       <div className="flex flex-col gap-0 md:gap-6 lg:flex-row lg:items-end lg:justify-between">
         <div className="flex flex-col gap-2 px-4 pb-4 pt-7 md:gap-3 md:p-0">
           <nav aria-label="Miga de pan">
-            <ol className="flex flex-wrap items-center gap-2 text-[13px] text-content-subtle md:text-body-sm">
+            <ol className="flex flex-wrap items-center gap-2 text-body-sm text-content-subtle">
               <li>
                 <a href={homeHref} className="-my-3 inline-block py-3">Inicio</a>
               </li>
@@ -60,8 +60,8 @@ export default function NewsListReact({ title, intro, posts, categories, emptyTe
               <li aria-current="page" className="text-brand-secondary-dark">Noticias</li>
             </ol>
           </nav>
-          <h1 className="text-heading-h2 text-brand-secondary-dark md:text-[48px] md:leading-[1.1]">{title}</h1>
-          {intro && <p className="hidden text-[17px] text-content-muted md:block">{intro}</p>}
+          <h1 className="text-heading-h2 text-brand-secondary-dark md:text-heading-h1">{title}</h1>
+          {intro && <p className="hidden text-body-lg text-content-muted md:block">{intro}</p>}
         </div>
         <div
           role="group"
@@ -96,7 +96,7 @@ export default function NewsListReact({ title, intro, posts, categories, emptyTe
           {featured && (
             <a
               href={featured.href}
-              className="group hidden overflow-hidden rounded-[28px] bg-surface-raised transition-shadow duration-300 motion-reduce:transition-none can-hover:hover:shadow-xl md:grid lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)]"
+              className="group hidden overflow-hidden rounded-2xl bg-surface-raised transition-shadow duration-300 motion-reduce:transition-none can-hover:hover:shadow-xl md:grid lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)]"
             >
               <div className="aspect-[16/10] overflow-hidden">
                 {featured.image && (
@@ -111,7 +111,7 @@ export default function NewsListReact({ title, intro, posts, categories, emptyTe
                 )}
               </div>
               <div className="flex flex-col justify-center gap-4 p-8 lg:p-12">
-                <p className="flex flex-wrap items-center gap-2.5 text-[13px] text-content-muted">
+                <p className="flex flex-wrap items-center gap-2.5 text-caption text-content-muted">
                   {featured.category && (
                     <span className="rounded-pill bg-greyscale-light px-3 py-1 font-medium text-content-muted">{featured.category}</span>
                   )}
@@ -119,16 +119,16 @@ export default function NewsListReact({ title, intro, posts, categories, emptyTe
                     {featured.date} · {featured.readTime}
                   </span>
                 </p>
-                <h2 className="text-heading-h2 leading-[1.2] text-brand-secondary-dark text-pretty">{featured.title}</h2>
-                {featured.excerpt && <p className="text-body-md leading-[1.6] text-content-muted">{featured.excerpt}</p>}
-                <span className="mt-1.5 text-[15px] font-medium text-brand-secondary-dark underline underline-offset-4">Leer artículo</span>
+                <h2 className="text-heading-h2 text-brand-secondary-dark text-pretty">{featured.title}</h2>
+                {featured.excerpt && <p className="text-body-md text-content-muted">{featured.excerpt}</p>}
+                <span className="mt-1.5 text-link text-brand-secondary-dark underline underline-offset-4">Leer artículo</span>
               </div>
             </a>
           )}
           <ul className="grid grid-cols-1 gap-8 px-4 md:grid-cols-2 md:gap-x-7 md:gap-y-12 md:px-0 lg:grid-cols-3">
             {filtered.map((post, index) => (
               <li key={post.href} className={post === featured ? "md:hidden" : undefined}>
-                <NewsCard post={post} eager={index < EAGER_CARDS} />
+                <NewsCard post={post} headingLevel="h2" eager={index < EAGER_CARDS} />
               </li>
             ))}
           </ul>

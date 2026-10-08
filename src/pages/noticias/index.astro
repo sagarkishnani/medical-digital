@@ -52,7 +52,7 @@ const breadcrumb = {
 
     {newsletter && (
       <form
-        class="mx-4 flex flex-col gap-3 rounded-[22px] bg-brand-secondary-dark p-6 text-white md:mx-0 md:rounded-[28px] md:px-12 md:py-10 lg:flex-row lg:items-center lg:justify-between lg:gap-8"
+        class="mx-4 flex flex-col gap-3 rounded-2xl bg-brand-secondary-dark p-6 text-white md:mx-0 md:px-12 md:py-10 lg:flex-row lg:items-center lg:justify-between lg:gap-8"
         onsubmit="event.preventDefault()"
       >
         <div class="flex flex-col gap-1.5">
@@ -67,9 +67,9 @@ const breadcrumb = {
             name="email"
             autocomplete="email"
             placeholder="Tu correo electrónico"
-            class="h-[50px] min-w-0 flex-1 rounded-pill border border-brand-secondary-medium bg-transparent px-[18px] text-body-md text-white outline-none placeholder:text-brand-tertiary-light focus:border-white focus-visible:ring-0 focus-visible:ring-offset-0 md:h-[52px] md:px-5 md:text-body-sm"
+            class="h-12 min-w-0 flex-1 rounded-pill border border-brand-secondary-medium bg-transparent px-5 text-body-md text-white outline-none placeholder:text-brand-tertiary-light focus:border-white focus-visible:ring-0 focus-visible:ring-offset-0 md:text-body-sm"
           />
-          <button type="submit" class="btn-primary h-[50px] whitespace-nowrap md:h-[52px]">Suscribirme</button>
+          <button type="submit" class="btn-primary whitespace-nowrap">Suscribirme</button>
         </div>
       </form>
     )}

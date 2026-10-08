@@ -53,7 +53,7 @@ export default function ShareButtonsReact({ url, title }: Props) {
     <div className="flex shrink-0 items-center gap-2">
       <div className="hidden items-center gap-2 md:flex">
         <a href={linkedinUrl} target="_blank" rel="noopener" aria-label="Compartir en LinkedIn" className={circleClassName}>
-          <FaLinkedinIn aria-hidden="true" className="h-[18px] w-[18px]" />
+          <FaLinkedinIn aria-hidden="true" className="h-5 w-5" />
         </a>
         <a href={whatsappUrl} target="_blank" rel="noopener" aria-label="Compartir por WhatsApp" className={circleClassName}>
           <FaWhatsapp aria-hidden="true" className="h-5 w-5" />
@@ -74,7 +74,7 @@ export default function ShareButtonsReact({ url, title }: Props) {
           <PiShareNetworkLight aria-hidden="true" className="h-6 w-6" />
         </button>
       )}
-      <span role="status" aria-live="polite" className={copied ? "text-caption text-content-subtle md:text-[13px]" : "sr-only"}>
+      <span role="status" aria-live="polite" className={copied ? "text-caption text-content-subtle" : "sr-only"}>
         {copied ? "Enlace copiado" : ""}
       </span>
     </div>

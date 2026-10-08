@@ -3,14 +3,16 @@ import type { NewsCardData } from "./types";
 interface Props {
   post: NewsCardData;
   variant?: "grid" | "related";
+  headingLevel?: "h2" | "h3";
   eager?: boolean;
 }
 
-export default function NewsCard({ post, variant = "grid", eager = false }: Props) {
+export default function NewsCard({ post, variant = "grid", headingLevel = "h3", eager = false }: Props) {
   const isRelated = variant === "related";
+  const Heading = headingLevel;
   return (
-    <a href={post.href} className="group flex min-w-0 flex-col gap-3 md:gap-[14px] lg:gap-4">
-      <div className="aspect-[16/10] overflow-hidden rounded-[18px] bg-surface-raised md:rounded-[22px]">
+    <a href={post.href} className="group flex min-w-0 flex-col gap-3 lg:gap-4">
+      <div className="aspect-[16/10] overflow-hidden rounded-xl bg-surface-raised md:rounded-2xl">
         {post.image && (
           <img
             src={post.image}
@@ -23,7 +25,7 @@ export default function NewsCard({ post, variant = "grid", eager = false }: Prop
           />
         )}
       </div>
-      <p className={`flex flex-wrap items-center gap-2 text-caption md:gap-2.5 md:text-[13px] ${isRelated ? "text-content-muted" : "text-content-subtle"}`}>
+      <p className={`flex flex-wrap items-center gap-2 text-caption md:gap-2.5 ${isRelated ? "text-content-muted" : "text-content-subtle"}`}>
         {post.category && (
           <span className="rounded-pill bg-brand-tertiary-lightest px-2.5 py-1 font-medium text-brand-tertiary-dark md:px-3">{post.category}</span>
         )}
@@ -32,10 +34,8 @@ export default function NewsCard({ post, variant = "grid", eager = false }: Prop
           {!isRelated && ` · ${post.readTime}`}
         </span>
       </p>
-      <h3 className={`font-medium leading-[1.35] text-brand-secondary-dark text-pretty ${isRelated ? "text-[19px]" : "text-[19px] md:text-heading-h4"}`}>
-        {post.title}
-      </h3>
-      {!isRelated && post.excerpt && <p className="text-body-sm leading-[1.55] text-content-subtle md:text-[15px]">{post.excerpt}</p>}
+      <Heading className="text-body-lg font-medium text-brand-secondary-dark text-pretty md:text-heading-h4">{post.title}</Heading>
+      {!isRelated && post.excerpt && <p className="text-body-sm text-content-subtle">{post.excerpt}</p>}
     </a>
   );
 }
