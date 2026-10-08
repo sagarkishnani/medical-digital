@@ -22,9 +22,21 @@ interface Props {
   viewTransitions?: boolean;
   hideWhatsAppButton?: boolean;
   ogImage?: string;
+  ogType?: "website" | "article";
+  article?: { publishedTime?: string; section?: string };
+  jsonLd?: object[];
 }
 
-const { title, description, viewTransitions = true, hideWhatsAppButton = false, ogImage: pageOgImage } = Astro.props;
+const {
+  title,
+  description,
+  viewTransitions = true,
+  hideWhatsAppButton = false,
+  ogImage: pageOgImage,
+  ogType = "website",
+  article,
+  jsonLd: pageJsonLd = [],
+} = Astro.props;
 
 const locale = isLocale(Astro.currentLocale) ? Astro.currentLocale : getLocale(Astro.url);
 
@@ -40,11 +52,13 @@ try {
 const seoTitle = title || tField(globalData?.seo, "title", locale) || "Medical Digital";
 const seoDescription =
   description || tField(globalData?.seo, "description", locale) || "Medical Digital cuida la salud del Perú con tecnología médica de marcas líderes en diagnóstico y soporte vital.";
-const ogImage = pageOgImage || globalData?.seo?.ogImage || "";
+const siteUrl = Astro.site || "https://medicaldigitalperu.com";
+const ogImageSource = pageOgImage || globalData?.seo?.ogImage || "";
+const ogImage = ogImageSource ? new URL(ogImageSource, siteUrl).href : "";
 const injectHead = globalData?.codeInjection?.head || "";
 const injectBodyEnd = globalData?.codeInjection?.bodyEnd || "";
 
-const canonical = new URL(Astro.url.pathname, Astro.site || "https://medicaldigitalperu.com").href;
+const canonical = new URL(Astro.url.pathname, siteUrl).href;
 
 /**
  * Datos estructurados. El estándar pide `Organization` en todo sitio; las
@@ -91,13 +105,18 @@ try {
     <meta name="description" content={seoDescription} />
     <link rel="canonical" href={canonical} />
 
-    <meta property="og:type" content="website" />
+    <meta property="og:type" content={ogType} />
     <meta property="og:title" content={seoTitle} />
     <meta property="og:description" content={seoDescription} />
+    <meta property="og:url" content={canonical} />
     {ogImage && <meta property="og:image" content={ogImage} />}
+    {article?.publishedTime && <meta property="article:published_time" content={article.publishedTime} />}
+    {article?.section && <meta property="article:section" content={article.section} />}
     <meta name="twitter:card" content="summary_large_image" />
+    {ogImage && <meta name="twitter:image" content={ogImage} />}
 
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+    {pageJsonLd.map((data) => <script type="application/ld+json" set:html={JSON.stringify(data)} />)}
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
