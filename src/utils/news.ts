@@ -12,7 +12,7 @@ const limaDateParts = new Intl.DateTimeFormat("en-US", {
 export function categorySlug(label: string): string {
   return label
     .normalize("NFD")
-    .replace(/[̀-ͯ]/g, "")
+    .replace(/[\u0300-\u036f]/g, "")
     .toLowerCase()
     .trim()
     .replace(/\s+/g, "-");
