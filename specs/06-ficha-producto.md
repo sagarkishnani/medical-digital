@@ -64,7 +64,11 @@ Todos los valores se escriben con tokens, nunca en hex. El layout de dos columna
 - **Desktop:** grilla `96px minmax(0,1fr)` con gap de 16 px, sticky bajo el header (`top-28`).
   - Miniaturas en columna de 96 × 96 px, `rounded-xl`, borde de 1,5 px (`line`; la activa en `brand-secondary-dark`).
   - Foto principal `aspect-square`, `rounded-3xl`, `bg-surface-raised`; imagen al 78 %, `object-contain`, `mix-blend-multiply`.
-  - Sin botón de zoom.
+  - Botón de zoom abajo a la derecha (14 px; 18 px en desktop): 44 px, `rounded-full`, `bg-surface`, `shadow-sm`, `PiMagnifyingGlassPlusLight` de 22 px y `scale(1.08)` en hover con mouse.
+- **Zoom (como Eres):** `<dialog>` a pantalla completa en `bg-surface-raised`, con la foto a 1600 px en `object-contain`.
+  - Cerrar de 48 px arriba a la derecha; abajo, anterior, "N / M" y siguiente (44 px) si hay más de una foto.
+  - `Esc` cierra y devuelve el foco al botón; las flechas del teclado navegan; el foco queda dentro del `<dialog>`; `scrollLock` bloquea la página.
+  - Entra con fade de 300 ms y sale con 200 ms. Al cerrar, la galería queda en la foto que se estaba viendo.
 - **Mobile:** foto principal con swipe (Embla + `useSlider`); debajo, fila de miniaturas de 72 px con gap de 8 px y scroll horizontal si no caben.
 
 ### 4. Información
@@ -122,7 +126,7 @@ Todos los valores se escriben con tokens, nunca en hex. El layout de dos columna
 **Entra:**
 
 - `/productos/<slug>` rehecha según la referencia desktop y mobile: miga, galería, información, CTA, sellos, acordeón, video, relacionados y barra fija en mobile.
-- **Galería** con Embla + `useSlider`: las miniaturas cambian la foto y en mobile hay swipe. Sin lightbox ni zoom.
+- **Galería** con Embla + `useSlider`: las miniaturas cambian la foto y en mobile hay swipe. Botón de zoom que abre la foto a pantalla completa.
 - **Cotización:**
   - "Solicitar cotización" abre el `QuoteModal` con el producto (`data-quote-name` / `data-quote-url`, igual que la tarjeta).
   - "Hablar con un asesor" abre WhatsApp con `buildQuoteUrl` (nombre y URL del producto).
@@ -139,7 +143,6 @@ Todos los valores se escriben con tokens, nunca en hex. El layout de dos columna
 **Fuera de alcance (para specs futuras):**
 
 - Activar "Show in Rest API" en JetEngine o crear el mu-plugin alternativo: es un cambio en el WordPress de producción que decide el revisor, fuera de este repo.
-- Lightbox y zoom de la galería.
 - Pestañas Características y Garantía, y el sello "N años de garantía" en los relacionados: no hay datos.
 - Viñetas fijas del video ("Puesta en marcha"…).
 - Precio, stock y `offers` en el JSON-LD: el sitio cotiza, no vende.
@@ -360,6 +363,7 @@ Colección singleton en `src/content/product-page/index.json`, sin crear ni borr
 - [ ] La ficha tiene `og:image` con la primera foto del producto.
 - [ ] Hay un solo H1; "Video demo" y "Productos relacionados" son H2.
 - [ ] Las miniaturas, el play del video y el WhatsApp de la barra tienen `aria-label`.
+- [ ] La lupa abre el zoom en la foto activa; `Esc` y ✕ lo cierran, las flechas del teclado navegan y la página de fondo no hace scroll.
 - [ ] Toda la ficha se usa con teclado y el foco siempre es visible.
 - [ ] Con `prefers-reduced-motion` no hay transiciones de desplazamiento en la galería ni en el carrusel.
 
@@ -407,7 +411,6 @@ Colección singleton en `src/content/product-page/index.json`, sin crear ni borr
 ## Qué **no** entra en esta spec
 
 - Activar "Show in Rest API" o crear el mu-plugin en WordPress.
-- Lightbox y zoom de la galería.
 - Pestañas Características y Garantía, y el sello de garantía.
 - Viñetas fijas del video.
 - Precio, stock y `offers`.
@@ -442,6 +445,7 @@ Build local (`npm run build:local`) con y sin `WOO_STORE_URL` (sin Woo: 7 págin
 - **Hospitalización (Desecador Derm 102):** 3 relacionados de su especialidad y el cuarto por destacados; con una sola foto no hay miniaturas.
 - **320, 360 y 768 px:** sin scroll horizontal; miga Productos / Cardiología; barra fija visible, botón flotante y sellos ocultos; controles de 44 px o más; swipe a la foto 2; carrusel de relacionados; la barra no tapa el final del footer; la barra abre el modal.
 - **`prefers-reduced-motion`:** el acordeón abre y cierra sin animar el alto ni el caret.
+- **Zoom (Chromium, 1280 y 360 px):** abre en la foto activa (3 / 5), → pasa a 4 / 5, `Tab` no sale del `<dialog>`, `Esc` cierra, devuelve el foco a la lupa y deja la galería en la foto 4; la página no hace scroll ni tiene desborde horizontal; sin errores de consola.
 - **Animación del acordeón (Chromium):** a los 120 ms las dos pestañas están a mitad de camino (164 px y 134 px); a los 300 ms queda una sola abierta. `Enter` anima igual, un doble clic rápido revierte sin saltos y no hay errores de consola.
 - **Campos de JetEngine simulados** (parche temporal en `extras.ts`, no versionado) en Q-Flow, en 1280 y 320 px: "Ficha técnica" y "Descargar ficha técnica" abren el PDF en otra pestaña; la pestaña "Accesorios" con `<p>&nbsp;</p>` no aparece; la tabla de especificaciones pierde `style` y clases y se desplaza en su contenedor sin scroll en la página; sin peticiones a YouTube antes del clic; el clic carga el `iframe` de `youtube-nocookie.com`. `scout-tube` sale sin ficha técnica ni video.
 - Sin errores de JavaScript en consola.

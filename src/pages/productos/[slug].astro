@@ -68,13 +68,15 @@ const specialtyHref = specialty ? withBase(`/productos/categoria/${specialty.slu
 const productsHref = withBase("/productos");
 const galleryImages: GalleryImage[] = await Promise.all(
   product.images.map(async (image) => {
-    const [main, thumb] = await Promise.all([
+    const [main, thumb, zoom] = await Promise.all([
       getImage({ src: image.src, inferSize: true, width: 960, format: "webp" }),
       getImage({ src: image.src, inferSize: true, width: 192, format: "webp" }),
+      getImage({ src: image.src, inferSize: true, width: 1600, format: "webp" }),
     ]);
     return {
       src: main.src,
       thumbSrc: thumb.src,
+      zoomSrc: zoom.src,
       width: Number(main.attributes.width),
       height: Number(main.attributes.height),
       alt: image.alt,
