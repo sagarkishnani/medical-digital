@@ -68,7 +68,8 @@ Todos los valores se escriben con tokens, nunca en hex. El layout de dos columna
   - Botón de zoom abajo a la derecha (14 px; 18 px en desktop): 44 px, `rounded-full`, `bg-surface`, `shadow-sm`, `PiMagnifyingGlassPlusLight` de 22 px y `scale(1.08)` en hover con mouse.
 - **Zoom (como Eres):** `<dialog>` a pantalla completa en `bg-surface-raised`, con la foto a 1600 px en `object-contain`.
   - Cerrar de 48 px arriba a la derecha; abajo, anterior, "N / M" y siguiente (44 px) si hay más de una foto.
-  - `Esc` cierra y devuelve el foco al botón; las flechas del teclado navegan; el foco queda dentro del `<dialog>`; `scrollLock` bloquea la página.
+  - Las fotos son un carrusel de Embla (`useSlider`): se deslizan con el dedo o arrastrando con el mouse.
+  - `Esc`, ✕ o un clic fuera de la foto y de los botones lo cierran y devuelven el foco al botón; las flechas del teclado navegan; el foco queda dentro del `<dialog>`; `scrollLock` bloquea la página.
   - Entra con fade de 300 ms y sale con 200 ms. Al cerrar, la galería queda en la foto que se estaba viendo.
 - **Mobile:** foto principal con swipe (Embla + `useSlider`); debajo, fila de miniaturas de 72 px con gap de 8 px y scroll horizontal si no caben.
 
@@ -102,7 +103,8 @@ Todos los valores se escriben con tokens, nunca en hex. El layout de dos columna
   - A la izquierda: "Video demo" (`body-md`, `text-content-subtle`), H2 "Conoce el equipo en funcionamiento" y un texto de 16 px.
 - **Mobile:** una columna, H2 de 22 px.
 - **Bloque de video:** `aspect-video`, `rounded-3xl`, `bg-brand-secondary-dark`.
-  - Póster: la miniatura de YouTube.
+  - Póster: la miniatura de YouTube. El bloque entero es un botón que abre el video en un lightbox.
+- **Lightbox del video:** `<dialog>` de hasta 1100 px sobre `brand-secondary-darkest/85`, con el video en `aspect-video` y ✕ de 48 px arriba a la derecha. Entra con `modal-in` (300 ms) y sale con `modal-out` (200 ms). `Esc`, ✕ o un clic fuera del video lo cierran; al cerrar se quita el reproductor (el video se detiene) y el foco vuelve al póster.
   - Play blanco de 88 px (64 px en mobile) con `PiPlayFill` en `text-accent`.
 - Sin las tres viñetas ni la leyenda "Espacio para video".
 
@@ -135,7 +137,7 @@ Todos los valores se escriben con tokens, nunca en hex. El layout de dos columna
 - **Etiqueta y sellos editables en Tina** en una colección singleton `productPage` (equivale a `shop.productPage` de Eres), con el contenido inicial de la referencia.
 - **Sello y enlace "Ficha técnica"** al PDF (`link` de JetEngine), solo cuando existe.
 - **Acordeón:** Descripción general (Woo), Especificaciones técnicas y Accesorios (JetEngine). Una pestaña sin contenido no se muestra.
-- **Video demo** solo cuando existe: YouTube con fachada e `iframe` de `youtube-nocookie.com` al hacer clic; un archivo subido, con `<video controls preload="none">`.
+- **Video demo** solo cuando existe: póster con play que abre un lightbox; dentro, el `iframe` de `youtube-nocookie.com` o el `<video controls>` del archivo subido se crea recién al abrirlo.
 - **Relacionados:** hasta 4 de la misma especialidad, con los destacados primero, completados con la misma marca y después con el resto del catálogo por destacados (como `eres-skin-studio`). Sin ninguno, no aparece la sección.
 - **Lectura de los campos de JetEngine en build** desde `/wp/v2/product` (`meta`), sanitizados con la allowlist de `store.ts`. Si no llegan, la ficha se publica sin esas secciones y el build no falla.
 - **JSON-LD** `Product` (sin `offers`) y `BreadcrumbList` (estándar §SEO).
@@ -242,7 +244,7 @@ Colección singleton en `src/content/product-page/index.json`, sin crear ni borr
 - **Islas:**
   - `ProductGalleryReact.tsx` (`client:load`, arriba del fold) recibe las imágenes ya optimizadas en Astro con `getImage()` (960 px la principal, 192 px las miniaturas, WebP).
   - `RelatedCarouselReact.tsx` (`client:visible`) recibe las `ProductCard.astro` como *children*. Embla solo se activa por debajo de `lg`; en desktop es una grilla.
-- **Sin isla:** el acordeón (`<details>` nativo), la fachada del video (un `<script>` de Astro que cambia el botón por el `iframe` al hacer clic), la barra fija y los CTA.
+- **Sin isla:** el acordeón (`<details>` nativo), el lightbox del video (un `<dialog>` y un `<script>` de Astro que crea el `iframe` al abrirlo), la barra fija y los CTA.
 - **JSON-LD:**
   - `Product` con `name`, `sku`, `image[]`, `description` (descripción corta en texto plano), `brand` (`Brand`), `category` y `url`.
   - `BreadcrumbList` con Inicio, Productos, la especialidad y el producto.
@@ -282,8 +284,8 @@ Colección singleton en `src/content/product-page/index.json`, sin crear ni borr
    - Miniaturas como `<button>` con `aria-label` y `aria-current`.
    - Con una sola foto, sin miniaturas ni swipe.
 9. **Video.**
-   - Sección con fachada: póster de `i.ytimg.com`, botón de play con `aria-label` e `iframe` de `youtube-nocookie.com` con `autoplay=1` al hacer clic.
-   - Para un archivo, `<video controls preload="none">`.
+   - Sección con fachada: póster de `i.ytimg.com` y botón de play con `aria-label` que abre un lightbox con el `iframe` de `youtube-nocookie.com` con `autoplay=1`.
+   - Para un archivo, `<video controls autoplay>` dentro del mismo lightbox.
    - Verificación: sin clic no hay ninguna petición a YouTube.
 10. **Relacionados.**
     - Sección con `ProductCard.astro` dentro de `RelatedCarouselReact.tsx`.
@@ -331,7 +333,7 @@ Colección singleton en `src/content/product-page/index.json`, sin crear ni borr
 - [ ] `scout-tube` no muestra el sello ni el enlace de ficha técnica.
 - [ ] La pestaña "Especificaciones técnicas" muestra la tabla con columnas por modelo y, a 320 px, se desplaza dentro de su contenedor sin scroll horizontal en la página.
 - [ ] Un producto sin accesorios no muestra la pestaña "Accesorios".
-- [ ] Un producto con video de YouTube muestra la sección con póster; antes del clic no hay ninguna petición a `youtube.com` ni a `youtube-nocookie.com`; al hacer clic, el video se reproduce.
+- [ ] Un producto con video de YouTube muestra la sección con póster; antes del clic no hay ninguna petición a `youtube.com` ni a `youtube-nocookie.com`; al hacer clic, el video se reproduce en un lightbox que se cierra con `Esc`, ✕ o un clic fuera y detiene el video al cerrarse.
 - [ ] Un producto sin video no muestra "Video demo".
 
 **Acordeón**
@@ -364,7 +366,7 @@ Colección singleton en `src/content/product-page/index.json`, sin crear ni borr
 - [ ] La ficha tiene `og:image` con la primera foto del producto.
 - [ ] Hay un solo H1; "Video demo" y "Productos relacionados" son H2.
 - [ ] Las miniaturas, el play del video y el WhatsApp de la barra tienen `aria-label`.
-- [ ] La lupa abre el zoom en la foto activa; `Esc` y ✕ lo cierran, las flechas del teclado navegan y la página de fondo no hace scroll.
+- [ ] La lupa abre el zoom en la foto activa; las fotos se deslizan con el dedo; `Esc`, ✕ o un clic fuera de la foto lo cierran, las flechas del teclado navegan y la página de fondo no hace scroll.
 - [ ] Toda la ficha se usa con teclado y el foco siempre es visible.
 - [ ] Con `prefers-reduced-motion` no hay transiciones de desplazamiento en la galería ni en el carrusel.
 
@@ -380,13 +382,13 @@ Colección singleton en `src/content/product-page/index.json`, sin crear ni borr
 - **No: sellos fijos en el código.** Son promesas comerciales ("Capacitación incluida") que el cliente debe poder ajustar.
 - **No: sellos por producto.** No hay un campo que los respalde; si hace falta, va en otra spec junto con JetEngine.
 - **Sí: "Ficha técnica" automático, fuera de Tina.** Depende de que el producto tenga PDF, no de una decisión editorial.
-- **Sí: galería con Embla + `useSlider`, sin lightbox.** Es lo que manda el `CLAUDE.md`. Las fotos de Woo son de producto sobre fondo blanco y suelen venir chicas, y un `<dialog>` más es el patrón que falló en Safari en la SPEC 05.
+- **Sí: galería con Embla + `useSlider`; el zoom también es un carrusel de Embla.** Es lo que manda el `CLAUDE.md`. Las fotos de Woo son de producto sobre fondo blanco y suelen venir chicas, y un `<dialog>` más es el patrón que falló en Safari en la SPEC 05.
 - **Sí: video con fachada y `youtube-nocookie.com`.** El estándar pide póster y carga bajo demanda; el `iframe` directo descarga unos 500 KB de JS por ficha.
 - **No: viñetas fijas del video.** Prometen contenido ("Limpieza y mantenimiento") que el video del producto quizá no tiene.
 - **Sí: relacionados con los cross-sells y upsells de Woo primero (como Eres), después la misma especialidad con los destacados primero, la marca y los destacados.** La especialidad es lo que busca un médico; el último paso, igual que en `eres-skin-studio`, asegura siempre 4 tarjetas si el catálogo las tiene.
 - **Sí: "Hablar con un asesor" abre WhatsApp directo.** El ícono promete WhatsApp y "Solicitar cotización" ya abre el modal. En el catálogo abre el modal porque ahí no hay producto en contexto.
 - **Sí: leer el logo de la marca en build.** El dato ya existe en las 11 marcas y la referencia lo muestra.
-- **Sí: acordeón con `<details>` nativo y fachada del video con un `<script>` de Astro.** No tienen estado que justifique React (estándar §2.1).
+- **Sí: acordeón con `<details>` nativo y lightbox del video con un `<dialog>` y un `<script>` de Astro.** No tienen estado que justifique React (estándar §2.1).
 - **Sí: una sola pestaña abierta a la vez, con `<details name>`.** Es el comportamiento de `eres-skin-studio`, resuelto por el navegador sin JS. Un navegador sin soporte del atributo deja abrir varias, sin romper nada.
 - **Sí: `buildProductPage()` en `src/lib/woo/productPage.ts`.** La misma estructura que `eres-skin-studio`: la página recibe `details` y `related` ya resueltos en build.
 - **Sí: carrusel de relacionados como isla que recibe las `ProductCard.astro` como *children*.** Reutiliza la tarjeta de la SPEC 05 sin duplicarla en React.
@@ -446,6 +448,7 @@ Build local (`npm run build:local`) con y sin `WOO_STORE_URL` (sin Woo: 7 págin
 - **`prefers-reduced-motion`:** el acordeón abre y cierra sin animar el alto ni el caret.
 - **Datos reales por la v3 (2026-10-08):** 45 fichas; 28 con ficha técnica, 44 con especificaciones, 0 con accesorios y 10 con video de YouTube; 43 con logo de marca. Q-Flow abre `Q-Flow-Spanish.pdf`, tiene 4 relacionados y no pide nada a YouTube antes del clic. Ninguna de las 45 fichas tiene scroll horizontal de página en 1280 y 360 px; solo la tabla de 7 columnas de Q-Flow se desplaza en desktop (5 tablas en mobile), dentro de su contenedor.
 - **Zoom (Chromium, 1280 y 360 px):** abre en la foto activa (3 / 5), → pasa a 4 / 5, `Tab` no sale del `<dialog>`, `Esc` cierra, devuelve el foco a la lupa y deja la galería en la foto 4; la página no hace scroll ni tiene desborde horizontal; sin errores de consola.
+- **Swipe, clic fuera y lightbox (Chromium, 1440 px y iPhone XR emulado):** deslizar en el zoom pasa de 1 / 4 a 2 / 4 y vuelve, sin cerrarlo, y la galería lo sigue; tocar la foto no cierra y tocar fuera sí; el video abre en lightbox con `autoplay=1` y bloquea el scroll; un clic fuera, `Esc` o ✕ lo cierran, quitan el `iframe` y devuelven el foco al póster; sin errores de consola.
 - **Animación del acordeón (Chromium):** a los 120 ms las dos pestañas están a mitad de camino (164 px y 134 px); a los 300 ms queda una sola abierta. `Enter` anima igual, un doble clic rápido revierte sin saltos y no hay errores de consola.
 - **Campos de JetEngine simulados** (parche temporal en `extras.ts`, no versionado) en Q-Flow, en 1280 y 320 px: "Ficha técnica" y "Descargar ficha técnica" abren el PDF en otra pestaña; la pestaña "Accesorios" con `<p>&nbsp;</p>` no aparece; la tabla de especificaciones pierde `style` y clases y se desplaza en su contenedor sin scroll en la página; sin peticiones a YouTube antes del clic; el clic carga el `iframe` de `youtube-nocookie.com`. `scout-tube` sale sin ficha técnica ni video.
 - Sin errores de JavaScript en consola.
