@@ -11,3 +11,27 @@ const { query, variables, data } = Astro.props;
 ---
 
 <BrandsReact query={query} variables={variables} data={data} client:tina />
+
+<script>
+  const loadLogosBeforeTheyScrollIn = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue;
+        entry.target.querySelectorAll("img[loading='lazy']").forEach((img) => img.setAttribute("loading", "eager"));
+        loadLogosBeforeTheyScrollIn.unobserve(entry.target);
+      }
+    },
+    { rootMargin: "400px 0px" },
+  );
+  const observeMarquees = () => document.querySelectorAll("[data-marquee]").forEach((marquee) => loadLogosBeforeTheyScrollIn.observe(marquee));
+  observeMarquees();
+  document.addEventListener("astro:page-load", observeMarquees);
+
+  document.addEventListener("click", (event) => {
+    const toggle = (event.target as Element | null)?.closest<HTMLButtonElement>("[data-marquee-toggle]");
+    const marquee = toggle?.closest<HTMLElement>("[data-marquee]");
+    if (!toggle || !marquee) return;
+    const paused = marquee.toggleAttribute("data-paused");
+    toggle.setAttribute("aria-pressed", String(paused));
+  });
+</script>
