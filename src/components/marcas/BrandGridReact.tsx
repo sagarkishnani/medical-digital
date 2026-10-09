@@ -58,7 +58,7 @@ export default function BrandGridReact({ page, home, productCounts }: Props) {
             {brand.slug && productCounts[brand.slug] > 0 && (
               <a
                 href={withBase(`/productos?marca=${brand.slug}`)}
-                className="btn-link mt-auto self-start"
+                className="btn-link mt-auto min-h-11 self-start"
                 data-tina-field={tinaField(section, "linkLabel")}
               >
                 {linkLabel}
