@@ -273,3 +273,4 @@ Si alguna de estas cosas se hace, va en su propia spec.
 - Las tres islas de la página son `client:tina`, igual que en Contacto. El header (`client:load`) y el banner de cookies (`client:idle`) cargan React en todas las páginas, así que el runtime sí se descarga en `/servicio-tecnico`. La página no agrega JS propio.
 - `ContactFormReact` tiene el mismo choque de alturas que se corrigió aquí (`h-[52px]` contra `h-[130px]` en el textarea). Queda fuera de alcance.
 - Sin credenciales de TinaCloud, el build se verifica con `npm run build:local`.
+- Foco según la referencia: los campos solo cambian el borde a `brand-secondary-dark` y el fondo a `surface`, sin anillo. Casilla, botón y enlaces usan el anillo global, pero en `brand-secondary-dark` y no en rojo. El cambio aplica solo a esta página; el resto del sitio sigue con el anillo `brand-primary`.

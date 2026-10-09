@@ -7,9 +7,9 @@ interface Props {
   data: any;
 }
 
-const itemClass = "flex min-w-0 items-center gap-3 md:gap-4";
+const itemClass = "flex min-w-0 items-center gap-3 md:gap-3.5";
 const iconClass = "h-8 w-8 shrink-0 text-brand-secondary-dark md:h-10 md:w-10";
-const termClass = "text-body-sm text-content-muted";
+const termClass = "text-[13px] leading-5 text-content-muted md:text-body-sm";
 const valueClass = "text-body-md font-medium text-brand-secondary-dark md:text-body-lg";
 
 export default function ServiceInfoReact({ query, variables, data: initialData }: Props) {
@@ -24,7 +24,7 @@ export default function ServiceInfoReact({ query, variables, data: initialData }
       {phoneDigits && (
         <li className={itemClass}>
           <PiPhoneLight aria-hidden="true" className={iconClass} />
-          <div className="flex min-w-0 flex-col">
+          <div className="flex min-w-0 flex-col md:gap-0.5">
             <p className={termClass}>Atención al cliente</p>
             <p className={valueClass} data-tina-field={tinaField(company, "phone")}>
               <a href={`tel:+${phoneDigits}`} className="hover:underline">
@@ -37,7 +37,7 @@ export default function ServiceInfoReact({ query, variables, data: initialData }
       {serviceEmail && (
         <li className={itemClass}>
           <PiEnvelopeSimpleLight aria-hidden="true" className={iconClass} />
-          <div className="flex min-w-0 flex-col">
+          <div className="flex min-w-0 flex-col md:gap-0.5">
             <p className={termClass}>Correo electrónico</p>
             <p className={`${valueClass} break-all`} data-tina-field={tinaField(company, "serviceEmail")}>
               <a href={`mailto:${serviceEmail}`} className="hover:underline">

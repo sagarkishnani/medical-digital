@@ -6,9 +6,9 @@ interface Props {
   data: any;
 }
 
-const labelClass = "flex flex-col gap-2 text-body-sm text-content-muted";
+const labelClass = "flex flex-col gap-1.5 text-body-sm text-content-muted md:gap-2";
 const controlClass =
-  "w-full rounded-xl border border-line bg-surface-raised px-4 text-body-md text-brand-secondary-dark focus:border-brand-secondary-dark focus:bg-surface focus:outline-none focus-visible:ring-1 focus-visible:ring-offset-0";
+  "w-full rounded-xl border border-line bg-surface-raised px-3.5 text-body-md text-brand-secondary-dark focus:border-brand-secondary-dark focus:bg-surface focus:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 md:px-4";
 const inputClass = `${controlClass} h-[50px] md:h-[52px]`;
 
 const TEXT_FIELDS = [
@@ -30,7 +30,7 @@ export default function ServiceFormReact({ query, variables, data: initialData }
   if (!form) return <div hidden />;
 
   return (
-    <form className="flex flex-col gap-5 rounded-[22px] bg-surface p-[22px] md:gap-8 md:rounded-[28px] md:p-12" noValidate>
+    <form className="flex flex-col gap-3.5 rounded-[22px] bg-surface p-[22px] md:gap-[22px] md:rounded-[28px] md:p-12" noValidate>
       <div className="grid gap-3.5 md:grid-cols-6 md:gap-5">
         {TEXT_FIELDS.map((field) => (
           <label key={field.name} className={`${labelClass} ${field.span}`}>
@@ -52,13 +52,13 @@ export default function ServiceFormReact({ query, variables, data: initialData }
             required
             rows={4}
             aria-describedby={form.incidentHint ? INCIDENT_HINT_ID : undefined}
-            className={`${controlClass} h-[120px] resize-none py-3.5 md:h-[140px]`}
+            className={`${controlClass} h-[120px] resize-none py-3 md:h-[140px] md:py-3.5`}
           />
         </label>
       </div>
 
       {(form.incidentHint || form.requiredNote) && (
-        <div className="flex flex-col gap-1 text-caption text-content-subtle md:text-[13px] md:leading-5">
+        <div className="flex flex-col gap-1.5 text-caption text-content-subtle md:text-[13px] md:leading-5">
           {form.incidentHint && (
             <p id={INCIDENT_HINT_ID} data-tina-field={tinaField(form, "incidentHint")}>
               {form.incidentHint}
@@ -68,8 +68,8 @@ export default function ServiceFormReact({ query, variables, data: initialData }
         </div>
       )}
 
-      <div className="flex flex-col gap-4 border-t border-line pt-5 md:flex-row md:items-center md:justify-between md:gap-6">
-        <label className="flex cursor-pointer items-start gap-2.5 text-body-sm text-content-muted md:items-center md:gap-3">
+      <div className="flex flex-col gap-3.5 md:flex-row md:items-center md:justify-between md:gap-6 md:border-t md:border-line md:pt-[22px]">
+        <label className="flex cursor-pointer items-start gap-2.5 text-body-sm text-brand-secondary-dark md:items-center md:gap-3">
           <input type="checkbox" name="consent" required className="h-5 w-5 shrink-0 accent-brand-secondary-dark" />
           <span data-tina-field={tinaField(form, "consentLabel")}>
             {form.consentLabel}{" "}
