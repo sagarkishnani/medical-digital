@@ -1,6 +1,6 @@
 # SPEC 07 — Noticias: listado, artículo y SEO
 
-> **Status:** Aprobado
+> **Status:** Implementado
 > **Depends on:** SPEC 03 (header), SPEC 04 (footer), SPEC 06 (prop `ogImage` de `BaseLayout`)
 > **Date:** 2026-10-08
 > **Objective:** Reemplazar el blog del starter por `/noticias` y `/noticias/<slug>` según las pantallas "Noticias" y "Detalle de noticia" de la referencia (desktop y mobile), con categorías, filtro en el navegador, compartir, Open Graph por artículo y JSON-LD `BlogPosting` + `BreadcrumbList`, editable desde Tina.
