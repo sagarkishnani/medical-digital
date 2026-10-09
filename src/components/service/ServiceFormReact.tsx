@@ -8,7 +8,7 @@ interface Props {
 
 const labelClass = "flex flex-col gap-2 text-body-sm text-content-muted";
 const controlClass =
-  "w-full rounded-xl border border-line bg-surface-raised px-4 text-body-md text-brand-secondary-dark focus:border-brand-secondary-dark focus:bg-surface focus:outline-none";
+  "w-full rounded-xl border border-line bg-surface-raised px-4 text-body-md text-brand-secondary-dark focus:border-brand-secondary-dark focus:bg-surface focus:outline-none focus-visible:ring-1 focus-visible:ring-offset-0";
 const inputClass = `${controlClass} h-[50px] md:h-[52px]`;
 
 const TEXT_FIELDS = [
