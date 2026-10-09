@@ -32,7 +32,7 @@ export default function BrandGridReact({ page, home, productCounts }: Props) {
       )}
       <ul className="grid gap-3.5 md:grid-cols-2 md:gap-5 lg:grid-cols-3">
         {brands.map((brand: any, index: number) => (
-          <li key={index} className="flex flex-col gap-3.5 rounded-2xl border border-line p-[22px] md:gap-5 md:p-7">
+          <li key={index} className="flex flex-col gap-3.5 rounded-xl border border-line p-5 md:gap-5 md:rounded-2xl md:p-7">
             <h3 className="flex h-11 items-center md:h-14">
               {brand.logo ? (
                 <img
@@ -41,7 +41,7 @@ export default function BrandGridReact({ page, home, productCounts }: Props) {
                   width={180}
                   height={44}
                   loading="lazy"
-                  className="max-h-9 w-auto max-w-[160px] object-contain mix-blend-multiply md:max-h-11 md:max-w-[180px]"
+                  className="max-h-9 w-auto max-w-40 object-contain mix-blend-multiply md:max-h-11 md:max-w-44"
                   data-tina-field={tinaField(brand, "logo")}
                 />
               ) : (
@@ -51,7 +51,7 @@ export default function BrandGridReact({ page, home, productCounts }: Props) {
               )}
             </h3>
             {brand.desc && (
-              <p className="flex-1 text-body-md text-content-muted" data-tina-field={tinaField(brand, "desc")}>
+              <p className="flex-1 text-body-sm text-content-muted" data-tina-field={tinaField(brand, "desc")}>
                 {brand.desc}
               </p>
             )}

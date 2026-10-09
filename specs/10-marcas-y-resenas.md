@@ -37,7 +37,7 @@ Breakpoints del estándar: 320 / 360 base, `md` 768, `lg` 1024, `xl` 1280, `2xl`
 | Nuestras marcas | H2 40 px; grilla de 3 columnas, gap 20; tarjeta con borde, radio 24, padding 28, logo de 44 px de alto, texto 15 px | H2 26 px; una columna, gap 14; radio 20, padding 22, logo de 36 px, texto 14 px | Componente nuevo `BrandGrid` |
 | Reseñas | Fondo gris, título, 4.9 · 120 reseñas, flechas, 3 tarjetas | 1 tarjeta, dots | `TestimonialsReact` sin cambios |
 
-Tarjeta de marca, en clases: `rounded-2xl border border-line p-[22px] md:p-7`, `flex flex-col gap-3.5 md:gap-5`. Logo en un contenedor `h-11 md:h-14` con `max-h-9 md:max-h-11 max-w-[160px] md:max-w-[180px] object-contain mix-blend-multiply`; sin logo, el nombre en `text-heading-h4 font-semibold`. Descripción en `text-body-md text-content-muted flex-1`. Enlace `btn-link`. Grilla `grid gap-3.5 md:grid-cols-2 md:gap-5 lg:grid-cols-3`.
+Tarjeta de marca, en clases (escala del UI Kit, ver Decisiones): `rounded-xl md:rounded-2xl border border-line p-5 md:p-7`, `flex flex-col gap-3.5 md:gap-5`. Logo en un contenedor `h-11 md:h-14` con `max-h-9 md:max-h-11 max-w-40 md:max-w-44 object-contain mix-blend-multiply`; sin logo, el nombre en `text-heading-h4 font-semibold`. Descripción en `text-body-sm text-content-muted flex-1`. Enlace `btn-link`. Grilla `grid gap-3.5 md:grid-cols-2 md:gap-5 lg:grid-cols-3`.
 
 ## Scope
 
@@ -171,6 +171,7 @@ Ganshorn y Trackmaster no aparecen en la Store API: no tienen productos publicad
 - **Sí: `PageHero` sin cambios.** En mobile mide 260 px y no 340 como la referencia, pero así queda igual que Nosotros y Contacto.
 - **Sí: descripciones condensadas desde producción.** Elección del usuario. Los textos de la referencia solo cubren 7 de las 13 marcas e incluyen marcas que no están (Welch Allyn, Suntech). Los de producción miden hasta unas 90 palabras y dejarían tarjetas desparejas. Se condensan a 1–2 frases sin agregar datos y con las erratas corregidas ("doctorados", "electrosquirúrgicos"). Es contenido inicial: el cliente lo valida y lo edita en Tina.
 - **No: `line-clamp` en la descripción.** Oculta contenido.
+- **Sí: escala del UI Kit en vez de los px de la referencia.** El estándar §2.4 prohíbe tamaños sueltos; mismo criterio y equivalencias que la SPEC 07. Padding 22/28 px → `p-5 md:p-7`; radio 20/24 px → `rounded-xl md:rounded-2xl` (16/24 px en este proyecto); texto 14/15 px → `text-body-sm` (14 px); logo de 160/180 px de ancho → `max-w-40 md:max-w-44` (176 px).
 - **Sí: foto del hero de la referencia como provisional.** Elección del usuario, como la foto de Nosotras en Eres 06.
 - **Sí: JSON-LD solo `BreadcrumbList`.** El estándar (§6.2) no pide `Brand` ni `ItemList`, y Eres solo agrega JSON-LD cuando habilita un resultado enriquecido. `Organization` ya lo emite `BaseLayout`.
 - **No: `aggregateRating` con las reseñas.** Google no lo admite para reseñas publicadas por el propio negocio.
@@ -191,6 +192,7 @@ Ganshorn y Trackmaster no aparecen en la Store API: no tienen productos publicad
 - **El logo o el nombre de cada tarjeta va en un `<h3>`.** La spec no fija la etiqueta; así la grilla queda `h1 → h2 → h3`, sin cambio visual. El `alt` del logo es el nombre de la marca.
 - **"Ver productos" con `mt-auto min-h-11`.** `mt-auto` lo baja al pie aunque una marca no tenga descripción; `min-h-11` lo lleva a 44 px de alto (estándar §3.2), como "Descargar ficha técnica" en la SPEC 06. Las tarjetas no van pegadas, así que no aplica la excepción del footer (SPEC 04).
 - **Los props de las islas `client:tina` llevan la consulta completa.** Con un bloque apagado, su texto puede aparecer en los props serializados del hero, pero el bloque no se renderiza. Es el mismo patrón que Nosotros.
+- **Tras el `/pre-pr`:** la tarjeta pasó a la escala del UI Kit (padding, radio, ancho del logo y texto de la descripción), como la SPEC 07.
 - **Lock de Tina.** `tina/tina-lock.json` se volvió a generar con `brandsPage` después del rebase.
 
 ## QA realizada
