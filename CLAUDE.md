@@ -215,6 +215,12 @@ cuenta los productos de Woo por `brandSlug`; "Ver productos" lleva a
 con un warning por cada `slug` sin productos. Un cambio de slug en Woo deja
 la marca sin enlace hasta corregirlo en Tina.
 
+La franja de logos (`BrandsReact`, Home y `/marcas`) es un marquee solo en
+CSS (`animate-marquee`, `.marquee-mask`) con botón de pausa; el `<script>` de
+`Brands.astro` alterna `data-paused` y carga los logos antes de que entren en
+pantalla. Con `prefers-reduced-motion` queda estática. Es una excepción al
+estándar §4 (ver la SPEC 10): no copies el patrón sin la pausa.
+
 ### Modo mantenimiento
 
 `BaseLayout.astro` consulta la colección `maintenance` en build time; con
