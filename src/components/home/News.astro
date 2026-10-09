@@ -4,6 +4,7 @@ import type { NewsPost } from "./NewsReact";
 import type { PostConnectionQuery } from "../../../tina/__generated__/types";
 import { mediaUrl } from "../../utils/mediaUrl";
 import { withBase } from "../../utils/url";
+import { formatNewsDate, readingMinutes, sortByDate } from "../../utils/news";
 
 interface Props {
   query: string;
@@ -13,21 +14,20 @@ interface Props {
 }
 
 const { query, variables, data } = Astro.props;
-const dateFormat = new Intl.DateTimeFormat("es-PE", { day: "numeric", month: "short", year: "numeric" });
-
-const posts: NewsPost[] = (Astro.props.posts.postConnection?.edges || [])
+const nodes = (Astro.props.posts.postConnection?.edges || [])
   .map((edge) => edge?.node)
-  .filter((node): node is NonNullable<typeof node> => Boolean(node))
-  .sort((a, b) => new Date(b.date || 0).getTime() - new Date(a.date || 0).getTime())
+  .filter((node): node is NonNullable<typeof node> => Boolean(node));
+
+const posts: NewsPost[] = sortByDate(nodes)
   .slice(0, 3)
   .map((post) => ({
-    href: withBase(`/blog/${post._sys.filename}`),
+    href: withBase(`/noticias/${post._sys.filename}`),
     title: post.title,
     excerpt: post.excerpt || "",
     image: post.coverImage ? mediaUrl(post.coverImage) : "",
-    tag: post.tags?.find(Boolean) || "",
-    date: post.date ? dateFormat.format(new Date(post.date)) : "",
-    readTime: post.readTime || "",
+    tag: post.category || "",
+    date: post.date ? formatNewsDate(post.date) : "",
+    readTime: `${readingMinutes(post.body)} min`,
   }));
 ---
 

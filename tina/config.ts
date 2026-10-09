@@ -4,6 +4,7 @@ import { homeCollection } from "./collections/home";
 import { aboutCollection } from "./collections/about";
 import { contactCollection } from "./collections/contact";
 import { postCollection } from "./collections/post";
+import { newsCollection } from "./collections/news";
 import { maintenanceCollection } from "./collections/maintenance";
 import { cookieConsentCollection } from "./collections/cookieConsent";
 import { productPageCollection } from "./collections/productPage";
@@ -41,6 +42,7 @@ export default defineConfig({
       aboutCollection,
       contactCollection,
       postCollection,
+      newsCollection,
       maintenanceCollection,
       cookieConsentCollection,
       productPageCollection,

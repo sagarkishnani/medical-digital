@@ -91,7 +91,8 @@ resuelve y se la pasa a cada isla (ver `src/pages/index.astro`).
 ### Contenido y colecciones
 
 El contenido vive en `src/content/` como JSON (páginas estructuradas).
-Los artículos del blog son MDX en `src/content/blog/`.
+Las noticias son MDX en `src/content/blog/` (la carpeta conserva el nombre; la
+URL es `/noticias`).
 El schema de `tina/config.ts` es la única fuente de verdad sobre la forma del
 contenido; cada colección vive en su propio archivo en `tina/collections/`.
 Los tipos, las queries y el cliente se generan en `tina/__generated__/`
@@ -114,7 +115,13 @@ Colecciones:
 - `about` — página `/nosotros`.
 - `contact` — página `/contacto` y el mapa de Google (acepta el código de
   "Insertar un mapa"; solo se usa si el `src` es de `google.com/maps/embed`).
-- `post` — artículos del blog en MDX (`src/content/blog/`).
+- `post` — noticias en MDX (`src/content/blog/`): `title`, `excerpt` (lead y
+  tarjetas), `category` (Productos, Actividades, Capacitaciones o Noticias,
+  fijas en `NEWS_CATEGORIES`), `author` (vacío muestra "Equipo Medical
+  Digital"), `coverImage` (también es el `og:image`), `date`, `featured` y
+  `seo` opcional (vacío usa "{título} | Medical Digital" y el extracto). El
+  tiempo de lectura se calcula en build (`readingMinutes`, 200 palabras/min).
+- `news` — textos y SEO de `/noticias`.
 - `maintenance` — modo mantenimiento del sitio.
 - `cookieConsent` — textos del banner de cookies.
 - `productPage` — etiqueta ("Uso Profesional Médico") y sellos de la ficha de
@@ -180,6 +187,17 @@ fuentes, todas en build:
 En mobile la ficha tiene una barra fija (`data-mobile-bottom-bar`): el `body`
 reserva su alto y `BaseLayout hideWhatsAppButton` oculta el botón flotante por
 debajo de `lg`.
+
+### Noticias
+
+`/noticias` y `/noticias/<slug>` (ver `specs/07-noticias.md`). Los helpers
+viven en `src/utils/news.ts` (fecha "18 sep 2026", lectura, destacado). La isla
+`NewsListReact` filtra en el navegador con `?categoria=<slug>`
+(`history.replaceState`); el HTML estático es la vista "Todos". Destacado: en
+"Todos", el más reciente con `featured`, o el más reciente; en una categoría,
+el primero. Mobile no muestra destacado ni "Sigue leyendo". El artículo emite
+`og:type="article"` y JSON-LD `BlogPosting` + `BreadcrumbList` mediante las
+props `ogImage`, `ogType`, `article` y `jsonLd` de `BaseLayout`.
 
 ### Modo mantenimiento
 
