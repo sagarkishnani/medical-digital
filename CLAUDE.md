@@ -263,6 +263,11 @@ panel abierto a la vez: `ProductsMegaMenu` (desktop), `SiteMenu` (☰ en desktop
 y menú mobile) y `SearchOverlay` (lee `/search-index.json`, que solo tiene
 productos de Woo). Las anclas (`[id]`) llevan `scroll-margin-top` para quedar
 visibles bajo el header; los heros ya no reservan espacio para él.
+Los enlaces del menú van en la barra desde 1101 px (breakpoint `nav`, como
+en la referencia); entre 1024 y 1100 px se muestran en una fila del panel ☰.
+Texto y rellenos del header son fluidos (`text-nav-link`, `spacing.nav-*` en
+`tailwind.config.mjs`): no los pases a medidas fijas por breakpoint, porque
+con cinco enlaces el menú se monta sobre la lupa.
 
 **Tema: light.** Los componentes NO escriben colores: piden tokens
 semánticos, y por eso el tema se puede cambiar sin tocar una sola clase.

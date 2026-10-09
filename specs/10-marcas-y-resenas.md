@@ -50,6 +50,8 @@ Tarjeta de marca, en clases (escala del UI Kit, ver Decisiones): `rounded-xl md:
 - Descripciones iniciales condensadas desde `/marcas/` de producción.
 - Foto del hero extraída de la referencia como contenido provisional.
 - JSON-LD `BreadcrumbList`.
+- Enlace "Marcas y reseñas" en el header y en el menú (pendiente desde la SPEC 08), y el slide "Nuestros aliados" de la Home con "Conoce las marcas" → `/marcas`, como en la referencia.
+- Ajuste del header de la SPEC 03 para que entren los cinco enlaces: breakpoint y medidas fluidas de la referencia.
 
 **Fuera de alcance (para futuras specs):**
 
@@ -140,11 +142,13 @@ Ganshorn y Trackmaster no aparecen en la Store API: no tienen productos publicad
 5. **Hero.** `src/components/marcas/BrandsHero.astro` + `BrandsHeroReact.tsx` (`client:tina`) con `PageHero` y breadcrumb "Marcas y reseñas", igual que `AboutHero`.
 6. **Grilla.** `src/components/marcas/BrandGrid.astro` + `BrandGridReact.tsx` (`client:tina`). Recibe la sección de `brandsPage`, la de `home` y `productCounts`; usa `useTina` para cada una. "Ver productos" es un `<a class="btn-link">` a `withBase("/productos?marca=<slug>")`, con un `<span class="sr-only">` "de {marca}" para que cada enlace tenga nombre único. Sin productos, el enlace no se renderiza. Sin marcas con nombre, `<div hidden />`.
 7. **Página.** `src/pages/marcas.astro`: consulta `brandsPage` y `home`, monta `BrandsHero`, `Brands` (si `logos.enabled`), `BrandGrid` (si `brands.enabled`) y `Testimonials` (si `testimonials.enabled`), y pasa `seo` y el `jsonLd` de `BreadcrumbList` (Inicio → Marcas y reseñas) a `BaseLayout`.
-8. **Build y QA.** `npm run build`, revisión en 320, 360, 768, 1024, 1280 y 1536 px, y Safari en iPhone mediante el preview de Amplify.
+8. **Enlaces y header.** Agregar "Marcas y reseñas" a `global.nav.links` después de Productos y cambiar el CTA del slide "Nuestros aliados" a "Conoce las marcas" → `/marcas`. Ajustar `HeaderReact` y `SiteMenu` a la referencia: enlaces en la barra desde 1101 px y medidas con `clamp()` como tokens.
+9. **Build y QA.** `npm run build`, revisión en 320, 360, 768, 1024, 1280 y 1536 px, y Safari en iPhone mediante el preview de Amplify.
 
 ## Criterios de aceptación
 
-- [ ] `/marcas` responde 200, y el enlace "Marcas y reseñas" del footer lleva ahí.
+- [ ] `/marcas` responde 200, y llevan ahí "Marcas y reseñas" del header, del menú ☰ / mobile y del footer, y "Conoce las marcas" del slide de la Home.
+- [ ] El header no se solapa con la lupa en ningún ancho desde 1024 px: entre 1024 y 1100 px los enlaces están en el ☰, y desde 1101 px en la barra.
 - [ ] Hay un solo `<h1>`: "Marcas aliadas que respaldan cada equipo". El breadcrumb dice "Inicio / Marcas y reseñas".
 - [ ] La franja de logos es la misma de la Home y no se mueve.
 - [ ] "Nuestras marcas" muestra las 13 marcas en el orden de `home.brands`: 3 columnas desde `lg`, 2 en `md` y 1 en mobile, sin scroll horizontal en 320 px.
@@ -193,6 +197,8 @@ Ganshorn y Trackmaster no aparecen en la Store API: no tienen productos publicad
 - **"Ver productos" con `mt-auto min-h-11`.** `mt-auto` lo baja al pie aunque una marca no tenga descripción; `min-h-11` lo lleva a 44 px de alto (estándar §3.2), como "Descargar ficha técnica" en la SPEC 06. Las tarjetas no van pegadas, así que no aplica la excepción del footer (SPEC 04).
 - **Los props de las islas `client:tina` llevan la consulta completa.** Con un bloque apagado, su texto puede aparecer en los props serializados del hero, pero el bloque no se renderiza. Es el mismo patrón que Nosotros.
 - **Tras el `/pre-pr`:** la tarjeta pasó a la escala del UI Kit (padding, radio, ancho del logo y texto de la descripción), como la SPEC 07.
+- **Header (SPEC 03).** Al agregar el quinto enlace, el menú se solapaba con la lupa entre 1024 y 1100 px y en 1280 px. Se replicó el header del bundle: breakpoint `nav` de 1101 px (`screens` completo en `tailwind.config.mjs`, para que quede ordenado entre `lg` y `xl`) y medidas con `clamp()` como tokens (`text-nav-link`, `text-nav-cta` y `spacing.nav-*`). Entre 1024 y 1100 px el ☰ muestra una fila con los cinco enlaces en `heading-h4` (22 px en el bundle). Anotado también en la SPEC 03.
+- **Marquee:** se mantiene la franja estática (ver Decisiones). Si diseño lo pide, es una excepción al estándar §4 que debe aprobar el revisor, con pausa y `prefers-reduced-motion`.
 - **Lock de Tina.** `tina/tina-lock.json` se volvió a generar con `brandsPage` después del rebase.
 
 ## QA realizada
@@ -206,5 +212,7 @@ Build local (`npm run build:local`): pasa y avisa por Ganshorn (`ganshorn`) y Tr
 - **Fallbacks:** el hero sin imagen sale con el degradado de marca; Bovie sin logo muestra su nombre en `/marcas` y en la franja de la Home, que leen el mismo dato.
 - **SEO:** title de 51 caracteres, description de 157, canonical, JSON-LD `Organization` + `BreadcrumbList` (Inicio → Marcas y reseñas) y ningún `aggregateRating`.
 - **Hidratación:** el hero, la franja y la grilla son `client:tina`; en `/marcas` solo hidratan el slider de testimonios (`client:visible`) y las islas compartidas del sitio (header con `client:load` y cookies con `client:idle`).
+
+- **Header (1024, 1100, 1101, 1150, 1200, 1279, 1280, 1366, 1440 y 1536 px):** sin scroll horizontal ni solapes; los enlaces aparecen en la barra desde 1101 px y a 1101 px quedan a 35 px de la lupa; el texto va de 13 a 15 px; "Marcas y reseñas" lleva `aria-current` en `/marcas`. A 1024 px el ☰ muestra los cinco enlaces de 44 px de alto, y desde 1101 px esa fila se oculta. A 360 px el menú mobile y el footer enlazan a `/marcas`, y el slide 3 de la Home lleva a `/marcas`.
 
 Pendiente de verificar a mano: Safari en el iPhone XR con el preview de Amplify, la edición en `/admin` (campos `slug` y `desc`, validación del slug, "Marcas y reseñas" sin crear ni borrar), el Rich Results Test sobre el preview y el visto bueno del cliente a las descripciones condensadas. La foto del hero (1440×309) sigue siendo provisional.
