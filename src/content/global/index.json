@@ -4,6 +4,7 @@
     "logoAlt": "Medical Digital",
     "links": [
       { "label": "Productos", "url": "/productos", "productsMenu": true },
+      { "label": "Servicio técnico", "url": "/servicio-tecnico" },
       { "label": "Noticias", "url": "/noticias" },
       { "label": "Contacto", "url": "/contacto" }
     ],
@@ -11,6 +12,7 @@
     "panel": {
       "cards": [
         { "image": "/uploads/menu/tarjeta-productos.webp", "title": "Nuestros productos", "text": "Equipos por especialidad médica", "url": "/productos" },
+        { "image": "/uploads/menu/tarjeta-servicio-tecnico.webp", "imageAlt": "Técnico probando un desfibrilador Schiller con un analizador en el laboratorio", "title": "Servicio posventa", "text": "Mantenimiento y repuestos", "url": "/servicio-tecnico" },
         { "image": "/uploads/menu/tarjeta-noticias.webp", "title": "Noticias", "text": "Capacitaciones y actividades", "url": "/noticias" }
       ],
       "columns": [
@@ -25,7 +27,10 @@
         },
         {
           "title": "Atención al cliente",
-          "links": [{ "label": "Contacto", "url": "/contacto" }]
+          "links": [
+            { "label": "Soporte técnico", "url": "/servicio-tecnico" },
+            { "label": "Contacto", "url": "/contacto" }
+          ]
         }
       ],
       "contactTitle": "Contáctanos"
@@ -98,7 +103,8 @@
     "address": "Las Palomas 392 #86\nSurquillo, Lima – Perú",
     "phone": "(+51) 1 222-0571",
     "emails": ["info@medicaldigitalperu.com", "ventas@medicaldigitalperu.com"],
-    "hours": "Lunes a viernes · 8:30 a 18:00"
+    "hours": "Lunes a viernes · 8:30 a 18:00",
+    "serviceEmail": "servicio.tecnico@medicaldigitalperu.com"
   },
   "seo": {
     "title": "Medical Digital",

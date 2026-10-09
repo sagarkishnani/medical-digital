@@ -1,0 +1,18 @@
+{
+  "hero": {
+    "title": "Servicio posventa calificado",
+    "text": "Coordina una revisión técnica, mantenimiento o reparación de tus equipos con nuestros ingenieros certificados."
+  },
+  "form": {
+    "incidentHint": "(**) Indica la periodicidad y circunstancias en las que ocurre el incidente. Si hubiera algún mensaje de error, anótalo.",
+    "requiredNote": "(*) Todos los campos son obligatorios.",
+    "consentLabel": "He leído y acepto la",
+    "privacyLabel": "Política de uso de datos personales",
+    "privacyUrl": "",
+    "submitLabel": "Enviar solicitud"
+  },
+  "seo": {
+    "title": "Servicio técnico de equipos médicos | Medical Digital",
+    "description": "Solicita mantenimiento preventivo, correctivo o reparación de tus equipos médicos con ingenieros certificados y repuestos originales en todo el Perú."
+  }
+}

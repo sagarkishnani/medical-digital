@@ -3,6 +3,7 @@ import { globalCollection } from "./collections/global";
 import { homeCollection } from "./collections/home";
 import { aboutCollection } from "./collections/about";
 import { contactCollection } from "./collections/contact";
+import { serviceCollection } from "./collections/service";
 import { postCollection } from "./collections/post";
 import { newsCollection } from "./collections/news";
 import { maintenanceCollection } from "./collections/maintenance";
@@ -41,6 +42,7 @@ export default defineConfig({
       homeCollection,
       aboutCollection,
       contactCollection,
+      serviceCollection,
       postCollection,
       newsCollection,
       maintenanceCollection,

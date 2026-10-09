@@ -108,13 +108,17 @@ Colecciones:
   enciende con `whatsappButton.enabled`), el placeholder de la búsqueda
   (`search`), el catálogo PDF (`catalog`), los íconos de cada categoría de Woo
   (`categoryIcons`, los usan el header y la Home) y los datos de la empresa
-  (`company`: dirección, teléfono, correos y horario).
+  (`company`: dirección, teléfono, correos, horario y `serviceEmail`, el
+  correo que muestra `/servicio-tecnico`; vacío, no se muestra).
 - `home` — contenido de la portada: slider, destacados (los marca Woo),
   especialidades (categorías de Woo), "Conoce más", marcas, testimonios y
   noticias (los 3 últimos posts).
 - `about` — página `/nosotros`.
 - `contact` — página `/contacto` y el mapa de Google (acepta el código de
   "Insertar un mapa"; solo se usa si el `src` es de `google.com/maps/embed`).
+- `service` — página `/servicio-tecnico`: cabecera, textos del formulario y
+  SEO. El teléfono y el correo salen de `global.company`. El formulario está
+  maquetado sin envío (`client:tina`, botón `type="button"`) hasta la SPEC 12.
 - `post` — noticias en MDX (`src/content/blog/`): `title`, `excerpt` (lead y
   tarjetas), `category` (Productos, Actividades, Capacitaciones o Noticias,
   fijas en `NEWS_CATEGORIES`), `author` (vacío muestra "Equipo Medical
