@@ -22,7 +22,7 @@ La referencia (`Medical Digital Desktop.html` y `Medical Digital Mobile.html`) d
   - miga, H1 "Noticias" y bajada (esta solo en desktop);
   - pestañas Todos, Productos, Actividades, Capacitaciones y Noticias;
   - un post destacado ancho (solo en desktop) y la grilla;
-  - el bloque "Suscríbete al boletín" con un input de correo.
+  - el bloque "Suscríbete al boletín" con un input de correo, que esta spec no implementa (ver Decisiones).
 - **Artículo:**
   - miga con la categoría, chip, H1 y una franja con el autor "MD · Equipo Medical Digital", la fecha y la lectura;
   - botones de compartir: LinkedIn, WhatsApp y copiar enlace en desktop, y un solo ícono en mobile;
@@ -41,7 +41,7 @@ Todos los valores se escriben con tokens, nunca en hex. Los px de esta sección 
 
 | Hex del bundle | Token |
 |---|---|
-| `#1C2140` (texto, pestaña activa, caja del boletín, CTA, avatar) | `brand-secondary-dark` |
+| `#1C2140` (texto, pestaña activa, CTA, avatar) | `brand-secondary-dark` |
 | `#F4F5F8` (fondo del destacado, cita, "Sigue leyendo", fondo de imagen) | `bg-surface-raised` |
 | `#EEF2FA` / `#18459A` (chip de categoría) | `bg-brand-tertiary-lightest` / `text-brand-tertiary-dark` |
 | `#E5E7EB` / `#3F3F3F` (chip del destacado) | `bg-greyscale-light` / `text-content-muted` |
@@ -49,9 +49,7 @@ Todos los valores se escriben con tokens, nunca en hex. Los px de esta sección 
 | `#3F3F3F` (bajada, cuerpo) | `text-content-muted` |
 | `#E5E7EB` (bordes, pestaña inactiva) | `border-line` |
 | `#F2F3F5` (hover de los botones de compartir) | `bg-greyscale-lightest` |
-| `#B3C3E3` (texto sobre navy) | `text-brand-tertiary-light` |
-| `#3A4066` (borde del input del boletín) | `border-brand-secondary-medium` |
-| `#E83C3E` → `#B8242A` ("Suscribirme", "Hablar con un asesor") | `btn-primary` |
+| `#E83C3E` → `#B8242A` ("Hablar con un asesor") | `btn-primary` |
 
 ### 1. Listado — cabecera y pestañas
 
@@ -98,18 +96,7 @@ Todos los valores se escriben con tokens, nunca en hex. Los px de esta sección 
   - **Extracto:** 15 px (14 px en mobile) `text-content-subtle`.
 - **Estado vacío:** `news.emptyText` centrado, en `body-md` y `text-content-muted`. No está en la referencia.
 
-### 4. Boletín (solo con `newsletter.enabled`)
-
-- **Caja:** `bg-brand-secondary-dark`, texto blanco y radio de 28 px (22 px en mobile).
-  - **Desktop:** padding `40px 48px`, en fila `justify-between`.
-  - **Mobile:** padding de 24 px, en columna con gap de 12 px.
-- **Título:** 24 px (20 px en mobile). **Texto:** 14 px `text-brand-tertiary-light`.
-- **Input:** 52 px (50 px en mobile), pill, borde `brand-secondary-medium` y fondo transparente.
-  - Texto de 14 px, y de 16 px en mobile para que iOS no haga zoom.
-  - Lleva un `<label>` visualmente oculto. El foco pasa el borde a blanco.
-- **Botón:** "Suscribirme", `btn-primary`, pill de 52 px (50 px en mobile).
-
-### 5. Artículo — cabecera
+### 4. Artículo — cabecera
 
 - **Columna de 820 px:** padding `48px 32px 40px` y gap de 22 px. En mobile: `24px 16px 20px` y gap de 14 px.
 - **Miga:**
@@ -128,7 +115,7 @@ Todos los valores se escriben con tokens, nunca en hex. Los px de esta sección 
     - Cada uno lleva su `aria-label`.
   - **Compartir en mobile:** un botón de 44 px con `PiShareNetworkLight` de 24 px.
 
-### 6. Artículo — portada, cuerpo y CTA
+### 5. Artículo — portada, cuerpo y CTA
 
 - **Portada:**
   - **Desktop:** columna de 1120 px, `aspect-[16/8]` y radio de 28 px.
@@ -148,7 +135,7 @@ Todos los valores se escriben con tokens, nunca en hex. Los px de esta sección 
   - Texto "¿Te ayudamos a elegir el equipo ideal?" en 19 px (18 px en mobile).
   - Botón "Hablar con un asesor" (`btn-primary`, 50 px), que abre `QuoteModal` en su versión genérica.
 
-### 7. Artículo — "Sigue leyendo" (solo `≥ md`)
+### 6. Artículo — "Sigue leyendo" (solo `≥ md`)
 
 - Sección `bg-surface-raised`, `container-xl`, padding `80px 0` y gap de 32 px.
 - H2 "Sigue leyendo" en 32 px (`heading-h2`).
@@ -156,7 +143,7 @@ Todos los valores se escriben con tokens, nunca en hex. Los px de esta sección 
   - La tarjeta es como la del listado, sin extracto ni lectura.
   - El título va en 19 px y la meta en `text-content-muted`, porque el fondo es `surface-raised`.
 
-### 8. Motion
+### 7. Motion
 
 - Todas las transiciones van en 300 ms o menos. La referencia usa 450 ms en la sombra y 800 ms en el zoom; se recortan por el estándar §4.
 - Con `prefers-reduced-motion` no hay zoom ni transición de sombra.
@@ -174,12 +161,11 @@ Todos los valores se escriben con tokens, nunca en hex. Los px de esta sección 
   - se eliminan `tags`, `readTime`, `title_en`, `excerpt_en` y `body_en`;
   - se conservan `title`, `excerpt`, `coverImage`, `date`, `featured` y `body`.
 - **Tiempo de lectura** calculado en build a partir del cuerpo: 200 palabras por minuto, redondeado hacia arriba, con un mínimo de 1 min.
-- **Colección singleton `news`** (`src/content/news/index.json`): título, bajada, texto del estado vacío, el boletín (interruptor, título y texto) y el SEO del listado.
+- **Colección singleton `news`** (`src/content/news/index.json`): título, bajada, texto del estado vacío y el SEO del listado.
 - **Listado:**
-  - cabecera, pestañas, destacado, grilla, estado vacío y boletín, según la referencia desktop y mobile;
+  - cabecera, pestañas, destacado, grilla y estado vacío, según la referencia desktop y mobile;
   - el filtro va en `?categoria=` con `history.replaceState`, en una isla `NewsListReact`;
   - el HTML estático es la vista "Todos".
-- **Boletín:** maqueta visible con `newsletter.enabled: true` (el valor por defecto, por decisión del usuario). El botón todavía no envía nada; el envío va en la SPEC 12.
 - **Artículo:**
   - cabecera, franja del autor, portada, lead, cuerpo, cita, CTA "Hablar con un asesor" con `QuoteModal` y "Sigue leyendo" (los 3 posts más recientes, sin contar el actual);
   - el cuerpo se renderiza con componentes de `TinaMarkdown`, sin `prose`.
@@ -204,7 +190,7 @@ Todos los valores se escriben con tokens, nunca en hex. Los px de esta sección 
 
 **Fuera de alcance (para specs futuras):**
 
-- Envío real del boletín (proveedor o endpoint): SPEC 12 o una spec propia.
+- El boletín, en maqueta o con envío: no se implementa (ver Decisiones). Si se retoma, va en una spec propia con proveedor, consentimiento (Ley 29733) y envío.
 - Redirecciones del "hello-world" y de `/category/uncategorized/` de WordPress: SPEC 13 (go-live).
 - Paginación del listado, porque se asumen menos de ~30 posts.
 - RSS.
@@ -281,19 +267,12 @@ Es una colección singleton (`allowedActions: { create: false, delete: false }`)
   "title": "Noticias",
   "intro": "Productos, actividades, capacitaciones y novedades del sector salud.",
   "emptyText": "Pronto publicaremos noticias en esta categoría.",
-  "newsletter": {
-    "enabled": true,
-    "title": "Suscríbete al boletín",
-    "text": "Novedades de productos y capacitaciones, una vez al mes."
-  },
   "seo": {
     "title": "Noticias de tecnología médica | Medical Digital Perú",
     "description": "Novedades de productos, capacitaciones y actividades de Medical Digital: guías para elegir equipos médicos y noticias del sector salud en el Perú."
   }
 }
 ```
-
-El texto del boletín en mobile ("Novedades y capacitaciones…") no se edita aparte: se usa el mismo `text` en todos los tamaños.
 
 ### `src/utils/news.ts` (solo build)
 
@@ -408,7 +387,7 @@ La rama `feat/spec-07-noticias` sale de `staging` actualizado, **después del me
      - en mobile, `navigator.share`, con el portapapeles como respaldo.
    - Verificación: copiar funciona en desktop, y en el iPhone del preview abre la hoja nativa.
 7. **Listado.**
-   - Crear `src/pages/noticias/index.astro`: cabecera, el boletín según `newsletter.enabled` y SEO desde `news.seo` con `BreadcrumbList`.
+   - Crear `src/pages/noticias/index.astro`: cabecera y SEO desde `news.seo` con `BreadcrumbList`.
    - Crear `src/components/noticias/NewsListReact.tsx` con `client:load`: pestañas, destacado, grilla y estado vacío.
      - Lee y escribe `?categoria=` con `history.replaceState`.
    - `viewTransitions={false}`, como el catálogo.
@@ -442,7 +421,7 @@ La rama `feat/spec-07-noticias` sale de `staging` actualizado, **después del me
 - [ ] `/noticias?categoria=inexistente` se ve igual que "Todos" y quita el parámetro de la URL.
 - [ ] Una categoría sin posts muestra `news.emptyText`.
 - [ ] A 360 px no hay destacado y las 6 tarjetas van en 1 columna. A 768 px la grilla tiene 2 columnas y a 1024 px, 3.
-- [ ] Con `newsletter.enabled: false` el boletín no está en el HTML. Con `true` se ve como la referencia, con el `<label>` oculto en el input.
+- [ ] El listado no tiene el bloque del boletín ni ningún campo de correo.
 - [ ] La pestaña activa lleva `aria-pressed="true"`, y las pestañas se usan con teclado y con el foco visible.
 
 **Artículo**
@@ -493,8 +472,7 @@ La rama `feat/spec-07-noticias` sale de `staging` actualizado, **después del me
 - **No: conservarlos sin uso, como Eres.** Son ruido en el panel.
 - **Sí: colección singleton `news`.** Mismo patrón que `journal` de Eres, y `global` no crece.
 - **Sí: `seo` opcional por post, con `title` + " | Medical Digital" y el `excerpt` como respaldo.** Cumple el §6.1 sin alargar los extractos de las tarjetas.
-- **Sí: el boletín se maqueta detrás de `newsletter.enabled`, encendido por defecto.** Lo decidió el usuario para que el listado se vea como la referencia. El interruptor permite apagarlo desde Tina, y el envío va en la SPEC 12.
-- **Riesgo aceptado: el formulario no envía hasta la SPEC 12.** Hay que conectarlo o apagarlo antes del go-live (SPEC 13).
+- **No: el boletín de la referencia.** El usuario decidió que no se implementará. Un formulario visible que no envía rompe el estándar §8 (validación en servidor, honeypot, consentimiento Ley 29733 y estados de envío), así que se quita la maqueta, el grupo `newsletter` de `news` y su contenido.
 - **Sí: compartir fiel a la referencia.** En desktop, LinkedIn y WhatsApp son enlaces sin JS. Solo "copiar" y la hoja nativa de mobile necesitan una isla chica.
 - **Sí: `og:image` = la portada tal cual, como la SPEC 06.** El 1200×630 del estándar se cumple por contenido: el campo lo pide y las portadas de ejemplo se exportan en esa proporción.
 - **No: recortar la OG en build.** `getImage()` no procesa imágenes de `public/` (verificado: devuelve la misma ruta), y hacerlo con `sharp` agrega una dependencia que se aparta de lo aprobado en la 06. Queda como propuesta para la revisión.
@@ -504,7 +482,7 @@ La rama `feat/spec-07-noticias` sale de `staging` actualizado, **después del me
 - **Sí: componentes de `TinaMarkdown` en vez de `prose`.** Así los tamaños salen exactos de la referencia.
 - **Sí: los 6 posts de la referencia, con sus imágenes extraídas del bundle.** Sin ellos no se validan el destacado, las pestañas ni "Sigue leyendo". Se reemplazan antes del go-live.
 - **Sí: la carpeta sigue siendo `src/content/blog/`.** La URL no depende de la carpeta, y moverla cambia el índice de TinaCloud sin ganar nada.
-- **Sí: escala del UI Kit en vez de los px de la referencia.** El estándar §2.4 prohíbe tamaños sueltos. Equivalencias: 48/46 px → `heading-h1`; 32/28 px → `heading-h2`; 28/24 px en el cuerpo → `heading-h3`; 22/20 px → `heading-h4`; 21/19/18 px → `body-lg`; 17/16 px → `body-md` o `body-lg`; 15/14 px → `body-sm`; 13/12 px → `caption`; radios de 18–22 px → `rounded-xl`, y de 24–28 px → `rounded-2xl`; botones y campo del boletín en `btn-lg` (48 px). Mismo criterio que la SPEC 06.
+- **Sí: escala del UI Kit en vez de los px de la referencia.** El estándar §2.4 prohíbe tamaños sueltos. Equivalencias: 48/46 px → `heading-h1`; 32/28 px → `heading-h2`; 28/24 px en el cuerpo → `heading-h3`; 22/20 px → `heading-h4`; 21/19/18 px → `body-lg`; 17/16 px → `body-md` o `body-lg`; 15/14 px → `body-sm`; 13/12 px → `caption`; radios de 18–22 px → `rounded-xl`, y de 24–28 px → `rounded-2xl`; botones en `btn-lg` (48 px). Mismo criterio que la SPEC 06.
 - **No: `useTina` en las páginas de noticias.** Los textos de `news` y de los posts se editan en `/admin` y se ven al reconstruir, como el Skin Journal de Eres. La edición visual en vivo no compensa una isla más por sección.
 - **Sí: el artículo recibe el post y los relacionados por `getStaticPaths`.** Una sola consulta de posts por build (estándar §2.3); la página solo consulta `global` para el WhatsApp, igual que `CatalogPage`.
 - **Sí: transiciones de 300 ms como máximo.** La referencia usa 450 y 800 ms; el estándar §4 manda.
@@ -521,7 +499,6 @@ La rama `feat/spec-07-noticias` sale de `staging` actualizado, **después del me
 | El editor sube una portada con otra proporción y la OG sale recortada por cada red | La descripción del campo pide 1200×630. Si se vuelve un problema, se propone el recorte en build con `sharp`. |
 | Alguna red no lee WebP en `og:image` | Las portadas son WebP por la regla de imágenes del proyecto. Se valida con los depuradores de Facebook y LinkedIn sobre el preview. |
 | El cuerpo del MDX cambia de estructura y `readingMinutes` cuenta de menos | Recorre todos los nodos de texto del AST; se verifica con un post de longitud conocida. |
-| El boletín se ve pero no envía (estándar §8: validación en servidor, honeypot, consentimiento Ley 29733 y estados de envío) | Decisión del usuario: queda visible. Se conecta en la SPEC 12 o se apaga desde Tina (`newsletter.enabled`) antes del go-live (SPEC 13). |
 | `navigator.share` o el portapapeles no existen (HTTP, navegadores viejos) | Si no hay `navigator.share`, se copia al portapapeles. Si tampoco hay portapapeles, el botón se oculta. |
 
 ## Notas de implementación / QA realizada
@@ -541,5 +518,5 @@ La rama `feat/spec-07-noticias` sale de `staging` actualizado, **después del me
 - `grep -rn "/blog" src` devuelve la importación de `src/components/blog/PostBody.tsx`, que la spec mantiene en esa carpeta. No queda ningún enlace a `/blog`.
 - `og:url` se agregó a `BaseLayout` junto con las demás meta de Open Graph, y `og:image` ahora se emite siempre como URL absoluta.
 - Tras el `/pre-pr`: tamaños y radios pasados a la escala del UI Kit, el artículo usa una sola consulta de posts y las tarjetas del listado son `h2` (no se salta de `h1` a `h3` en mobile).
-- El boletín queda visible sin envío por decisión del usuario (ver Riesgos).
+- Se quitó el boletín después de abrir el PR: el usuario decidió que no se implementará (ver Decisiones). El listado termina en la grilla.
 - Falta validar en el preview de Amplify: Rich Results Test, depuradores de Facebook y LinkedIn y la hoja nativa de compartir en iPhone.
