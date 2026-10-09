@@ -75,6 +75,21 @@ export default function SiteMenu({ id, open, locale, global, categories, onNavig
         </div>
 
         <div className="flex max-w-[1180px] flex-col gap-7 px-4 pb-8 pt-2 lg:gap-[52px] lg:px-14 lg:pb-12 lg:pt-[52px]">
+          <nav aria-label="Menú" className="hidden flex-wrap gap-x-7 border-b border-line pb-7 lg:flex nav:hidden">
+            {links.map((link: any, index: number) => (
+              <a
+                key={index}
+                href={localizeHref(link.url, locale, link.external)}
+                target={link.external ? "_blank" : undefined}
+                rel={link.external ? "noopener noreferrer" : undefined}
+                onClick={onNavigate}
+                className="flex min-h-11 items-center text-heading-h4 text-brand-secondary-dark transition-colors hover:text-accent"
+              >
+                {tField(link, "label", locale)}
+              </a>
+            ))}
+          </nav>
+
           <nav aria-label="Menú" className="flex flex-col lg:hidden">
             {links.map((link: any, index: number) =>
               link.productsMenu && categories.length > 0 ? (

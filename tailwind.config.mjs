@@ -2,6 +2,14 @@
 export default {
   content: ['./src/**/*.{astro,html,js,jsx,md,mdx,ts,tsx}'],
   theme: {
+    screens: {
+      sm: '640px',
+      md: '768px',
+      lg: '1024px',
+      nav: '1101px',
+      xl: '1280px',
+      '2xl': '1536px',
+    },
     fontFamily: {
       sans: ['Rubik', 'system-ui', 'sans-serif'],
       heading: ['Rubik', 'system-ui', 'sans-serif'],
@@ -34,8 +42,19 @@ export default {
       'subtitle-sm': ['clamp(1.25rem, 1.25vw + 0.4rem, 1.375rem)', { lineHeight: '1.25', fontWeight: '500' }],
 
       'caption-sm': ['12px', { lineHeight: '16px', fontWeight: '400' }],
+
+      'nav-link': ['clamp(13px, 1.05vw, 15px)', { lineHeight: '1', fontWeight: '500' }],
+      'nav-cta':  ['clamp(14px, 1.1vw, 16px)',  { lineHeight: '1', fontWeight: '500' }],
     },
     extend: {
+      spacing: {
+        'nav-logo':        'clamp(16px, 2.4vw, 40px)',
+        'nav-logo-height': 'clamp(22px, 2vw, 30px)',
+        'nav-menu':        'clamp(60px, 5.5vw, 92px)',
+        'nav-gutter':      'clamp(4px, 1.2vw, 20px)',
+        'nav-link':        'clamp(8px, 1vw, 14px)',
+        'nav-actions':     'clamp(6px, 1.2vw, 20px)',
+      },
       colors: {
         brand: {
           primary: {

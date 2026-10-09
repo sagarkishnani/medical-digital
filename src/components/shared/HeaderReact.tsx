@@ -122,7 +122,7 @@ export default function HeaderReact({ query, variables, data: initialData, local
     });
   };
 
-  const activeBarClassName = "absolute -bottom-px left-2 h-0.5 bg-brand-primary xl:left-3.5";
+  const activeBarClassName = "absolute -bottom-px left-nav-link h-0.5 bg-brand-primary";
   const menuOpen = openPanel === "menu";
   const megaOpen = openPanel === "mega";
   const searchOpen = openPanel === "search";
@@ -139,7 +139,7 @@ export default function HeaderReact({ query, variables, data: initialData, local
         <div className="flex h-16 items-stretch lg:h-[84px]">
           <a
             href={localizeHref(withBase("/"), locale)}
-            className="flex shrink-0 items-center pl-4 pr-2 lg:border-r lg:border-line lg:px-6 xl:px-10"
+            className="flex shrink-0 items-center pl-4 pr-2 lg:border-r lg:border-line lg:px-nav-logo"
             aria-label={nav?.logoAlt || "Medical Digital"}
             onClick={closePanels}
           >
@@ -149,7 +149,7 @@ export default function HeaderReact({ query, variables, data: initialData, local
                 alt={nav?.logoAlt || "Medical Digital"}
                 width={235}
                 height={33}
-                className="h-6 w-auto lg:h-7"
+                className="h-6 w-auto lg:h-nav-logo-height"
                 data-tina-field={tinaField(nav, "logo")}
               />
             ) : (
@@ -164,12 +164,12 @@ export default function HeaderReact({ query, variables, data: initialData, local
             aria-expanded={menuOpen}
             aria-controls="site-menu"
             aria-label={menuOpen ? "Cerrar menú" : "Abrir menú"}
-            className="hidden w-[72px] shrink-0 items-center justify-center border-r border-line text-brand-secondary-dark transition-colors hover:bg-surface-raised lg:flex xl:w-[92px]"
+            className="hidden w-nav-menu shrink-0 items-center justify-center border-r border-line text-brand-secondary-dark transition-colors hover:bg-surface-raised lg:flex"
           >
             <MenuIcon aria-hidden="true" className="h-8 w-8" />
           </button>
 
-          <nav aria-label="Navegación principal" className="hidden min-w-0 flex-1 items-stretch px-1 lg:flex xl:px-5">
+          <nav aria-label="Navegación principal" className="hidden min-w-0 flex-1 items-stretch px-nav-gutter nav:flex">
             {links.map((link: any, index: number) => {
               const current = isActive(currentPath, link.url);
               const active = current || (link.productsMenu && megaOpen);
@@ -181,14 +181,14 @@ export default function HeaderReact({ query, variables, data: initialData, local
                   target={link.external ? "_blank" : undefined}
                   rel={link.external ? "noopener noreferrer" : undefined}
                   aria-current={current ? "page" : undefined}
-                  className={`relative flex items-center whitespace-nowrap px-2 text-body-sm font-medium transition-colors hover:text-accent xl:px-3.5 xl:text-body-md xl:font-medium ${
+                  className={`relative flex items-center whitespace-nowrap px-nav-link text-nav-link transition-colors hover:text-accent ${
                     active ? "text-accent" : "text-brand-secondary-dark"
                   }`}
                   onMouseEnter={link.productsMenu ? openMegaOnHover : closeMegaOnLeave}
                   data-tina-field={tinaField(link, "label")}
                 >
                   {tField(link, "label", locale)}
-                  {current && !hasMega && <span aria-hidden="true" className={`${activeBarClassName} right-2 xl:right-3.5`} />}
+                  {current && !hasMega && <span aria-hidden="true" className={`${activeBarClassName} right-nav-link`} />}
                 </a>
               );
               if (!hasMega) return linkElement;
@@ -203,7 +203,7 @@ export default function HeaderReact({ query, variables, data: initialData, local
                     aria-expanded={megaOpen}
                     aria-controls="products-menu"
                     aria-label="Ver categorías de productos"
-                    className="-ml-1.5 flex w-6 items-center justify-center text-brand-secondary-dark hover:text-accent xl:-ml-2.5"
+                    className="-ml-1.5 flex w-6 items-center justify-center text-brand-secondary-dark hover:text-accent"
                   >
                     <PiCaretDownLight aria-hidden="true" className={`h-4 w-4 transition-transform duration-300 ${megaOpen ? "rotate-180" : ""}`} />
                   </button>
@@ -212,7 +212,7 @@ export default function HeaderReact({ query, variables, data: initialData, local
             })}
           </nav>
 
-          <div onMouseEnter={closeMegaOnLeave} className="ml-auto flex shrink-0 items-center pr-2 lg:ml-0 lg:px-3 xl:px-5">
+          <div onMouseEnter={closeMegaOnLeave} className="ml-auto flex shrink-0 items-center pr-2 nav:ml-0 lg:px-nav-actions">
             <button
               type="button"
               onClick={(event) => togglePanel("search", event.currentTarget)}
@@ -240,7 +240,7 @@ export default function HeaderReact({ query, variables, data: initialData, local
               type="button"
               onClick={openQuote}
               onMouseEnter={closeMegaOnLeave}
-              className="hidden min-w-[120px] shrink basis-[200px] items-center justify-center whitespace-nowrap bg-brand-primary px-4 text-body-sm font-medium text-white transition-colors hover:bg-brand-primary-dark lg:flex xl:text-body-md xl:font-medium"
+              className="hidden min-w-[120px] shrink basis-[200px] items-center justify-center whitespace-nowrap bg-brand-primary px-4 text-nav-cta text-white transition-colors hover:bg-brand-primary-dark lg:flex"
               data-tina-field={tinaField(nav.cta, "label")}
             >
               {tField(nav.cta, "label", locale)}
