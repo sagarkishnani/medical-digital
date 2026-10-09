@@ -11,5 +11,7 @@ interface ImportMeta {
 declare namespace NodeJS {
   interface ProcessEnv {
     readonly WOO_STORE_URL?: string;
+    readonly WOO_CONSUMER_KEY?: string;
+    readonly WOO_CONSUMER_SECRET?: string;
   }
 }

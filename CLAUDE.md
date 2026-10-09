@@ -91,7 +91,8 @@ resuelve y se la pasa a cada isla (ver `src/pages/index.astro`).
 ### Contenido y colecciones
 
 El contenido vive en `src/content/` como JSON (páginas estructuradas).
-Los artículos del blog son MDX en `src/content/blog/`.
+Las noticias son MDX en `src/content/blog/` (la carpeta conserva el nombre; la
+URL es `/noticias`).
 El schema de `tina/config.ts` es la única fuente de verdad sobre la forma del
 contenido; cada colección vive en su propio archivo en `tina/collections/`.
 Los tipos, las queries y el cliente se generan en `tina/__generated__/`
@@ -118,24 +119,35 @@ Colecciones:
 - `service` — página `/servicio-tecnico`: cabecera, textos del formulario y
   SEO. El teléfono y el correo salen de `global.company`. El formulario está
   maquetado sin envío (`client:tina`, botón `type="button"`) hasta la SPEC 12.
-- `post` — artículos del blog en MDX (`src/content/blog/`).
+- `post` — noticias en MDX (`src/content/blog/`): `title`, `excerpt` (lead y
+  tarjetas), `category` (Productos, Actividades, Capacitaciones o Noticias,
+  fijas en `NEWS_CATEGORIES`), `author` (vacío muestra "Equipo Medical
+  Digital"), `coverImage` (también es el `og:image`), `date`, `featured` y
+  `seo` opcional (vacío usa "{título} | Medical Digital" y el extracto). El
+  tiempo de lectura se calcula en build (`readingMinutes`, 200 palabras/min).
+- `news` — textos y SEO de `/noticias`.
 - `maintenance` — modo mantenimiento del sitio.
 - `cookieConsent` — textos del banner de cookies.
+- `productPage` — etiqueta ("Uso Profesional Médico") y sellos de la ficha de
+  producto, iguales para todos los productos.
 
 
 ### Catálogo de WooCommerce
 
 Los productos viven en el WordPress de `WOO_STORE_URL` y se leen **solo en
-build** desde la Store API pública (`/wp-json/wc/store/v1/`): no hay claves, ni
-proxy, ni fetch a WordPress desde el navegador. Ver `specs/01-catalogo-productos-woo.md`.
+build** desde la REST API v3 de Woo (`/wp-json/wc/v3/`), como en Eres, con una
+clave de **solo lectura** (`WOO_CONSUMER_KEY`/`WOO_CONSUMER_SECRET`, por
+cabecera `Authorization`). No hay proxy ni fetch a WordPress desde el
+navegador. Ver `specs/01-catalogo-productos-woo.md` y `specs/06-ficha-producto.md`.
 
 - `src/lib/woo/store.ts` descarga, proyecta y sanitiza. Solo sale lo declarado
   en `src/lib/woo/types.ts`; el HTML de las descripciones pasa por una allowlist.
 - **Nunca importes `src/lib/woo/store.ts` desde un `.tsx`.** Solo desde páginas
   y componentes `.astro`. El módulo lanza un error si llega al navegador.
-- `WOO_STORE_URL` va sin prefijo `PUBLIC_`. Vacía, el catálogo se genera vacío;
-  si WordPress no responde, **el build falla** a propósito para no publicar un
-  catálogo vacío.
+- `WOO_STORE_URL` y las claves van sin prefijo `PUBLIC_`. Con la URL vacía, el
+  catálogo se genera vacío; con la URL y sin claves, o si WordPress no
+  responde, **el build falla** a propósito para no publicar un catálogo vacío.
+- Se leen solo productos `publish` y se descartan los de visibilidad `hidden`.
 - Las imágenes pasan por `astro:assets` (`image.domains` se deriva de
   `WOO_STORE_URL` en `astro.config.mjs`) y se sirven desde `dist/`.
 - Los productos no son componente doble: se editan en Woo, no en Tina.
@@ -162,6 +174,34 @@ implícita; cambiar de especialidad desde ahí lleva a `/productos?especialidad=
 "Más relevantes" pone primero los destacados de Woo. El catálogo apaga las view
 transitions (`<BaseLayout viewTransitions={false}>`) para que `ClientRouter` no
 compita con su historial.
+
+La ficha (`/productos/[slug]`, ver `specs/06-ficha-producto.md`) suma tres
+fuentes, todas en build:
+
+- `brandLogo`: el logo de la marca, de `products/brands`.
+- `src/lib/woo/extras.ts`: los campos de JetEngine (ficha técnica PDF,
+  especificaciones, accesorios y video) desde el `meta_data` de la v3, en la
+  misma descarga que el catálogo. Son **opcionales**: si ningún producto los
+  trae, el build avisa y la ficha sale sin esas secciones. Las reglas puras están en
+  `extrasRules.ts`.
+- `src/lib/woo/productPage.ts` (`buildProductPage`, como en Eres): los paneles
+  del acordeón y hasta 4 relacionados (cross-sells y upsells de Woo, después
+  la misma especialidad por destacados, la misma marca y los destacados).
+
+En mobile la ficha tiene una barra fija (`data-mobile-bottom-bar`): el `body`
+reserva su alto y `BaseLayout hideWhatsAppButton` oculta el botón flotante por
+debajo de `lg`.
+
+### Noticias
+
+`/noticias` y `/noticias/<slug>` (ver `specs/07-noticias.md`). Los helpers
+viven en `src/utils/news.ts` (fecha "18 sep 2026", lectura, destacado). La isla
+`NewsListReact` filtra en el navegador con `?categoria=<slug>`
+(`history.replaceState`); el HTML estático es la vista "Todos". Destacado: en
+"Todos", el más reciente con `featured`, o el más reciente; en una categoría,
+el primero. Mobile no muestra destacado ni "Sigue leyendo". El artículo emite
+`og:type="article"` y JSON-LD `BlogPosting` + `BreadcrumbList` mediante las
+props `ogImage`, `ogType`, `article` y `jsonLd` de `BaseLayout`.
 
 ### Modo mantenimiento
 

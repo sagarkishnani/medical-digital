@@ -8,6 +8,7 @@ export interface UseSliderOptions {
   loop?: boolean;
   align?: "start" | "center";
   active?: boolean;
+  container?: string;
 }
 
 export interface Slider {
@@ -18,7 +19,7 @@ export interface Slider {
   canNext: boolean;
   next: () => void;
   prev: () => void;
-  goTo: (index: number) => void;
+  goTo: (index: number, jump?: boolean) => void;
 }
 
 function usePrefersReducedMotion(): boolean {
@@ -34,13 +35,14 @@ function usePrefersReducedMotion(): boolean {
 }
 
 export function useSlider(options: UseSliderOptions = {}): Slider {
-  const { loop = true, align = "start", active = true } = options;
+  const { loop = true, align = "start", active = true, container = null } = options;
 
   const reducedMotion = usePrefersReducedMotion();
   const [viewportRef, embla] = useEmblaCarousel({
     loop,
     align,
     active,
+    container,
     duration: reducedMotion ? 1 : SCROLL_DURATION,
   });
 
@@ -74,7 +76,7 @@ export function useSlider(options: UseSliderOptions = {}): Slider {
   const next = useCallback(() => embla?.scrollNext(reducedMotion), [embla, reducedMotion]);
   const prev = useCallback(() => embla?.scrollPrev(reducedMotion), [embla, reducedMotion]);
   const goTo = useCallback(
-    (index: number) => embla?.scrollTo(index, reducedMotion),
+    (index: number, jump = reducedMotion) => embla?.scrollTo(index, jump),
     [embla, reducedMotion]
   );
 

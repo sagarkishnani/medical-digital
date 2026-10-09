@@ -27,18 +27,17 @@ function toCatalogItem(product: WooProduct, rank: number): CatalogItem {
   };
 }
 
-export async function buildCatalog(category?: WooCategory): Promise<Catalog> {
-  const [allProducts, featured, categories] = await Promise.all([
-    getProducts(),
-    getFeaturedProducts(FEATURED_LIMIT),
-    getCategories(),
-  ]);
-
+export async function getRankedProducts(): Promise<WooProduct[]> {
+  const [allProducts, featured] = await Promise.all([getProducts(), getFeaturedProducts(FEATURED_LIMIT)]);
   const featuredIds = new Set(featured.map((product) => product.id));
-  const ranked = [
+  return [
     ...allProducts.filter((product) => featuredIds.has(product.id)),
     ...allProducts.filter((product) => !featuredIds.has(product.id)),
   ];
+}
+
+export async function buildCatalog(category?: WooCategory): Promise<Catalog> {
+  const [ranked, categories] = await Promise.all([getRankedProducts(), getCategories()]);
   const products = category
     ? ranked.filter((product) => product.categories.some((productCategory) => productCategory.id === category.id))
     : ranked;

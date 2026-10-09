@@ -5,7 +5,7 @@
     "links": [
       { "label": "Productos", "url": "/productos", "productsMenu": true },
       { "label": "Servicio técnico", "url": "/servicio-tecnico" },
-      { "label": "Noticias", "url": "/blog" },
+      { "label": "Noticias", "url": "/noticias" },
       { "label": "Contacto", "url": "/contacto" }
     ],
     "cta": { "label": "Cotiza aquí" },
@@ -13,7 +13,7 @@
       "cards": [
         { "image": "/uploads/menu/tarjeta-productos.webp", "title": "Nuestros productos", "text": "Equipos por especialidad médica", "url": "/productos" },
         { "image": "/uploads/menu/tarjeta-servicio-tecnico.webp", "imageAlt": "Técnico probando un desfibrilador Schiller con un analizador en el laboratorio", "title": "Servicio posventa", "text": "Mantenimiento y repuestos", "url": "/servicio-tecnico" },
-        { "image": "/uploads/menu/tarjeta-noticias.webp", "title": "Noticias", "text": "Capacitaciones y actividades", "url": "/blog" }
+        { "image": "/uploads/menu/tarjeta-noticias.webp", "title": "Noticias", "text": "Capacitaciones y actividades", "url": "/noticias" }
       ],
       "columns": [
         {
@@ -69,7 +69,7 @@
           { "label": "Nosotros", "url": "/nosotros" },
           { "label": "Marcas y reseñas", "url": "/marcas" },
           { "label": "Servicio técnico", "url": "/servicio-tecnico" },
-          { "label": "Noticias", "url": "/blog" },
+          { "label": "Noticias", "url": "/noticias" },
           { "label": "Trabaja con nosotros", "url": "/contacto" }
         ]
       },

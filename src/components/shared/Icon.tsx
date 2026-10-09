@@ -4,6 +4,7 @@ import {
   PiBedLight,
   PiCertificateLight,
   PiFirstAidLight,
+  PiGraduationCapLight,
   PiHandshakeLight,
   PiHeadsetLight,
   PiHeartbeatLight,
@@ -16,6 +17,7 @@ import {
   PiShieldCheckLight,
   PiShieldPlusLight,
   PiStethoscopeLight,
+  PiTruckLight,
   PiUserLight,
   PiWindLight,
 } from "react-icons/pi";
@@ -39,6 +41,8 @@ const ICONS: Record<string, IconType> = {
   lightbulb: PiLightbulbLight,
   headset: PiHeadsetLight,
   medal: PiMedalLight,
+  truck: PiTruckLight,
+  "graduation-cap": PiGraduationCapLight,
 };
 
 interface Props {

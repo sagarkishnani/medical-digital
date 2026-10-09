@@ -3,9 +3,11 @@ import { FaWhatsapp } from "react-icons/fa6";
 
 interface Props {
   phone: string;
+  desktopOnly?: boolean;
 }
 
-const digits = Astro.props.phone.replace(/\D/g, "");
+const { phone, desktopOnly = false } = Astro.props;
+const digits = phone.replace(/\D/g, "");
 ---
 
 {
@@ -15,7 +17,10 @@ const digits = Astro.props.phone.replace(/\D/g, "");
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Escríbenos por WhatsApp"
-      class="fixed bottom-7 right-7 z-30 flex h-[61px] w-[61px] items-center justify-center rounded-full bg-whatsapp text-white shadow-[0_12px_28px_-10px] shadow-semantics-success-dark/60 transition-transform duration-[250ms] motion-safe:hover:scale-[1.08]"
+      class:list={[
+        "fixed bottom-7 right-7 z-30 flex h-[61px] w-[61px] items-center justify-center rounded-full bg-whatsapp text-white shadow-[0_12px_28px_-10px] shadow-semantics-success-dark/60 transition-transform duration-[250ms] motion-safe:hover:scale-[1.08]",
+        desktopOnly && "max-lg:hidden",
+      ]}
     >
       <FaWhatsapp aria-hidden="true" className="h-8 w-8" />
     </a>

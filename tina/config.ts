@@ -5,8 +5,10 @@ import { aboutCollection } from "./collections/about";
 import { contactCollection } from "./collections/contact";
 import { serviceCollection } from "./collections/service";
 import { postCollection } from "./collections/post";
+import { newsCollection } from "./collections/news";
 import { maintenanceCollection } from "./collections/maintenance";
 import { cookieConsentCollection } from "./collections/cookieConsent";
+import { productPageCollection } from "./collections/productPage";
 
 /**
  * TinaCMS schema — the single source of truth for the shape of the content.
@@ -42,8 +44,10 @@ export default defineConfig({
       contactCollection,
       serviceCollection,
       postCollection,
+      newsCollection,
       maintenanceCollection,
       cookieConsentCollection,
+      productPageCollection,
     ],
   },
 });
