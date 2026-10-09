@@ -20,7 +20,6 @@ const posts = sortByDate(
 ).map(toNewsCard);
 
 const categories = NEWS_CATEGORIES.map((label) => ({ label, slug: categorySlug(label) }));
-const newsletter = news.newsletter?.enabled ? news.newsletter : null;
 
 const siteUrl = Astro.site || "https://medicaldigitalperu.com";
 const breadcrumb = {
@@ -39,7 +38,7 @@ const breadcrumb = {
   viewTransitions={false}
   jsonLd={[breadcrumb]}
 >
-  <section class="mx-auto flex w-full max-w-[1280px] flex-col gap-8 pb-12 md:gap-10 md:px-8 md:pb-24 md:pt-12">
+  <section class="mx-auto w-full max-w-[1280px] pb-12 md:px-8 md:pb-24 md:pt-12">
     <NewsListReact
       client:load
       title={news.title}
@@ -49,29 +48,5 @@ const breadcrumb = {
       emptyText={news.emptyText || "Pronto publicaremos noticias en esta categoría."}
       homeHref={withBase("/")}
     />
-
-    {newsletter && (
-      <form
-        class="mx-4 flex flex-col gap-3 rounded-2xl bg-brand-secondary-dark p-6 text-white md:mx-0 md:px-12 md:py-10 lg:flex-row lg:items-center lg:justify-between lg:gap-8"
-        onsubmit="event.preventDefault()"
-      >
-        <div class="flex flex-col gap-1.5">
-          <p class="text-heading-h4 lg:text-heading-h3">{newsletter.title}</p>
-          {newsletter.text && <p class="text-body-sm text-brand-tertiary-light">{newsletter.text}</p>}
-        </div>
-        <div class="flex flex-col gap-2.5 md:flex-row lg:max-w-[480px] lg:flex-1">
-          <label for="newsletter-email" class="sr-only">Correo electrónico</label>
-          <input
-            id="newsletter-email"
-            type="email"
-            name="email"
-            autocomplete="email"
-            placeholder="Tu correo electrónico"
-            class="h-12 min-w-0 rounded-pill border border-brand-secondary-medium bg-transparent px-5 text-body-md text-white outline-none placeholder:text-brand-tertiary-light focus:border-white focus-visible:ring-0 focus-visible:ring-offset-0 md:flex-1 md:text-body-sm"
-          />
-          <button type="submit" class="btn-primary whitespace-nowrap">Suscribirme</button>
-        </div>
-      </form>
-    )}
   </section>
 </BaseLayout>

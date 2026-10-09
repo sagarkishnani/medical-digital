@@ -12,16 +12,6 @@ export const newsCollection: Collection = {
     { name: "emptyText", label: "Texto sin noticias", description: "Se muestra cuando una categoría no tiene noticias.", type: "string" },
     {
       type: "object",
-      name: "newsletter",
-      label: "Boletín",
-      fields: [
-        { name: "enabled", label: "Mostrar el boletín", description: "Muestra el bloque de suscripción en el listado. El envío se conecta en la SPEC 12.", type: "boolean" },
-        { name: "title", label: "Título", type: "string" },
-        { name: "text", label: "Texto", type: "string" },
-      ],
-    },
-    {
-      type: "object",
       name: "seo",
       label: "SEO",
       fields: [
