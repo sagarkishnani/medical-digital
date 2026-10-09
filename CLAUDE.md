@@ -112,13 +112,16 @@ Colecciones:
   correo que muestra `/servicio-tecnico`; vacío, no se muestra).
 - `home` — contenido de la portada: slider, destacados (los marca Woo),
   especialidades (categorías de Woo), "Conoce más", marcas, testimonios y
-  noticias (los 3 últimos posts).
+  noticias (los 3 últimos posts). Cada marca lleva `slug` (el de WooCommerce)
+  y `desc`; las marcas y los testimonios también se muestran en `/marcas`.
 - `about` — página `/nosotros`.
 - `contact` — página `/contacto` y el mapa de Google (acepta el código de
   "Insertar un mapa"; solo se usa si el `src` es de `google.com/maps/embed`).
 - `service` — página `/servicio-tecnico`: cabecera, textos del formulario y
   SEO. El teléfono y el correo salen de `global.company`. El formulario está
   maquetado sin envío (`client:tina`, botón `type="button"`) hasta la SPEC 12.
+- `brandsPage` — página `/marcas`: cabecera, título y texto del enlace de la
+  grilla, interruptores por bloque y SEO.
 - `post` — noticias en MDX (`src/content/blog/`): `title`, `excerpt` (lead y
   tarjetas), `category` (Productos, Actividades, Capacitaciones o Noticias,
   fijas en `NEWS_CATEGORIES`), `author` (vacío muestra "Equipo Medical
@@ -203,6 +206,21 @@ el primero. Mobile no muestra destacado ni "Sigue leyendo". El artículo emite
 `og:type="article"` y JSON-LD `BlogPosting` + `BreadcrumbList` mediante las
 props `ogImage`, `ogType`, `article` y `jsonLd` de `BaseLayout`.
 
+### Marcas
+
+`/marcas` (ver `specs/10-marcas-y-resenas.md`) consulta `brandsPage` y `home`:
+las marcas y los testimonios se editan en un solo lugar, la Home. En build
+cuenta los productos de Woo por `brandSlug`; "Ver productos" lleva a
+`/productos?marca=<slug>` solo si la marca tiene productos, y el build avisa
+con un warning por cada `slug` sin productos. Un cambio de slug en Woo deja
+la marca sin enlace hasta corregirlo en Tina.
+
+La franja de logos (`BrandsReact`, Home y `/marcas`) es un marquee solo en
+CSS (`animate-marquee`, `.marquee-mask`), sin controles como en la referencia;
+el `<script>` de `Brands.astro` carga los logos antes de que entren en
+pantalla. Con `prefers-reduced-motion` queda estática. Es una excepción al
+estándar §4 (ver la SPEC 10): no lo extiendas a otros bloques.
+
 ### Modo mantenimiento
 
 `BaseLayout.astro` consulta la colección `maintenance` en build time; con
@@ -251,6 +269,11 @@ panel abierto a la vez: `ProductsMegaMenu` (desktop), `SiteMenu` (☰ en desktop
 y menú mobile) y `SearchOverlay` (lee `/search-index.json`, que solo tiene
 productos de Woo). Las anclas (`[id]`) llevan `scroll-margin-top` para quedar
 visibles bajo el header; los heros ya no reservan espacio para él.
+Los enlaces del menú van en la barra desde 1101 px (breakpoint `nav`, como
+en la referencia); entre 1024 y 1100 px se muestran en una fila del panel ☰.
+Texto y rellenos del header son fluidos (`text-nav-link`, `spacing.nav-*` en
+`tailwind.config.mjs`): no los pases a medidas fijas por breakpoint, porque
+con cinco enlaces el menú se monta sobre la lupa.
 
 **Tema: light.** Los componentes NO escriben colores: piden tokens
 semánticos, y por eso el tema se puede cambiar sin tocar una sola clase.

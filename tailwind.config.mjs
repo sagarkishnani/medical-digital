@@ -2,6 +2,14 @@
 export default {
   content: ['./src/**/*.{astro,html,js,jsx,md,mdx,ts,tsx}'],
   theme: {
+    screens: {
+      sm: '640px',
+      md: '768px',
+      lg: '1024px',
+      nav: '1101px',
+      xl: '1280px',
+      '2xl': '1536px',
+    },
     fontFamily: {
       sans: ['Rubik', 'system-ui', 'sans-serif'],
       heading: ['Rubik', 'system-ui', 'sans-serif'],
@@ -34,8 +42,22 @@ export default {
       'subtitle-sm': ['clamp(1.25rem, 1.25vw + 0.4rem, 1.375rem)', { lineHeight: '1.25', fontWeight: '500' }],
 
       'caption-sm': ['12px', { lineHeight: '16px', fontWeight: '400' }],
+
+      'nav-link': ['clamp(13px, 1.05vw, 15px)', { lineHeight: '1', fontWeight: '500' }],
+      'nav-cta':  ['clamp(14px, 1.1vw, 16px)',  { lineHeight: '1', fontWeight: '500' }],
     },
     extend: {
+      spacing: {
+        'nav-logo':        'clamp(16px, 2.4vw, 40px)',
+        'nav-logo-height': 'clamp(22px, 2vw, 30px)',
+        'nav-menu':        'clamp(60px, 5.5vw, 92px)',
+        'nav-gutter':      'clamp(4px, 1.2vw, 20px)',
+        'nav-link':        'clamp(8px, 1vw, 14px)',
+        'nav-actions':     'clamp(6px, 1.2vw, 20px)',
+        18:                '72px',
+        'brand-logo-sm':   '130px',
+        'brand-logo':      '180px',
+      },
       colors: {
         brand: {
           primary: {
@@ -154,6 +176,10 @@ export default {
           '0%':   { opacity: '0', transform: 'translateY(16px)' },
           '100%': { opacity: '1', transform: 'translateY(0)' },
         },
+        marquee: {
+          '0%':   { transform: 'translateX(0)' },
+          '100%': { transform: 'translateX(-50%)' },
+        },
       },
       animation: {
         'fade-in': 'fade-in 300ms ease-out both',
@@ -163,6 +189,7 @@ export default {
         'sheet-in': 'sheet-in 300ms ease-out both',
         'sheet-out': 'sheet-out 200ms ease-in both',
         'fade-up': 'fade-up 600ms cubic-bezier(0.22, 1, 0.36, 1) both',
+        marquee: 'marquee 40s linear infinite',
       },
     },
   },

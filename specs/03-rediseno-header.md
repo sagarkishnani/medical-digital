@@ -305,6 +305,7 @@ Cada paso deja el build verde y va en su propio commit.
 - **Pendiente (SPEC 01):** los nombres de Woo llegan con entidades HTML sin decodificar (por ejemplo "EASY PULSE &#8211; …"). Se ven así en el buscador, en `/productos`, en la categoría y en la ficha. Se corrige en `store.ts`.
 - **Pendiente (SPEC 02):** el mismo problema de peso en `ContactInfoReact.tsx` (`lg:text-body-lg` pisa a `font-medium`) y `BrandsReact.tsx` (`md:text-heading-h3` pisa a `font-semibold`).
 - **Pendiente (SPEC 02):** en la Home, a 320 px, el enlace "Ver todos" de `SectionHeader` desborda 29 px y genera scroll horizontal. No viene del header.
+- **Ajuste en la SPEC 10:** con el quinto enlace ("Marcas y reseñas") el menú se montaba sobre la lupa entre 1024 y 1100 px (94 px) y en 1280 px (20 px), porque las medidas subían por escalones (`lg`/`xl`). Ahora sigue a la referencia: los enlaces se muestran en la barra desde 1101 px (breakpoint `nav`, el `max-width:1100px` del bundle) y, entre 1024 y 1100 px, en una fila del panel ☰. Texto, rellenos, logo, celda ☰ y "Cotiza aquí" usan los `clamp()` del bundle como tokens de `tailwind.config.mjs` (`text-nav-link`, `text-nav-cta`, `px-nav-link`, `w-nav-menu`…). El texto de los enlaces queda en 13–15 px; antes llegaba a 16 px.
 
 ## QA realizada
 

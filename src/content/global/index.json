@@ -4,6 +4,7 @@
     "logoAlt": "Medical Digital",
     "links": [
       { "label": "Productos", "url": "/productos", "productsMenu": true },
+      { "label": "Marcas y reseñas", "url": "/marcas" },
       { "label": "Servicio técnico", "url": "/servicio-tecnico" },
       { "label": "Noticias", "url": "/noticias" },
       { "label": "Contacto", "url": "/contacto" }

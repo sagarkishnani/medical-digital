@@ -189,7 +189,7 @@ Cada paso deja el build verde y va en su propio commit.
 | Embla con `useSlider` | Patrón probado en Fiberlux (spec 68). Pesa unos 7 KB gzip. |
 | Mapa con el iframe oficial "Insertar un mapa" de Google Maps, URL editable en Tina | No necesita clave de API ni facturación. `loading="lazy"` evita cargarlo hasta que se acerca al viewport. Solo se aceptan URLs de `google.com/maps/embed` para que el panel no pueda inyectar un iframe arbitrario. |
 | Datos de la empresa en `global.company` | Una sola fuente; el footer y el formulario futuros los reutilizarán. |
-| Logos de marcas en franja estática, no en marquee | El estándar (sección 04) prohíbe los carruseles con autoplay, y un marquee lo es. |
+| Logos de marcas en franja estática, no en marquee | El estándar (sección 04) prohíbe los carruseles con autoplay, y un marquee lo es. **Cambiado en la SPEC 10:** pasa a marquee, como en la referencia, sin controles, y estática con `prefers-reduced-motion`. |
 | Estadísticas sin count-up | El estándar prohíbe los "contadores que corren solos". |
 | Íconos Phosphor Light con `react-icons/pi` | Son los del diseño aprobado y vienen en `react-icons`, que ya está instalado: no suma dependencias. Reemplaza la convención anterior de Font Awesome (`CLAUDE.md` actualizado); WhatsApp sigue con su logo de `fa6`. Sin pulmones en Phosphor, Diagnóstico Respiratorio usa "viento". Revisión del 2026-09-30. |
 | Colores de la referencia llevados a tokens | El `CLAUDE.md` y el estándar prohíben hex en los componentes. |
