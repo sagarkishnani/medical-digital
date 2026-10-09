@@ -1,6 +1,6 @@
 # SPEC 10 — Marcas y reseñas
 
-> **Status:** Aprobada
+> **Status:** Implementado
 > **Depends on:** SPEC 02 (marcas y testimonios de la Home), SPEC 05 (filtro `?marca=` del catálogo), SPEC 07 (prop `jsonLd` de `BaseLayout`)
 > **Date:** 2026-10-08
 > **Objective:** Crear `/marcas` según la pantalla "Marcas y reseñas" de la referencia, reutilizando las marcas y los testimonios que ya edita la Home.
@@ -184,6 +184,25 @@ Ganshorn y Trackmaster no aparecen en la Store API: no tienen productos publicad
 - **Las descripciones condensadas** son una redacción nuestra sobre textos del cliente: requieren su visto bueno.
 - **Trackmaster:** la Home dice "Trackmaster" y producción "Track master". Se mantiene el nombre de la Home.
 
-## Notas de implementación / QA realizada
+## Notas de implementación
 
-_Se completa al terminar._
+- **`npm run build` necesita TinaCloud.** En local se verificó con `npm run build:local`, como en las SPEC 06 y 07.
+- **Rebase sobre `staging`** con la ficha de producto (#17), noticias (#18) y servicio técnico (#19). La #18 trajo la prop `jsonLd` de `BaseLayout`, que esta spec usa para el `BreadcrumbList`. Woo pasó a la REST v3 y `brandSlug` se mantiene, así que el conteo por marca no cambió.
+- **El logo o el nombre de cada tarjeta va en un `<h3>`.** La spec no fija la etiqueta; así la grilla queda `h1 → h2 → h3`, sin cambio visual. El `alt` del logo es el nombre de la marca.
+- **"Ver productos" con `mt-auto min-h-11`.** `mt-auto` lo baja al pie aunque una marca no tenga descripción; `min-h-11` lo lleva a 44 px de alto (estándar §3.2), como "Descargar ficha técnica" en la SPEC 06. Las tarjetas no van pegadas, así que no aplica la excepción del footer (SPEC 04).
+- **Los props de las islas `client:tina` llevan la consulta completa.** Con un bloque apagado, su texto puede aparecer en los props serializados del hero, pero el bloque no se renderiza. Es el mismo patrón que Nosotros.
+- **Lock de Tina.** `tina/tina-lock.json` se volvió a generar con `brandsPage` después del rebase.
+
+## QA realizada
+
+Build local (`npm run build:local`): pasa y avisa por Ganshorn (`ganshorn`) y Trackmaster (`track-master`). `npm run typecheck`: 0 errores. `npm run check:standard`: 0 errores, 2 avisos previos (páginas sin `og:image` y JS de la home en 151 KB, ya registrado en la SPEC 07). Chromium headless sobre `astro preview`, 2026-10-08:
+
+- **320, 360, 768, 1024, 1280 y 1536 px:** sin scroll horizontal; grilla de 1, 1, 2, 3, 3 y 3 columnas; 13 tarjetas en el orden de `home.brands`, con las filas de la misma altura; hero de 260 px en mobile y 420 px desde `md`; un solo `<h1>`.
+- **Enlaces:** 11 "Ver productos" de 44 px de alto, con nombre accesible "Ver productos de {marca}". Ganshorn y Trackmaster no muestran el enlace.
+- **Catálogo:** las 11 URL `/productos?marca=<slug>` abren con productos visibles (Schiller 12 en la primera página, Bovie 2, Merivaara 3, Health o meter 2, Midmark 1, Edan 2, Baxter 3, Beacon 1, Jansen 1, Medicapture 1, Vivachek 2).
+- **Interruptores (contenido temporal, no versionado):** con `logos.enabled` y `testimonials.enabled` en `false`, la franja y el slider no se renderizan; con `brands.enabled` en `false`, la grilla tampoco.
+- **Fallbacks:** el hero sin imagen sale con el degradado de marca; Bovie sin logo muestra su nombre en `/marcas` y en la franja de la Home, que leen el mismo dato.
+- **SEO:** title de 51 caracteres, description de 157, canonical, JSON-LD `Organization` + `BreadcrumbList` (Inicio → Marcas y reseñas) y ningún `aggregateRating`.
+- **Hidratación:** el hero, la franja y la grilla son `client:tina`; en `/marcas` solo hidratan el slider de testimonios (`client:visible`) y las islas compartidas del sitio (header con `client:load` y cookies con `client:idle`).
+
+Pendiente de verificar a mano: Safari en el iPhone XR con el preview de Amplify, la edición en `/admin` (campos `slug` y `desc`, validación del slug, "Marcas y reseñas" sin crear ni borrar), el Rich Results Test sobre el preview y el visto bueno del cliente a las descripciones condensadas. La foto del hero (1440×309) sigue siendo provisional.
