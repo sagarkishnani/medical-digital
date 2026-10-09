@@ -58,7 +58,7 @@ export default function ServiceFormReact({ query, variables, data: initialData }
       </div>
 
       {(form.incidentHint || form.requiredNote) && (
-        <div className="flex flex-col gap-1.5 text-caption text-content-subtle md:text-[13px] md:leading-5">
+        <div className="flex flex-col gap-1.5 text-caption text-content-subtle md:text-body-sm">
           {form.incidentHint && (
             <p id={INCIDENT_HINT_ID} data-tina-field={tinaField(form, "incidentHint")}>
               {form.incidentHint}

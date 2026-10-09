@@ -9,7 +9,7 @@ interface Props {
 
 const itemClass = "flex min-w-0 items-center gap-3 md:gap-3.5";
 const iconClass = "h-8 w-8 shrink-0 text-brand-secondary-dark md:h-10 md:w-10";
-const termClass = "text-[13px] leading-5 text-content-muted md:text-body-sm";
+const termClass = "text-caption text-content-muted md:text-body-sm";
 const valueClass = "text-body-md font-medium text-brand-secondary-dark md:text-body-lg";
 
 export default function ServiceInfoReact({ query, variables, data: initialData }: Props) {

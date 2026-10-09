@@ -15,7 +15,7 @@ export default function ServiceHeroReact({ query, variables, data: initialData }
   return (
     <header className="flex flex-col gap-2 md:gap-3">
       <nav aria-label="Ruta de navegación">
-        <ol className="flex flex-wrap items-center gap-2 text-[13px] leading-5 text-content-muted md:text-body-sm">
+        <ol className="flex flex-wrap items-center gap-2 text-caption text-content-muted md:text-body-sm">
           <li>
             <a href={withBase("/")} className="-my-3 inline-block py-3 hover:underline">
               Inicio
