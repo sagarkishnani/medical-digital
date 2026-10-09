@@ -26,12 +26,4 @@ const { query, variables, data } = Astro.props;
   const observeMarquees = () => document.querySelectorAll("[data-marquee]").forEach((marquee) => loadLogosBeforeTheyScrollIn.observe(marquee));
   observeMarquees();
   document.addEventListener("astro:page-load", observeMarquees);
-
-  document.addEventListener("click", (event) => {
-    const toggle = (event.target as Element | null)?.closest<HTMLButtonElement>("[data-marquee-toggle]");
-    const marquee = toggle?.closest<HTMLElement>("[data-marquee]");
-    if (!toggle || !marquee) return;
-    const paused = marquee.toggleAttribute("data-paused");
-    toggle.setAttribute("aria-pressed", String(paused));
-  });
 </script>

@@ -1,5 +1,4 @@
 import { useTina, tinaField } from "tinacms/dist/react";
-import { PiPauseLight, PiPlayLight } from "react-icons/pi";
 import { mediaUrl } from "../../utils/mediaUrl";
 
 interface Props {
@@ -55,23 +54,13 @@ export default function BrandsReact({ query, variables, data: initialData }: Pro
   );
 
   return (
-    <section data-marquee className="marquee group relative border-y border-line py-9 md:py-14" aria-label="Marcas que representamos">
+    <section data-marquee className="marquee border-y border-line py-9 md:py-14" aria-label="Marcas que representamos">
       <div className="marquee-mask overflow-hidden">
         <div className="flex w-max animate-marquee motion-reduce:w-auto motion-reduce:animate-none">
           {renderList(false)}
           {renderList(true)}
         </div>
       </div>
-      <button
-        type="button"
-        data-marquee-toggle
-        aria-pressed="false"
-        aria-label="Pausar el desplazamiento de las marcas"
-        className="absolute right-2 top-1/2 flex h-11 w-11 -translate-y-1/2 items-center justify-center rounded-full border border-line bg-surface text-brand-secondary-dark transition-colors hover:text-accent motion-reduce:hidden md:right-4"
-      >
-        <PiPauseLight aria-hidden="true" className="h-5 w-5 group-data-[paused]:hidden" />
-        <PiPlayLight aria-hidden="true" className="hidden h-5 w-5 group-data-[paused]:block" />
-      </button>
     </section>
   );
 }
