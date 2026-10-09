@@ -1,6 +1,6 @@
 # SPEC 08 — Página de servicio técnico
 
-> **Status:** Approved
+> **Status:** Implemented
 > **Depends on:** SPEC 02, SPEC 03, SPEC 04
 > **Date:** 2026-10-08
 > **Objective:** Crear `/servicio-tecnico` según la pantalla "Servicio técnico" de la referencia (desktop y mobile), con sus textos editables desde Tina y el formulario de solicitud maquetado sin envío.
@@ -274,3 +274,4 @@ Si alguna de estas cosas se hace, va en su propia spec.
 - `ContactFormReact` tiene el mismo choque de alturas que se corrigió aquí (`h-[52px]` contra `h-[130px]` en el textarea). Queda fuera de alcance.
 - Sin credenciales de TinaCloud, el build se verifica con `npm run build:local`.
 - Foco según la referencia: los campos solo cambian el borde a `brand-secondary-dark` y el fondo a `surface`, sin anillo. Casilla, botón y enlaces usan el anillo global, pero en `brand-secondary-dark` y no en rojo. El cambio aplica solo a esta página; el resto del sitio sigue con el anillo `brand-primary`.
+- Los textos de 13 px de la referencia (breadcrumb y rótulos en mobile, notas en desktop) usan tokens: `caption` (12 px) en mobile y `body-sm` (14 px) en desktop. No hay token de 13 px.
