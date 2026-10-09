@@ -275,3 +275,4 @@ Si alguna de estas cosas se hace, va en su propia spec.
 - Sin credenciales de TinaCloud, el build se verifica con `npm run build:local`.
 - Foco según la referencia: los campos solo cambian el borde a `brand-secondary-dark` y el fondo a `surface`, sin anillo. Casilla, botón y enlaces usan el anillo global, pero en `brand-secondary-dark` y no en rojo. El cambio aplica solo a esta página; el resto del sitio sigue con el anillo `brand-primary`.
 - Los textos de 13 px de la referencia (breadcrumb y rótulos en mobile, notas en desktop) usan tokens: `caption` (12 px) en mobile y `body-sm` (14 px) en desktop. No hay token de 13 px.
+- Sin `privacyUrl`, "Política de uso de datos personales" lleva el estilo de enlace de la referencia (subrayado, `text-brand-tertiary-dark`), pero sin `href`. Decisión del usuario mientras la SPEC 09 no cree la página. Al llenar `privacyUrl` en Tina pasa a ser un enlace real.

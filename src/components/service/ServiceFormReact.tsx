@@ -78,7 +78,7 @@ export default function ServiceFormReact({ query, variables, data: initialData }
                 {form.privacyLabel}
               </a>
             ) : (
-              <span>{form.privacyLabel}</span>
+              <span className="text-brand-tertiary-dark underline">{form.privacyLabel}</span>
             )}
           </span>
         </label>
