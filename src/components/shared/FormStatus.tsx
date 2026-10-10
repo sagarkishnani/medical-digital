@@ -1,3 +1,4 @@
+import { useEffect, useRef } from "react";
 import type { ReactNode } from "react";
 import { FaWhatsapp } from "react-icons/fa6";
 import { PiCheckLight, PiWarningCircleLight } from "react-icons/pi";
@@ -54,8 +55,11 @@ interface SuccessProps {
 }
 
 export function FormSuccess({ title, text, className = "", children }: SuccessProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  useEffect(() => containerRef.current?.focus(), []);
+
   return (
-    <div role="status" className={`flex flex-col items-center gap-3.5 text-center ${className}`}>
+    <div ref={containerRef} tabIndex={-1} role="status" className={`flex flex-col items-center gap-3.5 text-center outline-none ${className}`}>
       <span className="flex h-18 w-18 items-center justify-center rounded-pill bg-semantics-success-lightest">
         <PiCheckLight aria-hidden="true" className="h-[38px] w-[38px] text-semantics-success-dark" />
       </span>
