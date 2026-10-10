@@ -1,6 +1,6 @@
 # SPEC 11 — Envío de formularios
 
-> **Status:** Aprobado
+> **Status:** Implementado
 > **Depends on:** SPEC 02 (Contacto y modal de cotización), SPEC 08 (formulario de servicio técnico), SPEC 09 (política de privacidad)
 > **Date:** 2026-10-09
 > **Objective:** Hacer que los formularios de Contacto, Cotización y Servicio técnico envíen por correo a través de `send-email.php`, con validación, honeypot, límite por IP y estados de envío, todo configurado pero sin credenciales.
