@@ -76,6 +76,12 @@ export const aboutCollection: Collection = {
           ui: { itemProps: (item) => ({ label: item?.title || "Política" }) },
           fields: [
             { name: "title", label: "Título", type: "string" },
+            {
+              name: "slug",
+              label: "Identificador",
+              type: "string",
+              description: "Para enlazar la pestaña: /nosotros?politica=<identificador>#politicas. Minúsculas y guiones.",
+            },
             { name: "intro", label: "Introducción", type: "string", ui: { component: "textarea" } },
             { name: "points", label: "Puntos", type: "string", list: true },
             { name: "document", label: "Documento PDF", description: "Opcional. Sin documento no se muestra el botón de descarga.", type: "image" },

@@ -5,6 +5,7 @@ import { aboutCollection } from "./collections/about";
 import { contactCollection } from "./collections/contact";
 import { serviceCollection } from "./collections/service";
 import { brandsPageCollection } from "./collections/brandsPage";
+import { legalCollection } from "./collections/legal";
 import { postCollection } from "./collections/post";
 import { newsCollection } from "./collections/news";
 import { maintenanceCollection } from "./collections/maintenance";
@@ -45,6 +46,7 @@ export default defineConfig({
       contactCollection,
       serviceCollection,
       brandsPageCollection,
+      legalCollection,
       postCollection,
       newsCollection,
       maintenanceCollection,

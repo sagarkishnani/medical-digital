@@ -78,9 +78,9 @@
         "title": "Legales",
         "links": [
           { "label": "Términos y condiciones", "url": "/terminos-y-condiciones" },
-          { "label": "Devoluciones y garantías", "url": "/nosotros#politicas" },
-          { "label": "Código de ética y conducta", "url": "/nosotros#politicas" },
-          { "label": "Homologación", "url": "/homologacion" }
+          { "label": "Políticas de privacidad", "url": "/politicas-de-privacidad" },
+          { "label": "Devoluciones y garantías", "url": "/nosotros?politica=devoluciones-y-garantias#politicas" },
+          { "label": "Código de ética y conducta", "url": "/nosotros?politica=codigo-de-etica#politicas" }
         ]
       }
     ],
@@ -91,7 +91,7 @@
       { "code": "BPA", "name": "Buenas Prácticas de Almacenamiento" },
       { "code": "ISO 13485", "name": "Dispositivos médicos" }
     ],
-    "complaintsBook": { "label": "Libro de Reclamaciones", "url": "/libro-de-reclamaciones" },
+    "complaintsBook": { "label": "Libro de Reclamaciones", "url": "" },
     "social": [
       { "network": "linkedin", "url": "https://www.linkedin.com/company/medicaldigitalpe/" },
       { "network": "facebook", "url": "https://www.facebook.com/medicaldigital" },

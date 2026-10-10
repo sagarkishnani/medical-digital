@@ -1,4 +1,4 @@
-import { useId, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import type { KeyboardEvent } from "react";
 import { useTina, tinaField } from "tinacms/dist/react";
 import { PiCheckCircleLight } from "react-icons/pi";
@@ -19,6 +19,13 @@ export default function PoliciesReact({ query, variables, data: initialData }: P
 
   const policies = data?.about?.policies;
   const items = (policies?.items || []).filter((item: any) => item?.title);
+
+  useEffect(() => {
+    const requested = new URLSearchParams(window.location.search).get("politica");
+    const index = items.findIndex((item: any) => requested && item.slug === requested);
+    if (index >= 0) setSelected(index);
+  }, []);
+
   if (!policies || items.length === 0) return <div hidden />;
 
   const activeIndex = Math.min(selected, items.length - 1);
