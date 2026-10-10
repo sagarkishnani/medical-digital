@@ -30,7 +30,7 @@ Pantallas "Contacto", "Servicio técnico" y el modal de cotización de "Medical 
 | `#267C35` | Ícono del check | `text-semantics-success-dark` |
 | `#717274` | Texto de éxito y línea "Tu solicitud llegará a…" | `text-content-subtle` |
 | `#E83C3E` | "Enviar otro mensaje" / "Enviar otra solicitud" | `btn-link` |
-| `#1C2140` | "Cerrar" del modal (borde y texto) | `btn-secondary` |
+| `#1C2140` | "Cerrar" del modal (borde y texto) | `btn` + `border-brand-secondary-dark text-brand-secondary-dark` (`btn-secondary` es rojo) |
 | — | Error junto al campo (no está en la referencia) | `text-semantics-error-dark` + ícono `PiWarningCircleLight` |
 
 ### Estados
@@ -39,7 +39,7 @@ Pantallas "Contacto", "Servicio técnico" y el modal de cotización de "Medical 
 |---|---|---|---|
 | Formulario | Sin cambios de maqueta (SPEC 02) | Sin cambios (SPEC 08) | Agrega la casilla de consentimiento y la línea `PiEnvelopeSimpleLight` "Tu solicitud llegará a…" (13 px, `text-content-subtle`) antes de los botones |
 | Cargando | Botón `aria-disabled`, texto "Enviando…" y la misma medida | Igual | Igual |
-| Éxito | Reemplaza el formulario: círculo de 72 px con `PiCheckLight` de 38 px, título de 24 px (`text-heading-h4` en 500), texto de 15 px y enlace "Enviar otro mensaje"; `padding` 56 px | Igual, con "Solicitud registrada" y "Enviar otra solicitud"; `padding` 48 px | Igual dentro del modal, con "¡Solicitud enviada!", texto con `max-w-[380px]` y botón "Cerrar" de 48 px; `padding` 20 px |
+| Éxito | Reemplaza el formulario: círculo de 72 px con `PiCheckLight` de 38 px, título de 24 px (`text-heading-h3`), texto de 15 px y enlace "Enviar otro mensaje"; `padding` 56 px | Igual, con "Solicitud registrada" y "Enviar otra solicitud"; `padding` 48 px | Igual dentro del modal, con "¡Solicitud enviada!", texto con `max-w-[380px]` y botón "Cerrar" de 48 px; `padding` 20 px |
 | Error de envío | Mensaje con `role="alert"` sobre el botón, con enlace a WhatsApp; los datos se conservan | Igual | Igual; "Hablar con un asesor" ya está al lado |
 | Error de campo | Texto bajo el campo, `aria-invalid` y `aria-describedby`; el foco va al primer campo inválido | Igual | Igual (sus labels son `sr-only`, así que el error se ve bajo el input) |
 
@@ -291,3 +291,30 @@ return [
 - Mock del backend en dev.
 - Formularios configurables en Tina, adjuntos, Libro de Reclamaciones y newsletter.
 - Guardar los envíos o un panel para consultarlos.
+
+## Notas de implementación
+
+- **Hook compartido:** además de `FormStatus.tsx`, el estado, la validación, el honeypot y Turnstile de los tres formularios viven en `src/hooks/useFormSubmission.ts`. Así cada formulario solo dibuja sus campos.
+- **URL del producto en la cotización:** `ProductCard` y la ficha suman `data-quote-product-url`. Sin ese atributo (por ejemplo, "Asesoría comercial"), se envía la URL de la página desde la que se pidió.
+- **Tipografía del éxito:** la escala del UI Kit pone los 24 px en `text-heading-h3`, no en `h4` como decía el borrador de esta spec.
+- **"Cerrar" del éxito de cotización:** `btn-secondary` es rojo en este proyecto. Se usa `btn` con borde y texto `brand-secondary-dark`, como la referencia.
+- **`location` es obligatorio también en el PHP.** Si el editor vacía las opciones de "Ubicación" en Tina, el campo deja de mostrarse y el envío de Contacto falla con un error de campo. No se cubrió ese caso para no relajar la regla.
+- **PHPMailer 7.1.1** (último release, 2026-05-18), con su `LICENSE` (LGPL 2.1) y un `.htaccess` que niega el acceso directo a la carpeta.
+- **Build local sin claves de Woo:** el `.env` local tiene `WOO_STORE_URL` sin claves, y el build falla a propósito. Para probar se corrió `WOO_STORE_URL= npm run build:local` (catálogo vacío).
+- **Peso:** `check:standard` marca 152 KB de JS en la home, el mismo valor que `staging` antes de esta rama (aviso previo de la SPEC 06).
+
+## QA realizada
+
+- `npm run build:local` (con `WOO_STORE_URL` vacío), `tsc --noEmit` sin errores en `src/` y `npm run check:standard`: 0 errores y 2 avisos previos (`og:image` y JS de la home).
+- `dist/` trae `send-email.php`, `config.example.php`, `phpmailer/` y `form-config.json`, y no trae `site-config.php` ni `data/`. `form-config.json` lista los tres formularios sin `label`.
+- Playwright sobre `astro preview` (2026-10-10), 31 comprobaciones en verde:
+  - Contacto: vacío no hace la petición y marca 7 campos con `aria-invalid`, con el foco en el primero y el error enlazado por `aria-describedby`; mensajes propios de correo y teléfono; sin consentimiento no envía; sin backend muestra la alerta con WhatsApp y conserva lo escrito; "Enviando…" con `aria-disabled`; éxito con endpoint simulado y "Enviar otro mensaje" vuelve limpio.
+  - Sin scroll horizontal a 320, 360, 768, 1024 y 1440 px en el estado de error, y a 320 y 1440 px en el de éxito.
+  - Servicio técnico: vacío marca 10 campos; sin backend, alerta con WhatsApp.
+  - Cotización ("Cotiza aquí"): consentimiento con enlace a `/politicas-de-privacidad`, línea `recipientNote`, 5 errores al enviar vacío, reabre limpio, éxito con "Cerrar" y payload con `product`, `productUrl`, `consent` y honeypot vacío.
+  - Sin `PUBLIC_TURNSTILE_SITE_KEY`, ninguna petición a `challenges.cloudflare.com`.
+- **Sin verificar:**
+  - Los criterios del backend: no hay PHP en el entorno local y no se tocó el servidor.
+  - La edición en `/admin`.
+  - Las fichas de producto con catálogo real (el build local va sin Woo).
+
