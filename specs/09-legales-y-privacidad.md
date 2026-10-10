@@ -211,3 +211,28 @@ No hay hex nuevos: todo sale de tokens existentes.
 - Redacción o revisión legal, y la generación de los PDF.
 
 Cada una, si llega, va en su propia spec.
+
+## Notas de implementación
+
+- **`npm run build` necesita TinaCloud.** En local se verificó con `npm run build:local` y `WOO_STORE_URL` vacía (catálogo vacío), como en las SPEC 06, 07 y 10.
+- **El texto se guarda como Markdown** dentro del JSON, como `cookieConsent.intro`. Tina lo lee como rich text; al guardar desde el panel puede pasarlo a su formato de árbol, y la página se ve igual.
+- **Las secciones de producción eran `h3`.** Van como `h2` (lo pide la spec), así la página queda `h1 → h2`.
+- **Corrección tipográfica:** "Ley N° 29733" → "Ley N.° 29733". El correo de Privacidad conserva la negrita de producción y pasa a ser enlace `mailto:`.
+- **Fecha:** la línea dice "Última actualización: 18 sep 2026", con `<time datetime>`.
+- **`PoliciesReact`** lee `?politica=` en un `useEffect` al montar, así que la pestaña se elige después de hidratar. No cambia la URL al cambiar de pestaña.
+- **El menú ☰ (`global.nav`)** sigue enlazando "Políticas" a `/nosotros#politicas`. No estaba en la tabla de cambios.
+- **Lock de Tina.** `tina/tina-lock.json` se regeneró con `legal` y el `slug` de las políticas.
+
+## QA realizada
+
+Build local (`npm run build:local`): pasa, 16 páginas. `npm run typecheck`: 0 errores. `npm run check:standard`: 0 errores, 2 avisos previos (páginas sin `og:image` y JS de la home en 151 KB). Chromium headless sobre `astro preview`, 2026-10-09:
+
+- **Páginas:** responden 200 y están en `sitemap-0.xml`. Un `h1` cada una. Términos tiene 7 `h2` y Privacidad 4, con las mismas listas que producción. Privacidad enlaza `mailto:info@medicaldigitalperu.com`.
+- **SEO:** title y description de la tabla (50/155 y 60/157 caracteres), canonical a la URL de la página y JSON-LD `BreadcrumbList` (Inicio → título).
+- **320, 360, 768, 1024, 1280 y 1536 px:** sin scroll horizontal. La columna de lectura llega a 760 px y los `h2` van de 20 a 24 px.
+- **Fecha y PDF (contenido temporal, no versionado):** con `updatedAt` se ve "18 sep 2026". Con un PDF, "Descargar documento completo" lo sirve como `application/pdf`. Vacíos, no aparecen (Privacidad).
+- **Hidratación:** las páginas no tienen isla propia; solo las compartidas del sitio (header, footer y cookies).
+- **Footer (1280 px):** Legales muestra Términos y condiciones, Políticas de privacidad, Devoluciones y garantías, y Código de ética y conducta. No hay Homologación ni Libro de Reclamaciones.
+- **Pestañas (360 px):** `?politica=devoluciones-y-garantias#politicas` y `?politica=codigo-de-etica#politicas` bajan a Políticas con su pestaña abierta. Sin parámetro o con uno desconocido, abre "Política de calidad".
+- **Enlaces:** Contacto y Servicio técnico enlazan `/politicas-de-privacidad`, igual que "Ver más" de cookies. `grep` sobre `src/content` y `dist` no encuentra `/homologacion`, `/libro-de-reclamaciones` ni `/politica-de-cookies`.
+- **Pendiente de probar a mano en `/admin`:** que "Legales" no deje crear ni borrar documentos, que al editar Términos cambie la página y que el campo "Identificador" aparezca en cada política.
