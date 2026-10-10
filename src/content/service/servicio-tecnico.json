@@ -9,7 +9,11 @@
     "consentLabel": "He leído y acepto la",
     "privacyLabel": "Política de uso de datos personales",
     "privacyUrl": "/politicas-de-privacidad",
-    "submitLabel": "Enviar solicitud"
+    "submitLabel": "Enviar solicitud",
+    "successTitle": "Solicitud registrada",
+    "successText": "Te confirmaremos la fecha de visita en menos de 24 horas hábiles.",
+    "successReset": "Enviar otra solicitud",
+    "errorText": "No pudimos enviar tu solicitud. Inténtalo de nuevo o escríbenos por WhatsApp."
   },
   "seo": {
     "title": "Servicio técnico de equipos médicos | Medical Digital",

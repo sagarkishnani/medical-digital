@@ -27,6 +27,10 @@ export const serviceCollection: Collection = {
         { name: "privacyLabel", label: "Texto del enlace a la política", description: "Ej.: Política de uso de datos personales", type: "string" },
         { name: "privacyUrl", label: "URL de la política de datos personales", description: "Sin URL, el texto se muestra sin enlace.", type: "string" },
         { name: "submitLabel", label: "Texto del botón", type: "string" },
+        { name: "successTitle", label: "Éxito: título", type: "string" },
+        { name: "successText", label: "Éxito: texto", type: "string", ui: { component: "textarea" } },
+        { name: "successReset", label: "Éxito: enlace para enviar otro", type: "string" },
+        { name: "errorText", label: "Error: mensaje", description: "Se muestra si el envío falla, con el enlace a WhatsApp.", type: "string", ui: { component: "textarea" } },
       ],
     },
     {
