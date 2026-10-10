@@ -39,7 +39,7 @@ export default function ContactFormReact({ query, variables, data: initialData, 
     return (
       <div className={cardClass}>
         <FormSuccess title={form.successTitle || "¡Mensaje enviado!"} text={form.successText} className="py-14">
-          <button type="button" onClick={reset} className="btn-link">
+          <button type="button" onClick={reset} className="btn-link min-h-11">
             {form.successReset || "Enviar otro mensaje"}
           </button>
         </FormSuccess>

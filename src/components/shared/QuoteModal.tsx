@@ -185,7 +185,7 @@ export default function QuoteModal({ product, texts, onClose }: Props) {
           </div>
 
           {texts?.recipientNote && (
-            <p className="flex items-center gap-2 text-[13px] text-content-subtle">
+            <p className="flex items-center gap-2 text-caption text-content-subtle">
               <PiEnvelopeSimpleLight aria-hidden="true" className="h-[18px] w-[18px] shrink-0" />
               {texts.recipientNote}
             </p>

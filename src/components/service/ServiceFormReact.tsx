@@ -37,7 +37,7 @@ export default function ServiceFormReact({ query, variables, data: initialData, 
     return (
       <div className={cardClass}>
         <FormSuccess title={form.successTitle || "Solicitud registrada"} text={form.successText} className="py-12">
-          <button type="button" onClick={reset} className="btn-link">
+          <button type="button" onClick={reset} className="btn-link min-h-11">
             {form.successReset || "Enviar otra solicitud"}
           </button>
         </FormSuccess>

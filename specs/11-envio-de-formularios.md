@@ -37,7 +37,7 @@ Pantallas "Contacto", "Servicio técnico" y el modal de cotización de "Medical 
 
 | Estado | Contacto | Servicio técnico | Cotización |
 |---|---|---|---|
-| Formulario | Sin cambios de maqueta (SPEC 02) | Sin cambios (SPEC 08) | Agrega la casilla de consentimiento y la línea `PiEnvelopeSimpleLight` "Tu solicitud llegará a…" (13 px, `text-content-subtle`) antes de los botones |
+| Formulario | Sin cambios de maqueta (SPEC 02) | Sin cambios (SPEC 08) | Agrega la casilla de consentimiento y la línea `PiEnvelopeSimpleLight` "Tu solicitud llegará a…" (`text-caption`, 12 px, de la escala del UI Kit; la referencia usa 13 px, `text-content-subtle`) antes de los botones |
 | Cargando | Botón `aria-disabled`, texto "Enviando…" y la misma medida | Igual | Igual |
 | Éxito | Reemplaza el formulario: círculo de 72 px con `PiCheckLight` de 38 px, título de 24 px (`text-heading-h3`), texto de 15 px y enlace "Enviar otro mensaje"; `padding` 56 px | Igual, con "Solicitud registrada" y "Enviar otra solicitud"; `padding` 48 px | Igual dentro del modal, con "¡Solicitud enviada!", texto con `max-w-[380px]` y botón "Cerrar" de 48 px; `padding` 20 px |
 | Error de envío | Mensaje con `role="alert"` sobre el botón, con enlace a WhatsApp; los datos se conservan | Igual | Igual; "Hablar con un asesor" ya está al lado |
