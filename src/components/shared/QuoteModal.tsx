@@ -92,7 +92,7 @@ export default function QuoteModal({ product, texts, onClose }: Props) {
             {shown.name}
           </h2>
           <FormSuccess title={texts?.successTitle || "¡Solicitud enviada!"} text={texts?.successText || undefined} className="py-5">
-            <button type="button" onClick={onClose} className="btn-secondary mt-2 px-7">
+            <button type="button" onClick={onClose} className="btn mt-2 border-brand-secondary-dark bg-surface px-7 text-brand-secondary-dark hover:bg-greyscale-lightest">
               {texts?.closeLabel || "Cerrar"}
             </button>
           </FormSuccess>
