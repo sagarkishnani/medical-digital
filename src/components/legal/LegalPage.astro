@@ -1,0 +1,61 @@
+---
+import { BsFiletypePdf } from "react-icons/bs";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import PageHero from "../shared/PageHero";
+import PostBody from "../blog/PostBody";
+import { formatNewsDate } from "../../utils/news";
+import { mediaUrl } from "../../utils/mediaUrl";
+import { withBase } from "../../utils/url";
+
+interface Props {
+  legalDocument: {
+    hero: { title: string; image?: string | null };
+    updatedAt?: string | null;
+    body?: any;
+    document?: string | null;
+    seo?: { title?: string | null; description?: string | null } | null;
+  };
+}
+
+const { legalDocument } = Astro.props;
+const { hero } = legalDocument;
+
+const siteUrl = Astro.site || "https://medicaldigitalperu.com";
+const seoTitle = legalDocument.seo?.title?.trim() || `${hero.title} | Medical Digital`;
+const seoDescription = legalDocument.seo?.description?.trim() || undefined;
+const updatedAt = legalDocument.updatedAt ? formatNewsDate(legalDocument.updatedAt) : "";
+const documentUrl = mediaUrl(legalDocument.document);
+
+const breadcrumb = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Inicio", item: new URL(withBase("/"), siteUrl).href },
+    { "@type": "ListItem", position: 2, name: hero.title },
+  ],
+};
+---
+
+<BaseLayout title={seoTitle} description={seoDescription} jsonLd={[breadcrumb]}>
+  <PageHero hero={hero} breadcrumb={hero.title} compact />
+  <section class="bg-surface">
+    <div class="container-lg flex max-w-[760px] flex-col gap-4 py-10 md:gap-5 md:py-20">
+      {updatedAt && (
+        <p class="text-caption text-content-subtle">
+          Última actualización: <time datetime={legalDocument.updatedAt}>{updatedAt}</time>
+        </p>
+      )}
+      <PostBody content={legalDocument.body} />
+      {documentUrl && (
+        <a
+          href={documentUrl}
+          download
+          class="mt-2 flex items-center gap-2 self-start text-link text-brand-secondary-dark hover:underline md:mt-5"
+        >
+          <BsFiletypePdf aria-hidden="true" className="h-6 w-6 text-brand-primary" />
+          Descargar documento completo
+        </a>
+      )}
+    </div>
+  </section>
+</BaseLayout>
