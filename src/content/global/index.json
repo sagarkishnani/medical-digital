@@ -100,6 +100,16 @@
     "legal": "Medical Digital Perú · Todos los derechos reservados"
   },
   "whatsapp": "51983511262",
+  "quote": {
+    "recipientNote": "Tu solicitud llegará a ventas@medicaldigitalperu.com",
+    "consentLabel": "Acepto la",
+    "privacyLabel": "política de datos personales",
+    "privacyUrl": "/politicas-de-privacidad",
+    "successTitle": "¡Solicitud enviada!",
+    "successText": "Un asesor comercial te contactará en menos de 24 horas hábiles.",
+    "closeLabel": "Cerrar",
+    "errorText": "No pudimos enviar tu solicitud. Inténtalo de nuevo o habla con un asesor."
+  },
   "company": {
     "address": "Las Palomas 392 #86\nSurquillo, Lima – Perú",
     "phone": "(+51) 1 222-0571",

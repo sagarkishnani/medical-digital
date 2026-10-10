@@ -5,9 +5,10 @@ interface Props {
   query: string;
   variables: object;
   data: any;
+  whatsappUrl: string;
 }
 
-const { query, variables, data } = Astro.props;
+const { query, variables, data, whatsappUrl } = Astro.props;
 ---
 
-<ServiceFormReact query={query} variables={variables} data={data} client:tina />
+<ServiceFormReact query={query} variables={variables} data={data} whatsappUrl={whatsappUrl} client:visible />

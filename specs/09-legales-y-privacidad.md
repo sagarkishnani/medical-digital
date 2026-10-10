@@ -54,8 +54,8 @@ No hay hex nuevos: todo sale de tokens existentes.
 **Fuera de alcance (para futuras specs):**
 
 - Páginas que producción no tiene: política de cookies, Devoluciones y garantías, Código de ética, Homologación y Libro de Reclamaciones.
-- Libro de Reclamaciones virtual. Es obligatorio en Perú: el cliente debe entregar el enlace del proveedor o pedir una página propia, que depende de la SPEC 12.
-- Casilla de consentimiento del modal de cotización (SPEC 12).
+- Libro de Reclamaciones virtual. Es obligatorio en Perú: el cliente debe entregar el enlace del proveedor o pedir una página propia, que depende de la SPEC 11.
+- Casilla de consentimiento del modal de cotización (SPEC 11).
 - Redacción o revisión legal de los textos.
 - Generar los PDF: el campo queda listo, pero sin archivo no se muestra el botón.
 
@@ -206,8 +206,8 @@ No hay hex nuevos: todo sale de tokens existentes.
 ## Lo que **no** entra en esta spec
 
 - Páginas de cookies, Devoluciones y garantías, Código de ética, Homologación y Libro de Reclamaciones.
-- Libro de Reclamaciones virtual o con formulario (necesita la SPEC 12 o el proveedor del cliente).
-- Casilla de consentimiento del modal de cotización (SPEC 12).
+- Libro de Reclamaciones virtual o con formulario (necesita la SPEC 11 o el proveedor del cliente).
+- Casilla de consentimiento del modal de cotización (SPEC 11).
 - Redacción o revisión legal, y la generación de los PDF.
 
 Cada una, si llega, va en su propia spec.

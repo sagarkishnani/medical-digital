@@ -9,7 +9,11 @@
     "consentLabel": "Acepto la",
     "privacyLabel": "política de datos personales",
     "privacyUrl": "/politicas-de-privacidad",
-    "submitLabel": "Enviar"
+    "submitLabel": "Enviar",
+    "successTitle": "¡Mensaje enviado!",
+    "successText": "Te responderemos en menos de 24 horas hábiles.",
+    "successReset": "Enviar otro mensaje",
+    "errorText": "No pudimos enviar tu mensaje. Inténtalo de nuevo o escríbenos por WhatsApp."
   },
   "map": {
     "embedUrl": "<iframe src=\"https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d7802.227451608827!2d-77.02744072461192!3d-12.104366288136955!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x9105c86c533e366b%3A0x56fdeb7d23a63baa!2sC.%20Las%20Palomas%20392%2C%20Surquillo%2015047!5e0!3m2!1ses-419!2spe!4v1790748397330!5m2!1ses-419!2spe\" width=\"600\" height=\"450\" style=\"border:0;\" allowfullscreen=\"\" loading=\"lazy\" referrerpolicy=\"strict-origin-when-cross-origin\"></iframe>",

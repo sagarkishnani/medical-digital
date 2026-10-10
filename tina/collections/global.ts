@@ -205,6 +205,21 @@ export const globalCollection: Collection = {
     },
     {
       type: "object",
+      name: "quote",
+      label: "Modal \"Solicitar cotización\"",
+      fields: [
+        { name: "recipientNote", label: "Línea de destino", description: "Ej.: Tu solicitud llegará a ventas@… Vacía, no se muestra.", type: "string" },
+        { name: "consentLabel", label: "Texto del consentimiento", description: "Ej.: Acepto la", type: "string" },
+        { name: "privacyLabel", label: "Texto del enlace a la política", description: "Ej.: política de datos personales", type: "string" },
+        { name: "privacyUrl", label: "URL de la política de datos personales", description: "Sin URL, el texto se muestra sin enlace.", type: "string" },
+        { name: "successTitle", label: "Éxito: título", type: "string" },
+        { name: "successText", label: "Éxito: texto", type: "string", ui: { component: "textarea" } },
+        { name: "closeLabel", label: "Éxito: botón para cerrar", type: "string" },
+        { name: "errorText", label: "Error: mensaje", type: "string", ui: { component: "textarea" } },
+      ],
+    },
+    {
+      type: "object",
       name: "company",
       label: "Datos de la empresa",
       description: "Los usan la página de Contacto, el panel del menú y el footer.",

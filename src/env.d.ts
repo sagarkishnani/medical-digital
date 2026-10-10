@@ -2,6 +2,8 @@
 
 interface ImportMetaEnv {
   readonly BASE_URL: string;
+  readonly PUBLIC_FORMS_ENDPOINT?: string;
+  readonly PUBLIC_TURNSTILE_SITE_KEY?: string;
 }
 
 interface ImportMeta {

@@ -61,7 +61,11 @@ export default function HeaderReact({ query, variables, data: initialData, local
       if (!trigger) return;
       event.preventDefault();
       setOpenPanel(null);
-      setQuote({ name: trigger.dataset.quoteName || "", whatsappUrl: trigger.dataset.quoteUrl || "" });
+      setQuote({
+        name: trigger.dataset.quoteName || "",
+        whatsappUrl: trigger.dataset.quoteUrl || "",
+        productUrl: new URL(trigger.dataset.quoteProductUrl || window.location.href, window.location.href).href,
+      });
     };
     document.addEventListener("click", openQuoteFromTrigger);
     return () => document.removeEventListener("click", openQuoteFromTrigger);
@@ -119,6 +123,7 @@ export default function HeaderReact({ query, variables, data: initialData, local
       whatsappUrl: whatsappDigits
         ? `https://wa.me/${whatsappDigits}?text=${encodeURIComponent("Hola, quiero asesoría sobre equipos médicos.")}`
         : "",
+      productUrl: window.location.href,
     });
   };
 
@@ -270,7 +275,7 @@ export default function HeaderReact({ query, variables, data: initialData, local
         onNavigate={closePanels}
       />
 
-      <QuoteModal product={quote} onClose={() => setQuote(null)} />
+      <QuoteModal product={quote} texts={global?.quote} onClose={() => setQuote(null)} />
     </>
   );
 }

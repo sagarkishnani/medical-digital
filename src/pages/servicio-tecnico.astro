@@ -4,6 +4,7 @@ import ServiceHero from "../components/service/ServiceHero.astro";
 import ServiceInfo from "../components/service/ServiceInfo.astro";
 import ServiceForm from "../components/service/ServiceForm.astro";
 import client from "../../tina/__generated__/client";
+import { buildAdvisorUrl } from "../utils/whatsapp";
 
 const [service, global] = await Promise.all([
   client.queries.service({ relativePath: "servicio-tecnico.json" }),
@@ -12,6 +13,7 @@ const [service, global] = await Promise.all([
 const seo = service.data.service.seo;
 const serviceSection = { query: service.query, variables: service.variables, data: service.data };
 const globalSection = { query: global.query, variables: global.variables, data: global.data };
+const whatsappUrl = buildAdvisorUrl(global.data.global.whatsapp ?? "");
 ---
 
 <BaseLayout title={seo?.title} description={seo?.description}>
@@ -19,7 +21,7 @@ const globalSection = { query: global.query, variables: global.variables, data: 
     <div class="mx-auto flex w-full max-w-[1120px] [&_*:focus-visible]:ring-brand-secondary-dark flex-col gap-[22px] px-4 pb-12 pt-7 md:gap-9 md:px-8 md:pb-24 md:pt-16">
       <ServiceHero {...serviceSection} />
       <ServiceInfo {...globalSection} />
-      <ServiceForm {...serviceSection} />
+      <ServiceForm {...serviceSection} whatsappUrl={whatsappUrl} />
     </div>
   </section>
 </BaseLayout>

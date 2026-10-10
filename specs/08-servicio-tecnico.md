@@ -9,7 +9,7 @@
 
 El footer ya enlaza a `/servicio-tecnico` y hoy da 404. El slide 2 de la Home ("Solicitar servicio") la reemplaza con `/contacto`, y ni el header ni el menú ☰ la enlazan.
 
-La tarea "Página de servicio técnico con formulario" se cierra con dos specs: esta (la página y el formulario maquetado) y la 12 (el envío de Contacto, Cotización y Servicio técnico). Es el mismo corte de la SPEC 02 con Contacto: la espera por el hosting, el SMTP y Turnstile no frena la página.
+La tarea "Página de servicio técnico con formulario" se cierra con dos specs: esta (la página y el formulario maquetado) y la 11 (el envío de Contacto, Cotización y Servicio técnico). Es el mismo corte de la SPEC 02 con Contacto: la espera por el hosting, el SMTP y Turnstile no frena la página.
 
 ## Referencia de diseño
 
@@ -69,9 +69,9 @@ Pantallas "Servicio técnico" de `Medical Digital Desktop.html` y `Medical Digit
 
 **Fuera de alcance (para specs futuras):**
 
-- Envío, validación con mensajes junto al campo, honeypot, Turnstile y correo (SPEC 12).
-- El estado "Solicitud registrada", con sus textos y su maqueta (SPEC 12).
-- Casilla de consentimiento en el modal de cotización (SPEC 12).
+- Envío, validación con mensajes junto al campo, honeypot, Turnstile y correo (SPEC 11).
+- El estado "Solicitud registrada", con sus textos y su maqueta (SPEC 11).
+- Casilla de consentimiento en el modal de cotización (SPEC 11).
 - La página de la política de datos personales, que es la que llena `privacyUrl` (SPEC 09).
 - JSON-LD `BreadcrumbList` y `Service`: `BreadcrumbList` para todas las páginas internas va en la 13. `Service` no genera resultados enriquecidos.
 - Botones "Llamar" y "WhatsApp" en mobile: no están en la referencia de esta pantalla.
@@ -232,9 +232,9 @@ Rama `feat/spec-08-servicio-tecnico`, creada desde `staging` actualizado.
 - **No: botones "Llamar" y "WhatsApp" en mobile.** El brief los mencionaba, pero la pantalla mobile de la referencia no los tiene: son de Contacto.
 - **Sí: "Marca" como texto libre.** Elección del usuario. Servicio técnico atiende equipos que ya no se venden o que se compraron en otro lado.
 - **No: select ni `<datalist>` con las marcas de Woo.** El select deja fuera esas marcas, y el `datalist` hace depender la página de la descarga de Woo.
-- **Sí: formulario maquetado sin validación ni JS (`client:tina`).** Elección del usuario. Es el criterio de Contacto en la SPEC 02. La validación con mensajes junto al campo y los estados cargando/éxito/error llegan en la 12, en un solo módulo para los tres formularios.
+- **Sí: formulario maquetado sin validación ni JS (`client:tina`).** Elección del usuario. Es el criterio de Contacto en la SPEC 02. La validación con mensajes junto al campo y los estados cargando/éxito/error llegan en la 11, en un solo módulo para los tres formularios.
 - **No: validar ya.** Un botón que valida y luego no hace nada confunde. Además, este formulario quedaría con un criterio distinto al de Contacto y Cotización.
-- **Sí: "Solicitud registrada" completo en la 12.** Elección del usuario. Un campo de Tina que no se ve en el sitio confunde al editor.
+- **Sí: "Solicitud registrada" completo en la 11.** Elección del usuario. Un campo de Tina que no se ve en el sitio confunde al editor.
 - **Sí: SEO con title, description, canonical y OG, sin JSON-LD propio.** Elección del usuario, con el criterio de Eres 06 y 08: las páginas institucionales no emiten JSON-LD, y Eres solo lo emite cuando da un resultado enriquecido (`FAQPage`, `BlogPosting`, `Product`).
 - **No: `BreadcrumbList` ni `Service` en esta spec.** `Service` no da resultados enriquecidos. `BreadcrumbList` va en la 13 para todas las páginas internas, y la prop `jsonLd` de `BaseLayout` todavía no está en `staging` (llega con la 07).
 - **Sí: los cuatro enlaces del diseño, solo en el contenido.** Elección del usuario. No toca código del header ni del menú.
@@ -249,14 +249,14 @@ Rama `feat/spec-08-servicio-tecnico`, creada desde `staging` actualizado.
 | Riesgo | Mitigación |
 |---|---|
 | Conflictos con la rama de la 07 en `tina/config.ts`, `tina/__generated__/` y `global/index.json` | Los archivos generados no se resuelven a mano: después del merge se corre `tinacms build`. En el JSON son líneas sueltas. |
-| `staging` llega a `main` con un formulario que no envía. El go-live exige formularios probados con un correo recibido. | Mismo criterio de la SPEC 02: lo dice el PR, y `staging` no pasa a `main` hasta que la 12 conecte el envío. |
+| `staging` llega a `main` con un formulario que no envía. El go-live exige formularios probados con un correo recibido. | Mismo criterio de la SPEC 02: lo dice el PR, y `staging` no pasa a `main` hasta que la 11 conecte el envío. |
 | El cliente intenta usar el formulario en el preview y cree que envió | El botón no cambia de estado ni muestra éxito. El PR lo avisa al revisor. |
 | `privacyUrl` vacío hasta la 09 | El texto se muestra sin enlace, como en Contacto. La 09 lo llena desde Tina sin tocar código. |
 | Una ruta de imagen de Tina con el prefijo `assets.tina.io` en la tarjeta del ☰ | Ya pasa por `mediaUrl()` en el header (SPEC 03). |
 
 ## Lo que **no** entra en esta spec
 
-- Envío, validación, honeypot, Turnstile, correo y el estado "Solicitud registrada" (SPEC 12).
+- Envío, validación, honeypot, Turnstile, correo y el estado "Solicitud registrada" (SPEC 11).
 - La política de datos personales (SPEC 09).
 - JSON-LD de la página (SPEC 13).
 - Botones "Llamar" y "WhatsApp", la lista de servicios, sugerencias de marcas de Woo, adjuntos, agenda y seguimiento de tickets.
