@@ -409,5 +409,5 @@ Disponible en `/admin` con `npm run dev`. Las imágenes se suben a `public/`.
 - Cada componente funciona sin imagen (degradado de marca o bloque neutro), así
   que quitar una foto en Tina nunca rompe el layout.
 
-El favicon es `public/favicon-medical-digital.svg`, con un PNG de 100×100 de
+El favicon es `public/favicon.svg`, con `public/favicon.png` de 100×100 como
 respaldo; los dos se enlazan en `BaseLayout.astro`.

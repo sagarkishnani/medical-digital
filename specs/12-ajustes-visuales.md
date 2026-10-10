@@ -22,12 +22,12 @@
 | 3 | Chevron de "Productos" activo | Texto en `text-accent`, chevron navy fijo | Con la página de productos activa, texto **y** chevron en `text-accent` | `src/components/shared/HeaderReact.tsx` |
 | 4 | Portada del video de YouTube | `hqdefault.jpg` remoto (480×360), pixelado | `maxresdefault` → `sddefault` → `hqdefault`, elegida en build y servida por `astro:assets` desde `dist/` | `src/pages/productos/[slug].astro`, `astro.config.mjs` |
 | 5 | Sombra de la noticia destacada | `can-hover:hover:shadow-xl` | `can-hover:hover:shadow-md` | `src/components/noticias/NewsListReact.tsx` |
-| 6 | Favicon | `public/favicon.svg` | `favicon-medical-digital.svg` (68×68) y `favicon-medical-digital.png` (100×100) de respaldo | `public/`, `src/layouts/BaseLayout.astro` |
+| 6 | Favicon | `public/favicon.svg` (anterior) | `favicon-medical-digital.svg` (68×68) y `.png` (100×100) de diseño, publicados como `public/favicon.svg` y `public/favicon.png` | `public/`, `src/layouts/BaseLayout.astro` |
 | 7 | Slides 1 y 2 de la Home | `slide-tecnologia-diagnostico.webp`, `slide-servicio-tecnico-laboratorio.webp` | `slide-medicos-electrocardiografo.webp` (`banner-1`, 1440×655) y `slide-servicio-tecnico-desfibrilador.webp` (`banner-2` reducido de 2828×1200 a 1440×611, < 300 KB). Se actualizan los `alt`; el slide 3 no cambia | `public/uploads/home/`, `src/content/home/index.json` (`slides`) |
 | 8 | Crédito del footer | Texto "TWNSTUDIOS" | `twnstudios-logo-white.svg`: `h-3`, `opacity-80` y `opacity-100` al pasar el mouse, `alt="TWNSTUDIOS"` | `public/`, `src/components/shared/FooterReact.tsx` |
 | 9 | Misión y visión | Textos anteriores | Textos nuevos del cliente (ver Modelo de datos) | `src/content/about/nosotros.json` (`visionMission`) |
 
-Las imágenes reemplazadas (`tarjeta-*.webp`, los dos slides viejos y `favicon.svg`) solo se usan en esos lugares y se borran del repo.
+Las imágenes reemplazadas (`tarjeta-*.webp`, los dos slides viejos y el `favicon.svg` anterior) solo se usan en esos lugares y se borran del repo.
 
 ## Scope
 
@@ -103,9 +103,9 @@ La ficha pasa `src`, `width` y `height` a `<Image>` de `astro:assets` con `width
 
 Cada paso compila (`npm run build`) y se puede commitear por separado.
 
-1. **Assets.** Copiar `menu-*.webp` a `public/uploads/menu/` y `banner-1.webp` como `public/uploads/home/slide-medicos-electrocardiografo.webp`. Reducir `banner-2.webp` a 1440 px de ancho con `sharp` (WebP, calidad ~80), guardarlo como `slide-servicio-tecnico-desfibrilador.webp` y verificar que pese < 300 KB. Copiar `favicon-medical-digital.svg`/`.png` y `twnstudios-logo-white.svg` a `public/`. Sin los archivos `:Zone.Identifier`.
+1. **Assets.** Copiar `menu-*.webp` a `public/uploads/menu/` y `banner-1.webp` como `public/uploads/home/slide-medicos-electrocardiografo.webp`. Reducir `banner-2.webp` a 1440 px de ancho con `sharp` (WebP, calidad ~80), guardarlo como `slide-servicio-tecnico-desfibrilador.webp` y verificar que pese < 300 KB. Copiar `favicon-medical-digital.svg`/`.png` como `public/favicon.svg`/`.png` y `twnstudios-logo-white.svg` a `public/`. Sin los archivos `:Zone.Identifier`.
 2. **Contenido.** Actualizar `nav.panel.cards` (imagen e `imageAlt`), `slides` (imagen e `imageAlt` de los tres) y `visionMission` (`vision` y `mission`). Borrar `tarjeta-*.webp`, `slide-tecnologia-diagnostico.webp` y `slide-servicio-tecnico-laboratorio.webp`. Verificar con `grep` que no queden referencias.
-3. **Favicon.** En `BaseLayout.astro`, `<link rel="icon" type="image/svg+xml">` al SVG nuevo y `<link rel="icon" type="image/png" sizes="100x100">` al PNG, ambos con `import.meta.env.BASE_URL`. Borrar `public/favicon.svg`.
+3. **Favicon.** En `BaseLayout.astro`, `<link rel="icon" type="image/svg+xml">` al SVG nuevo y `<link rel="icon" type="image/png" sizes="100x100">` al PNG, ambos con `import.meta.env.BASE_URL`. El SVG nuevo reemplaza al anterior con el mismo nombre.
 4. **Footer.** En `FooterReact.tsx`, reemplazar el texto "TWNSTUDIOS" por `<img>` del logo (`h-3 w-auto`, `width`/`height` del SVG, `alt="TWNSTUDIOS"`). El enlace lleva `opacity-80 can-hover:hover:opacity-100` con transición de 300 ms y conserva `target`, `rel` y la URL con UTM.
 5. **Header.** En `HeaderReact.tsx`, el botón del chevron de "Productos" usa `text-accent` con la misma condición que el texto (`active`: página actual o mega menú abierto). Si no, queda como hoy (navy con hover en `text-accent`).
 6. **Filtro de marcas.** En `BrandFilter.tsx`, la casilla pasa de `rounded-md` a `rounded-sm`.
@@ -121,7 +121,7 @@ Cada paso compila (`npm run build`) y se puede commitear por separado.
 - [ ] Los slides 1 y 2 de la Home muestran las fotos nuevas. Los tres slides tienen `alt` no vacío y el slide 3 conserva su foto.
 - [ ] `slide-servicio-tecnico-desfibrilador.webp` mide 1440 px de ancho. Las cinco imágenes nuevas pesan < 300 KB.
 - [ ] `/nosotros` muestra la misión y la visión nuevas, palabra por palabra como en esta spec.
-- [ ] `grep` no encuentra `tarjeta-productos`, `tarjeta-servicio-tecnico`, `tarjeta-noticias`, `slide-tecnologia-diagnostico`, `slide-servicio-tecnico-laboratorio` ni `favicon.svg` en `src/`, `tina/` ni `public/`.
+- [ ] `grep` no encuentra `tarjeta-productos`, `tarjeta-servicio-tecnico`, `tarjeta-noticias`, `slide-tecnologia-diagnostico` ni `slide-servicio-tecnico-laboratorio` en `src/`, `tina/` ni `public/`.
 - [ ] No hay archivos `:Zone.Identifier` en el repo.
 
 **Favicon y footer**
@@ -190,6 +190,7 @@ Cada paso compila (`npm run build`) y se puede commitear por separado.
 - **`rounded-sm` mide 4 px, no 2 px.** La escala de `tailwind.config.mjs` redefine los radios (`sm` 4, `md` 8). Se usa la clase del proyecto en vez de un valor arbitrario.
 - **`inferRemoteSize` en vez de `sharp`.** `sharp` no está en `package.json`, solo llega como dependencia de Astro. `inferRemoteSize` (de `astro:assets`) falla ante un 404 y lee solo la cabecera de la imagen, así que valida status y ancho sin agregar una dependencia.
 - **El chevron sigue a `active`, no solo a `current`.** El texto de "Productos" ya se pinta en `text-accent` también con el mega menú abierto. Atar el chevron a la misma condición evita que texto e ícono queden en colores distintos.
+- **Favicon como `favicon.svg`/`favicon.png`.** Con el nombre de diseño (`favicon-medical-digital.*`), `check:standard` avisaba "No hay favicon": busca archivos que terminen en `favicon.(ico|svg|png)`. El nombre no es visible para nadie, así que se publica con el nombre estándar.
 - **`banner-2`** quedó en 1440×611 y 49 KB (WebP, calidad 80).
 - **`sizes` de la portada:** `(min-width: 1280px) 760px, (min-width: 1024px) 60vw, 100vw`, según la columna de 1.7fr dentro de `container-xl`. Los `widths` se filtran para no superar el ancho de la variante elegida.
 
@@ -197,6 +198,7 @@ Cada paso compila (`npm run build`) y se puede commitear por separado.
 
 - `npm run build:local` con `WOO_STORE_URL=" "` (catálogo vacío, sin claves de Woo en local): 16 páginas, sin errores ni warnings nuevos.
 - Cascada de portadas probada contra YouTube con `inferRemoteSize`: `dQw4w9WgXcQ` → `maxresdefault` 1280×720. `jNQXAC9IVRw` → `maxresdefault` y `sddefault` 404, `hqdefault` 480×360.
-- `grep` sin referencias a las imágenes ni al favicon borrados en `src/`, `tina/` y `public/`. Sin archivos `:Zone.Identifier`.
+- `grep` sin referencias a las imágenes borradas en `src/`, `tina/` y `public/`. Sin archivos `:Zone.Identifier`.
 - `tsc --noEmit` sin errores en los archivos tocados.
+- `check:standard`: 0 errores. Avisos ajenos a esta spec: páginas sin `og:image` (build sin catálogo) y 151 KB de JS en la home.
 - Pendiente en el preview de Amplify (con el catálogo real): portada servida desde `/_astro/`, chevron activo en `/productos`, casillas de marca, sombra de la destacada, footer a 360 px y sin scroll horizontal a 320/360 px.
