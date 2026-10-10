@@ -5,6 +5,7 @@ use PHPMailer\PHPMailer\Exception as MailerException;
 use PHPMailer\PHPMailer\PHPMailer;
 
 date_default_timezone_set('America/Lima');
+ini_set('display_errors', '0');
 
 const RATE_LIMIT_MAX = 5;
 const RATE_LIMIT_WINDOW = 600;
@@ -70,6 +71,11 @@ const ERROR_MESSAGES = [
 header('Content-Type: application/json; charset=utf-8');
 header('X-Content-Type-Options: nosniff');
 header('Cache-Control: no-store');
+
+set_exception_handler(function (Throwable $exception): void {
+    error_log('send-email: ' . $exception->getMessage());
+    respond(500, ['success' => false, 'error' => 'No se pudo enviar el formulario.']);
+});
 
 $configPath = __DIR__ . '/site-config.php';
 $config = file_exists($configPath) ? require $configPath : null;
@@ -160,6 +166,7 @@ try {
 try {
     $confirmation = createMailer($config, 'Medical Digital');
     $confirmation->addAddress($leadEmail, $leadName);
+    $confirmation->addReplyTo($recipients[0]);
     $confirmation->Subject = "Recibimos tu solicitud [{$correlativo}] — Medical Digital";
     $confirmation->Body = confirmationEmailHtml($leadName, $correlativo, $siteUrl);
     $confirmation->AltBody = confirmationEmailText($leadName, $correlativo, $siteUrl);
@@ -183,9 +190,11 @@ function stringValue(mixed $value): string
     return is_string($value) ? trim($value) : '';
 }
 
-function requestHost(): string
+function requestOrigin(): string
 {
-    return strtolower((string) preg_replace('/:\d+$/', '', (string) ($_SERVER['HTTP_HOST'] ?? '')));
+    $https = ($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https'
+        || (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off');
+    return ($https ? 'https' : 'http') . '://' . strtolower((string) ($_SERVER['HTTP_HOST'] ?? ''));
 }
 
 function applyCors(mixed $allowedOrigins): void
@@ -193,8 +202,7 @@ function applyCors(mixed $allowedOrigins): void
     $origin = (string) ($_SERVER['HTTP_ORIGIN'] ?? '');
     if ($origin === '') return;
 
-    $originHost = strtolower((string) parse_url($origin, PHP_URL_HOST));
-    if ($originHost !== '' && $originHost === requestHost()) return;
+    if (strtolower(rtrim($origin, '/')) === requestOrigin()) return;
 
     $allowed = is_array($allowedOrigins) ? array_map(fn ($item) => rtrim((string) $item, '/'), $allowedOrigins) : [];
     if (!in_array(rtrim($origin, '/'), $allowed, true)) {
@@ -367,10 +375,8 @@ function validateSubmission(array $fields, array $input): array
 
 function siteUrl(): string
 {
-    $https = ($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https'
-        || (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off');
     $directory = rtrim(str_replace('\\', '/', dirname((string) ($_SERVER['SCRIPT_NAME'] ?? '/'))), '/');
-    return ($https ? 'https' : 'http') . '://' . requestHost() . $directory . '/';
+    return requestOrigin() . $directory . '/';
 }
 
 function createMailer(array $config, string $fromName): PHPMailer

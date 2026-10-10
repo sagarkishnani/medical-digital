@@ -263,12 +263,14 @@ son fijos en el código, no en Tina.
   con STARTTLS a `smtp.office365.com:587`. El buzón del cliente necesita
   SMTP AUTH habilitado en Microsoft 365. Se envía un correo al equipo
   (correlativo `CON-`, `COT-` o `SVT-` y `Reply-To` del usuario) y una
-  confirmación al usuario; si la confirmación falla, el envío igual cuenta.
+  confirmación al usuario, con `Reply-To` del primer destinatario del
+  formulario; si la confirmación falla, el envío igual cuenta.
 - **Turnstile:** programado y apagado. Se activa con
   `PUBLIC_TURNSTILE_SITE_KEY` (el widget) y `turnstile_secret` (el PHP
   verifica y falla cerrado). Con una sola de las dos, no queda bien activado.
 - **Protección:** honeypot `website`, 5 envíos cada 10 minutos por IP y CORS
-  solo para el mismo host o `allowed_origins`.
+  solo para el mismo origen (esquema, host y puerto) o `allowed_origins`. Un
+  preview de Amplify que apunte a otro PHP necesita su URL en esa lista.
 - **Datos:** no se guardan los envíos. `send-email.php` crea `data/` (con
   `.htaccess` que niega el acceso) solo para los contadores y los hashes de
   IP del límite.

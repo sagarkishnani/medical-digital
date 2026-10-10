@@ -256,7 +256,7 @@ return [
 - **No: `mail()` de IONOS.** El correo saldría del hosting y no del buzón del cliente, y la entrega dependería de DMARC.
 - **Sí: destinatarios en Tina (`formConfig` → `/form-config.json`).** El cliente cambia correos sin tocar el servidor, como en Eres. Un cambio necesita redeploy. Los correos quedan públicos en el JSON, pero ya son públicos en el sitio (`global.company`).
 - **No: destinatarios en `site-config.php`.** Cada cambio obligaría a subir el archivo a mano al servidor.
-- **Sí: confirmación a quien llenó el formulario.** Le da constancia y le entrega el correlativo para el seguimiento. Si falla, el envío principal igual cuenta como éxito, como en Eres. El límite por IP acota el abuso de mandar confirmaciones a correos ajenos.
+- **Sí: confirmación a quien llenó el formulario.** Le da constancia y le entrega el correlativo para el seguimiento. Su `Reply-To` es el primer destinatario del formulario, para que una respuesta llegue al equipo y no al buzón técnico que envía. Si falla, el envío principal igual cuenta como éxito, como en Eres. El límite por IP acota el abuso de mandar confirmaciones a correos ajenos.
 - **Sí: `PUBLIC_FORMS_ENDPOINT`, vacía por defecto.** En producción el PHP corre en el mismo dominio. Los previews pueden apuntar a un PHP real con `allowed_origins`, como Eres. Sin backend, el formulario valida y muestra el error con WhatsApp.
 - **No: mock en dev.** Sería código que no llega a producción y puede ocultar diferencias con el PHP real.
 - **Sí: no guardar los envíos.** El estándar §8 lo pide, y el correo ya es el registro. En `data/` solo quedan contadores y hashes de IP.
@@ -313,8 +313,15 @@ return [
   - Servicio técnico: vacío marca 10 campos; sin backend, alerta con WhatsApp.
   - Cotización ("Cotiza aquí"): consentimiento con enlace a `/politicas-de-privacidad`, línea `recipientNote`, 5 errores al enviar vacío, reabre limpio, éxito con "Cerrar" y payload con `product`, `productUrl`, `consent` y honeypot vacío.
   - Sin `PUBLIC_TURNSTILE_SITE_KEY`, ninguna petición a `challenges.cloudflare.com`.
+- **Backend con PHP 8.2.34** (imagen oficial `php:8.2-cli`, la misma versión del hosting), 2026-10-10:
+  - `php -l` sin errores en `send-email.php`, `config.example.php` y PHPMailer.
+  - 19 casos con `curl` contra `php -S`, todos en verde: sin config (500), SMTP vacío (503), GET (405), body no JSON (400), honeypot (falso éxito sin correlativo), origen ajeno y mismo host con otro puerto (403), preflight de `allowed_origins` (204 con `Access-Control-Allow-Origin`), `formType` inválido, validación con `fields`, largo máximo, Turnstile sin token, `enabled: false`, sin destinatarios, SMTP inalcanzable (500 JSON), sexto envío (429), `.htaccess` en `data/`, sin datos personales en `data/` y solo hashes en `ratelimit.json`.
+  - Un error inesperado simulado responde 500 en JSON (`set_exception_handler`), sin warnings ni notices en el log.
+  - Envío real contra un SMTP local con STARTTLS y AUTH: los tres formularios llegan al destinatario de `form-config.json`, con correlativo, `Reply-To` del usuario y HTML escapado (`<script>` y `&` llegan como texto). La confirmación llega al usuario con `Reply-To` del equipo.
+  - De punta a punta: el build con `PUBLIC_FORMS_ENDPOINT` apuntando al PHP y Playwright llenando los tres formularios llega al estado de éxito con los correos enviados.
+  - La prueba encontró un bug: el CORS comparaba solo el nombre del host y respondía el preflight sin cabeceras a un origen con otro puerto. Se corrigió para comparar el origen completo.
 - **Sin verificar:**
-  - Los criterios del backend: no hay PHP en el entorno local y no se tocó el servidor.
+  - El envío con el buzón real de Microsoft 365: faltan las credenciales.
   - La edición en `/admin`.
   - Las fichas de producto con catálogo real (el build local va sin Woo).
 
