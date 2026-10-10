@@ -114,7 +114,8 @@ Colecciones:
   especialidades (categorías de Woo), "Conoce más", marcas, testimonios y
   noticias (los 3 últimos posts). Cada marca lleva `slug` (el de WooCommerce)
   y `desc`; las marcas y los testimonios también se muestran en `/marcas`.
-- `about` — página `/nosotros`.
+- `about` — página `/nosotros`. Cada política lleva `slug`: la pestaña se
+  abre con `/nosotros?politica=<slug>#politicas`.
 - `contact` — página `/contacto` y el mapa de Google (acepta el código de
   "Insertar un mapa"; solo se usa si el `src` es de `google.com/maps/embed`).
 - `service` — página `/servicio-tecnico`: cabecera, textos del formulario y
@@ -122,6 +123,9 @@ Colecciones:
   maquetado sin envío (`client:tina`, botón `type="button"`) hasta la SPEC 12.
 - `brandsPage` — página `/marcas`: cabecera, título y texto del enlace de la
   grilla, interruptores por bloque y SEO.
+- `legal` — `/terminos-y-condiciones` (`terms`) y `/politicas-de-privacidad`
+  (`privacy`): cabecera, fecha de actualización y PDF opcionales, texto en
+  rich text y SEO.
 - `post` — noticias en MDX (`src/content/blog/`): `title`, `excerpt` (lead y
   tarjetas), `category` (Productos, Actividades, Capacitaciones o Noticias,
   fijas en `NEWS_CATEGORIES`), `author` (vacío muestra "Equipo Medical
@@ -220,6 +224,15 @@ CSS (`animate-marquee`, `.marquee-mask`), sin controles como en la referencia;
 el `<script>` de `Brands.astro` carga los logos antes de que entren en
 pantalla. Con `prefers-reduced-motion` queda estática. Es una excepción al
 estándar §4 (ver la SPEC 10): no lo extiendas a otros bloques.
+
+### Legales
+
+`/terminos-y-condiciones` y `/politicas-de-privacidad` (ver
+`specs/09-legales-y-privacidad.md`) comparten `LegalPage.astro`, que dibuja el
+texto con `PostBody` sin isla ni `useTina`: la edición en Tina se ve al
+recargar la vista previa. Los formularios y el "Ver más" de cookies enlazan
+la política de privacidad. El Libro de Reclamaciones queda sin URL hasta que
+el cliente entregue la suya; el footer lo oculta mientras tanto.
 
 ### Modo mantenimiento
 
