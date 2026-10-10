@@ -109,18 +109,21 @@ Colecciones:
   (`search`), el catálogo PDF (`catalog`), los íconos de cada categoría de Woo
   (`categoryIcons`, los usan el header y la Home) y los datos de la empresa
   (`company`: dirección, teléfono, correos, horario y `serviceEmail`, el
-  correo que muestra `/servicio-tecnico`; vacío, no se muestra).
+  correo que muestra `/servicio-tecnico`; vacío, no se muestra) y los textos
+  del modal de cotización (`quote`: consentimiento, línea de destino, éxito y
+  error).
 - `home` — contenido de la portada: slider, destacados (los marca Woo),
   especialidades (categorías de Woo), "Conoce más", marcas, testimonios y
   noticias (los 3 últimos posts). Cada marca lleva `slug` (el de WooCommerce)
   y `desc`; las marcas y los testimonios también se muestran en `/marcas`.
 - `about` — página `/nosotros`. Cada política lleva `slug`: la pestaña se
   abre con `/nosotros?politica=<slug>#politicas`.
-- `contact` — página `/contacto` y el mapa de Google (acepta el código de
-  "Insertar un mapa"; solo se usa si el `src` es de `google.com/maps/embed`).
+- `contact` — página `/contacto`, textos del formulario (con los de éxito y
+  error) y el mapa de Google (acepta el código de "Insertar un mapa"; solo se
+  usa si el `src` es de `google.com/maps/embed`).
 - `service` — página `/servicio-tecnico`: cabecera, textos del formulario y
-  SEO. El teléfono y el correo salen de `global.company`. El formulario está
-  maquetado sin envío (`client:tina`, botón `type="button"`) hasta la SPEC 12.
+  SEO. El teléfono y el correo salen de `global.company`. El formulario envía
+  con el backend de **Formularios**.
 - `brandsPage` — página `/marcas`: cabecera, título y texto del enlace de la
   grilla, interruptores por bloque y SEO.
 - `legal` — `/terminos-y-condiciones` (`terms`) y `/politicas-de-privacidad`
@@ -137,6 +140,8 @@ Colecciones:
 - `cookieConsent` — textos del banner de cookies.
 - `productPage` — etiqueta ("Uso Profesional Médico") y sellos de la ficha de
   producto, iguales para todos los productos.
+- `formConfig` — por formulario (`contacto`, `cotizacion`,
+  `servicio-tecnico`): `enabled` y `recipients[]`. Ver **Formularios**.
 
 
 ### Catálogo de WooCommerce
@@ -234,6 +239,40 @@ recargar la vista previa. Los formularios y el "Ver más" de cookies enlazan
 la política de privacidad. El Libro de Reclamaciones queda sin URL hasta que
 el cliente entregue la suya; el footer lo oculta mientras tanto.
 
+### Formularios
+
+Contacto, Cotización (`QuoteModal`) y Servicio técnico envían por correo con
+`public/send-email.php` (ver `specs/11-envio-de-formularios.md`). Los campos
+son fijos en el código, no en Tina.
+
+- **Cliente:** `src/hooks/useFormSubmission.ts` valida con
+  `src/utils/formValidation.ts`, maneja los estados (cargando, éxito y error)
+  y llama a `src/utils/submitForm.ts`. Las piezas visuales (error junto al
+  campo, éxito, honeypot) están en `src/components/shared/FormStatus.tsx`.
+  `FORM_FIELDS` y las `FORMS` del PHP deben cambiar juntas.
+- **Endpoint:** `PUBLIC_FORMS_ENDPOINT`; vacía, `send-email.php` del mismo
+  dominio. Amplify no ejecuta PHP: sin backend, el formulario valida y
+  muestra el error con WhatsApp.
+- **Destinatarios:** colección `formConfig` → `/form-config.json` en build
+  (un cambio necesita redeploy). Sin destinatarios, usa `fallback_email`.
+- **Secretos:** solo en `public/site-config.php`, que se sube a mano junto a
+  `send-email.php` y está en `.gitignore` (plantilla en
+  `public/config.example.php`). Sin ese archivo o con el SMTP vacío, el PHP
+  responde un error JSON.
+- **SMTP:** PHPMailer 7.1.1 copiado en `public/phpmailer/` (sin Composer),
+  con STARTTLS a `smtp.office365.com:587`. El buzón del cliente necesita
+  SMTP AUTH habilitado en Microsoft 365. Se envía un correo al equipo
+  (correlativo `CON-`, `COT-` o `SVT-` y `Reply-To` del usuario) y una
+  confirmación al usuario; si la confirmación falla, el envío igual cuenta.
+- **Turnstile:** programado y apagado. Se activa con
+  `PUBLIC_TURNSTILE_SITE_KEY` (el widget) y `turnstile_secret` (el PHP
+  verifica y falla cerrado). Con una sola de las dos, no queda bien activado.
+- **Protección:** honeypot `website`, 5 envíos cada 10 minutos por IP y CORS
+  solo para el mismo host o `allowed_origins`.
+- **Datos:** no se guardan los envíos. `send-email.php` crea `data/` (con
+  `.htaccess` que niega el acceso) solo para los contadores y los hashes de
+  IP del límite.
+
 ### Modo mantenimiento
 
 `BaseLayout.astro` consulta la colección `maintenance` en build time; con
@@ -269,8 +308,9 @@ Componentes reutilizables (úsalos antes de escribir uno nuevo):
   breadcrumb.
 - `src/components/shared/QuoteModal.tsx` — modal "Solicitar cotización".
 - `src/components/productos/ProductCard.astro` — tarjeta de producto de la home
-  y del catálogo, en Astro puro. Su botón lleva `data-quote-name` y
-  `data-quote-url`: `HeaderReact` escucha esos clics y abre el `QuoteModal`.
+  y del catálogo, en Astro puro. Su botón lleva `data-quote-name`,
+  `data-quote-url` (WhatsApp) y `data-quote-product-url` (sin él, se envía la
+  URL de la página): `HeaderReact` escucha esos clics y abre el `QuoteModal`.
   Cualquier botón con esos atributos abre la cotización sin una isla propia.
 - `src/utils/url.ts` (`withBase`) — rutas internas escritas en el código.
 - `src/utils/scrollLock.ts` — bloquea y libera el scroll de la página (también
