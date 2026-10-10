@@ -208,7 +208,7 @@ export default function HeaderReact({ query, variables, data: initialData, local
                     aria-expanded={megaOpen}
                     aria-controls="products-menu"
                     aria-label="Ver categorías de productos"
-                    className="-ml-1.5 flex w-6 items-center justify-center text-brand-secondary-dark hover:text-accent"
+                    className={`-ml-1.5 flex w-6 items-center justify-center hover:text-accent ${active ? "text-accent" : "text-brand-secondary-dark"}`}
                   >
                     <PiCaretDownLight aria-hidden="true" className={`h-4 w-4 transition-transform duration-300 ${megaOpen ? "rotate-180" : ""}`} />
                   </button>
