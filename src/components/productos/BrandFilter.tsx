@@ -49,7 +49,7 @@ export default function BrandFilter({ brands, selected, counts, onToggle, large 
                 />
                 <span
                   aria-hidden="true"
-                  className={`flex shrink-0 items-center justify-center rounded-md border-[1.5px] transition-colors peer-focus-visible:ring-2 peer-focus-visible:ring-brand-primary peer-focus-visible:ring-offset-2 ${large ? "h-6 w-6" : "h-5 w-5"} ${checked ? "border-brand-secondary-dark bg-brand-secondary-dark text-white" : "border-greyscale-medium bg-surface text-transparent"}`}
+                  className={`flex shrink-0 items-center justify-center rounded-sm border-[1.5px] transition-colors peer-focus-visible:ring-2 peer-focus-visible:ring-brand-primary peer-focus-visible:ring-offset-2 ${large ? "h-6 w-6" : "h-5 w-5"} ${checked ? "border-brand-secondary-dark bg-brand-secondary-dark text-white" : "border-greyscale-medium bg-surface text-transparent"}`}
                 >
                   <PiCheckLight className="h-3.5 w-3.5" />
                 </span>
