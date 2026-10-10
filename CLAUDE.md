@@ -200,6 +200,12 @@ fuentes, todas en build:
   del acordeón y hasta 4 relacionados (cross-sells y upsells de Woo, después
   la misma especialidad por destacados, la misma marca y los destacados).
 
+La portada del video de YouTube se elige en build (`src/lib/woo/youtubePoster.ts`,
+ver `specs/12-ajustes-visuales.md`): `maxresdefault` → `sddefault` →
+`hqdefault`, y la que responde pasa por `astro:assets` (`i.ytimg.com` está en
+`image.domains`). Si YouTube no responde, el build avisa y usa `hqdefault`
+remoto: una portada nunca tumba el deploy.
+
 En mobile la ficha tiene una barra fija (`data-mobile-bottom-bar`): el `body`
 reserva su alto y `BaseLayout hideWhatsAppButton` oculta el botón flotante por
 debajo de `lg`.
@@ -402,3 +408,6 @@ Disponible en `/admin` con `npm run dev`. Las imágenes se suben a `public/`.
   la ruta local.
 - Cada componente funciona sin imagen (degradado de marca o bloque neutro), así
   que quitar una foto en Tina nunca rompe el layout.
+
+El favicon es `public/favicon-medical-digital.svg`, con un PNG de 100×100 de
+respaldo; los dos se enlazan en `BaseLayout.astro`.

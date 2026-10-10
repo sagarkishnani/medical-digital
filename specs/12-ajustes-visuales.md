@@ -18,7 +18,7 @@
 | # | Ajuste | Hoy | Después | Archivo |
 |---|---|---|---|---|
 | 1 | Fotos del panel ☰ | `tarjeta-productos.webp`, `tarjeta-servicio-tecnico.webp`, `tarjeta-noticias.webp` (provisionales); solo una tarjeta tiene `imageAlt` | `menu-productos.webp` (1024×683), `menu-servicio-posventa.webp` (1200×800), `menu-noticias.webp` (1422×800), todas < 300 KB, con `imageAlt` en las tres | `public/uploads/menu/`, `src/content/global/index.json` (`nav.panel.cards`) |
-| 2 | Casillas del filtro de marcas | `rounded-md` (se ven casi circulares) | `rounded-sm` (2 px) | `src/components/productos/BrandFilter.tsx` |
+| 2 | Casillas del filtro de marcas | `rounded-md` (8 px, se ven casi circulares) | `rounded-sm` (4 px en la escala de `tailwind.config.mjs`) | `src/components/productos/BrandFilter.tsx` |
 | 3 | Chevron de "Productos" activo | Texto en `text-accent`, chevron navy fijo | Con la página de productos activa, texto **y** chevron en `text-accent` | `src/components/shared/HeaderReact.tsx` |
 | 4 | Portada del video de YouTube | `hqdefault.jpg` remoto (480×360), pixelado | `maxresdefault` → `sddefault` → `hqdefault`, elegida en build y servida por `astro:assets` desde `dist/` | `src/pages/productos/[slug].astro`, `astro.config.mjs` |
 | 5 | Sombra de la noticia destacada | `can-hover:hover:shadow-xl` | `can-hover:hover:shadow-md` | `src/components/noticias/NewsListReact.tsx` |
@@ -85,12 +85,16 @@ Esta spec **no cambia ningún schema de Tina**. Solo cambian valores de contenid
 Función nueva `resolveYouTubePoster(id)` en `src/lib/woo/youtubePoster.ts`, importada solo desde `.astro`:
 
 ```ts
-type YouTubePoster =
-  | { kind: "remote"; src: string; width: number; height: number }; // la URL de i.ytimg.com que respondió 200
+interface YouTubePoster {
+  src: string; // la URL de i.ytimg.com que respondió
+  width: number;
+  height: number;
+}
 
+// resolveYouTubePoster(id): Promise<YouTubePoster | null>
 // Orden: maxresdefault (1280×720) → sddefault (640×480) → hqdefault (480×360).
 // Un 404, un error de red o una imagen de 120 px de ancho pasa a la siguiente.
-// Si fallan todas, devuelve hqdefault sin verificar.
+// Si fallan todas, devuelve null y la ficha usa hqdefault remoto sin verificar.
 ```
 
 La ficha pasa `src`, `width` y `height` a `<Image>` de `astro:assets` con `widths` para el `srcset` y `sizes` según el contenedor. `astro.config.mjs` agrega `i.ytimg.com` a `image.domains` junto a los dominios de Woo. Las respuestas se cachean en memoria por `id` durante el build.
@@ -103,10 +107,10 @@ Cada paso compila (`npm run build`) y se puede commitear por separado.
 2. **Contenido.** Actualizar `nav.panel.cards` (imagen e `imageAlt`), `slides` (imagen e `imageAlt` de los tres) y `visionMission` (`vision` y `mission`). Borrar `tarjeta-*.webp`, `slide-tecnologia-diagnostico.webp` y `slide-servicio-tecnico-laboratorio.webp`. Verificar con `grep` que no queden referencias.
 3. **Favicon.** En `BaseLayout.astro`, `<link rel="icon" type="image/svg+xml">` al SVG nuevo y `<link rel="icon" type="image/png" sizes="100x100">` al PNG, ambos con `import.meta.env.BASE_URL`. Borrar `public/favicon.svg`.
 4. **Footer.** En `FooterReact.tsx`, reemplazar el texto "TWNSTUDIOS" por `<img>` del logo (`h-3 w-auto`, `width`/`height` del SVG, `alt="TWNSTUDIOS"`). El enlace lleva `opacity-80 can-hover:hover:opacity-100` con transición de 300 ms y conserva `target`, `rel` y la URL con UTM.
-5. **Header.** En `HeaderReact.tsx`, el botón del chevron de "Productos" usa `text-accent` cuando `current` es verdadero. Si no, queda como hoy (navy con hover en `text-accent`).
+5. **Header.** En `HeaderReact.tsx`, el botón del chevron de "Productos" usa `text-accent` con la misma condición que el texto (`active`: página actual o mega menú abierto). Si no, queda como hoy (navy con hover en `text-accent`).
 6. **Filtro de marcas.** En `BrandFilter.tsx`, la casilla pasa de `rounded-md` a `rounded-sm`.
 7. **Noticias.** En `NewsListReact.tsx`, la destacada pasa de `can-hover:hover:shadow-xl` a `can-hover:hover:shadow-md`.
-8. **Portada del video.** Crear `src/lib/woo/youtubePoster.ts` con `resolveYouTubePoster` (status y ancho validado con `sharp`). Agregar `i.ytimg.com` a `image.domains`. En `[slug].astro`, dibujar la portada con `<Image>` (`widths` 640/960/1280, `sizes` del contenedor, `loading="lazy"`). Si ninguna variante respondió, dibujar el `<img>` remoto de `hqdefault` como hoy, sin `astro:assets`, para que el build no falle.
+8. **Portada del video.** Crear `src/lib/woo/youtubePoster.ts` con `resolveYouTubePoster` (status y ancho leídos con `inferRemoteSize` de `astro:assets`). Agregar `i.ytimg.com` a `image.domains`. En `[slug].astro`, dibujar la portada con `<Image>` (`widths` 640/960/1280, `sizes` del contenedor, `loading="lazy"`). Si ninguna variante respondió, dibujar el `<img>` remoto de `hqdefault` como hoy, sin `astro:assets`, para que el build no falle.
 9. **Documentación.** Actualizar `CLAUDE.md` (favicon, portada del video en build) y completar "Notas de implementación" y "QA realizada" en esta spec.
 
 ## Criterios de aceptación
@@ -129,7 +133,7 @@ Cada paso compila (`npm run build`) y se puede commitear por separado.
 **Estilos**
 
 - [ ] En `/productos`, `/productos/categoria/<slug>` y la ficha, el texto y el chevron de "Productos" en el header van en `text-accent`. En las demás páginas el chevron sigue navy.
-- [ ] Las casillas del filtro de marcas tienen esquinas de 2 px, en el sidebar y en el panel de filtros mobile.
+- [ ] Las casillas del filtro de marcas tienen esquinas de 4 px (`rounded-sm`), en el sidebar y en el panel de filtros mobile.
 - [ ] La noticia destacada muestra `shadow-md` solo al pasar el mouse y no la muestra en un dispositivo táctil.
 
 **Portada del video**
@@ -156,7 +160,7 @@ Cada paso compila (`npm run build`) y se puede commitear por separado.
 - **Sí:** respaldo al `<img>` remoto de `hqdefault` si YouTube no responde en build, porque una portada no justifica tumbar el deploy (a diferencia del catálogo, que falla a propósito).
 - **Sí:** `shadow-md` al pasar el mouse, solo en la destacada, porque mantiene la pista de que es clicable sin la mancha que señaló la revisión.
 - **No:** agregar sombras a las demás tarjetas de noticias, porque hoy no tienen y la revisión no lo pidió.
-- **Sí:** `rounded-sm` (2 px) en las casillas de marca, porque `rounded-md` a 20–24 px las hace parecer radios (selección única) cuando son checkboxes.
+- **Sí:** `rounded-sm` (4 px) en las casillas de marca, porque `rounded-md` a 20–24 px las hace parecer radios (selección única) cuando son checkboxes.
 - **Sí:** chevron en `text-accent` solo con "Productos" activo, para que texto e ícono se lean como un mismo control.
 - **Sí:** logo del footer a `h-3` con `opacity-80`, porque iguala la altura del texto `caption` y reproduce el hover que hoy tiene el texto.
 - **Sí:** PNG de 100×100 como respaldo del favicon SVG, para navegadores sin soporte de SVG.
@@ -168,7 +172,7 @@ Cada paso compila (`npm run build`) y se puede commitear por separado.
 
 | Riesgo | Mitigación |
 |---|---|
-| YouTube responde 200 con la imagen gris en vez de 404 | Además del status, se valida el ancho con `sharp` (120 px se descarta). Se comprueba en QA con un video sin `maxresdefault` |
+| YouTube responde 200 con la imagen gris en vez de 404 | Además del status, se valida el ancho con `inferRemoteSize` (120 px se descarta). Se comprueba en QA con un video sin `maxresdefault` |
 | Un video se cambia en Woo y la portada queda vieja | Igual que todo el catálogo: aparece en el siguiente deploy (ver `CLAUDE.md`) |
 | El build se alarga con muchos videos | Un pedido por video, cacheado en memoria por `id`. Hoy son pocos productos con video |
 | `banner-2` reducido pierde calidad en pantallas 2× | Mismo criterio que el resto de los slides (estándar §5.2: 1440 px, < 300 KB) |
@@ -183,8 +187,16 @@ Cada paso compila (`npm run build`) y se puede commitear por separado.
 
 ## Notas de implementación
 
-Se completan al terminar la implementación.
+- **`rounded-sm` mide 4 px, no 2 px.** La escala de `tailwind.config.mjs` redefine los radios (`sm` 4, `md` 8). Se usa la clase del proyecto en vez de un valor arbitrario.
+- **`inferRemoteSize` en vez de `sharp`.** `sharp` no está en `package.json`, solo llega como dependencia de Astro. `inferRemoteSize` (de `astro:assets`) falla ante un 404 y lee solo la cabecera de la imagen, así que valida status y ancho sin agregar una dependencia.
+- **El chevron sigue a `active`, no solo a `current`.** El texto de "Productos" ya se pinta en `text-accent` también con el mega menú abierto. Atar el chevron a la misma condición evita que texto e ícono queden en colores distintos.
+- **`banner-2`** quedó en 1440×611 y 49 KB (WebP, calidad 80).
+- **`sizes` de la portada:** `(min-width: 1280px) 760px, (min-width: 1024px) 60vw, 100vw`, según la columna de 1.7fr dentro de `container-xl`. Los `widths` se filtran para no superar el ancho de la variante elegida.
 
 ## QA realizada
 
-Se completa al terminar la implementación.
+- `npm run build:local` con `WOO_STORE_URL=" "` (catálogo vacío, sin claves de Woo en local): 16 páginas, sin errores ni warnings nuevos.
+- Cascada de portadas probada contra YouTube con `inferRemoteSize`: `dQw4w9WgXcQ` → `maxresdefault` 1280×720. `jNQXAC9IVRw` → `maxresdefault` y `sddefault` 404, `hqdefault` 480×360.
+- `grep` sin referencias a las imágenes ni al favicon borrados en `src/`, `tina/` y `public/`. Sin archivos `:Zone.Identifier`.
+- `tsc --noEmit` sin errores en los archivos tocados.
+- Pendiente en el preview de Amplify (con el catálogo real): portada servida desde `/_astro/`, chevron activo en `/productos`, casillas de marca, sombra de la destacada, footer a 360 px y sin scroll horizontal a 320/360 px.
