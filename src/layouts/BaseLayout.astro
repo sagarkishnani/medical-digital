@@ -15,6 +15,7 @@ import { isLocale } from "../i18n/config";
 import "../styles/global.css";
 import CookieConsent from "../components/cookies/CookieConsent.astro";
 import WhatsAppButton from "../components/shared/WhatsAppButton.astro";
+import Analytics from "../components/shared/Analytics.astro";
 
 interface Props {
   title?: string;
@@ -123,6 +124,7 @@ try {
     {pageJsonLd.map((data) => <script type="application/ld+json" set:html={serializeJsonLd(data)} />)}
 
     {viewTransitions && <ClientRouter />}
+    <Analytics ga4Id={globalData?.analytics?.ga4Id} />
     <Fragment set:html={injectHead} />
   </head>
   <body>

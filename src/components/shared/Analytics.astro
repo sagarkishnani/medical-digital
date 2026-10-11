@@ -1,0 +1,89 @@
+---
+import { resolveGa4Id } from "../../utils/ga4";
+
+interface Props {
+  ga4Id?: string | null;
+}
+
+const ga4Id = import.meta.env.SITE_INDEXABLE ? resolveGa4Id(Astro.props.ga4Id) : "";
+---
+
+{ga4Id && <meta name="ga4-id" content={ga4Id} />}
+
+{
+  ga4Id && (
+    <script>
+      import { CONSENT_EVENT, hasConsent } from "../../utils/consent";
+
+      type AnalyticsWindow = Window & { dataLayer?: unknown[]; gtag?: (...args: unknown[]) => void } & Record<string, unknown>;
+
+      const analyticsWindow = window as unknown as AnalyticsWindow;
+      const ga4Id = document.querySelector<HTMLMetaElement>('meta[name="ga4-id"]')?.content ?? "";
+      const disableFlag = `ga-disable-${ga4Id}`;
+
+      let tagLoaded = false;
+      let lastPageViewUrl: string | null = null;
+
+      function loadTag() {
+        if (tagLoaded) return;
+        tagLoaded = true;
+        analyticsWindow.dataLayer = analyticsWindow.dataLayer || [];
+        // gtag.js solo procesa el objeto `arguments`; un array normal se ignora.
+        analyticsWindow.gtag = function () {
+          analyticsWindow.dataLayer!.push(arguments);
+        };
+        analyticsWindow.gtag("js", new Date());
+        analyticsWindow.gtag("config", ga4Id, { send_page_view: false });
+
+        const tag = document.createElement("script");
+        tag.async = true;
+        tag.src = `https://www.googletagmanager.com/gtag/js?id=${encodeURIComponent(ga4Id)}`;
+        document.head.appendChild(tag);
+      }
+
+      function sendPageView() {
+        if (!tagLoaded || analyticsWindow[disableFlag] === true) return;
+        if (lastPageViewUrl === location.href) return;
+        lastPageViewUrl = location.href;
+        analyticsWindow.gtag?.("event", "page_view", { page_location: location.href, page_title: document.title });
+      }
+
+      function deleteAnalyticsCookies() {
+        const names = document.cookie
+          .split(";")
+          .map((cookie) => cookie.split("=")[0].trim())
+          .filter((name) => name === "_ga" || name.startsWith("_ga_"));
+        if (!names.length) return;
+
+        const hostParts = location.hostname.split(".");
+        const domains = ["", ...hostParts.map((_, index) => hostParts.slice(index).join("."))];
+        for (const name of names) {
+          for (const domain of domains) {
+            const domainAttribute = domain ? `; domain=.${domain}` : "";
+            document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/${domainAttribute}`;
+          }
+        }
+      }
+
+      function enable() {
+        analyticsWindow[disableFlag] = false;
+        loadTag();
+        sendPageView();
+      }
+
+      function disable() {
+        analyticsWindow[disableFlag] = true;
+        lastPageViewUrl = null;
+        deleteAnalyticsCookies();
+      }
+
+      const applyConsent = () => (hasConsent("analitica") ? enable() : disable());
+
+      if (ga4Id) {
+        applyConsent();
+        window.addEventListener(CONSENT_EVENT, applyConsent);
+        document.addEventListener("astro:page-load", sendPageView);
+      }
+    </script>
+  )
+}
