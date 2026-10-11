@@ -82,11 +82,11 @@
   .btn-md { @apply h-10 px-6; font-size: theme('fontSize.body-sm'); }
   .btn-sm { @apply h-8 px-[18px]; font-size: theme('fontSize.caption'); }
   .btn-primary,
-  .btn-navigation { @apply bg-brand-primary-medium text-white; }
+  .btn-navigation { @apply bg-brand-primary-dark text-white; }
   .btn-primary:hover,
-  .btn-navigation:hover { @apply bg-brand-primary-dark; }
+  .btn-navigation:hover { @apply bg-brand-primary-darkest; }
   .btn-primary:active,
-  .btn-navigation:active { @apply bg-brand-primary-darkest; }
+  .btn-navigation:active { @apply bg-brand-primary-darkest brightness-90; }
   .btn-primary:is(:disabled, [aria-disabled="true"]),
   .btn-navigation:is(:disabled, [aria-disabled="true"]) {
     @apply bg-greyscale-light text-greyscale-medium;
