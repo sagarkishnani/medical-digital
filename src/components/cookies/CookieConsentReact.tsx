@@ -6,6 +6,7 @@ import type {
   CookieConsentQueryVariables,
 } from "../../../tina/__generated__/types";
 import { lockScroll, unlockScroll } from "../../utils/scrollLock";
+import { CONSENT_KEY, readConsent } from "../../utils/consent";
 
 interface Props {
   query: string;
@@ -22,21 +23,10 @@ interface Category {
 
 type View = "hidden" | "banner" | "settings";
 
-const STORAGE_KEY = "medical-digital-cookie-consent:v1";
-
-function readConsent(): Record<string, boolean> | null {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? JSON.parse(raw) : null;
-  } catch {
-    return null;
-  }
-}
-
 function writeConsent(prefs: Record<string, boolean>) {
   try {
     localStorage.setItem(
-      STORAGE_KEY,
+      CONSENT_KEY,
       JSON.stringify({ ...prefs, ts: Date.now() })
     );
   } catch {
