@@ -11,9 +11,8 @@ export default {
       '2xl': '1536px',
     },
     fontFamily: {
-      sans: ['Rubik', 'system-ui', 'sans-serif'],
-      heading: ['Rubik', 'system-ui', 'sans-serif'],
-      mono: ['Space Mono', 'ui-monospace', 'monospace'],
+      sans: ['Rubik Variable', 'Rubik', 'system-ui', 'sans-serif'],
+      heading: ['Rubik Variable', 'Rubik', 'system-ui', 'sans-serif'],
     },
     fontSize: {
       display:      ['56px', { lineHeight: '62px', fontWeight: '500' }],

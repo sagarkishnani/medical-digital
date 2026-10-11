@@ -1,5 +1,6 @@
 /* Global stylesheet. BaseLayout.astro imports it, which is what makes Astro
    bundle it — a CSS file nobody imports silently ships nothing. */
+@import "@fontsource-variable/rubik";
 @tailwind base;
 @tailwind components;
 @tailwind utilities;

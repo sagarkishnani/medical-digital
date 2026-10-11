@@ -121,10 +121,6 @@ try {
     <script type="application/ld+json" set:html={serializeJsonLd(jsonLd)} />
     {pageJsonLd.map((data) => <script type="application/ld+json" set:html={serializeJsonLd(data)} />)}
 
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700&family=Space+Mono:wght@300;400;500;600;700&display=swap" />
-
     {viewTransitions && <ClientRouter />}
     <Fragment set:html={injectHead} />
   </head>
