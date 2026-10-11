@@ -218,3 +218,40 @@ Cada paso compila (`npm run build`) y se puede commitear por separado.
 - Cambios en las categorías de cookies o en la clave de `localStorage`.
 
 Cada una, si llega, va en su propia spec.
+
+## Notas de implementación
+
+- **"Cotiza aquí" del header no usaba `btn-navigation`.** Tenía sus propias clases con texto blanco sobre `bg-brand-primary` (4.07:1). Queda fuera de la letra del alcance, pero es el mismo defecto y solo se ve en desktop. Se alineó con `btn-primary` en un commit aparte (`fix(a11y): alinea el botón de cotización del header con btn-primary`).
+- **El modal de categorías es un `<dialog>` nativo.** `showModal()` da el cierre con Esc, la trampa de foco y la devolución del foco sin código propio. Mientras está abierto sin consentimiento guardado, el banner sigue montado detrás del backdrop para que el foco vuelva a "Configurar".
+- **Los pasos 7 y 8 van en un solo commit.** El banner y el modal comparten el estado `view` y no compilan por separado.
+- **Banner en mobile.** Usa un solo desplazamiento inferior (`88px + max(16px, safe-area)`) que libra tanto el botón de WhatsApp (61 px) como la barra fija de la ficha. Entre `md` y `lg` solo se aplica en la ficha.
+- **Botones del modal.** "Guardar mis preferencias" ocupa una fila y "Rechazar todo" y "Aceptar todo" la siguiente: con `whitespace-nowrap` los tres no caben en una fila de 480 px.
+- **Enlace al catálogo.** El mega menú y el panel ☰ siguen pidiendo además `catalog.label`, como antes.
+- **Auditoría de animaciones.** Las 37 clases `duration-*` de `src/` son de 200, 250 o 300 ms. Las constantes en JS (`ACCORDION_DURATION_MS`, `CLOSE_FALLBACK_MS`) son de 300 ms. Se quitó `fade-up` (600 ms) de `tailwind.config.mjs`: nadie la usaba. No hubo que corregir ningún componente. La regla global de `global.css` lleva a 0.01 ms toda animación y transición con `prefers-reduced-motion`; Lenis no arranca y el marquee queda estático.
+- **Lenis (`duration: 1.1`) no es una transición.** Es la inercia del scroll y se apaga con movimiento reducido. No se tocó.
+
+## QA realizada
+
+Build local (`astro build` contra el servidor de Tina en marcha, catálogo real de Woo, 68 páginas) servido con `astro preview`. Lighthouse 13.5, mobile, una corrida por página:
+
+| Página | Rendimiento | Accesibilidad | Prácticas | SEO | Navegación agéntica |
+|---|---|---|---|---|---|
+| `/` | 92 | 100 | 100 | 100 | 2/2 |
+| `/productos/` | 93 | 91 | 100 | 100 | 2/2 |
+| `/productos/balanza-de-pie-digital-500kl/` | 91 | 100 | 100 | 100 | 2/2 |
+| `/noticias/` | 93 | 100 | 100 | 100 | 2/2 |
+| `/contacto/` | 96 | 97 | 100 | 100 | 2/2 |
+
+- En la Home pasan `color-contrast`, `list`, `target-size`, `crawlable-anchors` y `agent-accessibility-tree`. FCP baja de 2.7 s a 2.1 s; LCP queda en 3.1 s.
+- `astro preview` no comprime ni usa CDN: el rendimiento es orientativo. **Pendiente:** repetir la medición en el preview de Amplify (mediana de tres corridas) después del push.
+- Ningún HTML ni CSS de `dist/` (sin `/admin`) menciona `fonts.googleapis`, `fonts.gstatic` ni `Space Mono`. La fuente computada del `body` es `"Rubik Variable"`.
+- Ningún `<a>` sin `href` en las 68 páginas.
+- Banner medido con emulación de móvil: a 360 px ocupa de x=16 a x=344, termina 15 px por encima del botón de WhatsApp y 21 px por encima de la barra de la ficha. Sin scroll horizontal a 320 ni a 360 px. En desktop mide 440 px.
+- "Configurar" abre el `<dialog>` con las tres categorías (captura a 360 px revisada).
+- `npm run typecheck`: sin errores. `npm run check:standard`: 0 errores y dos avisos (17 páginas sin `og:image` y 9 imágenes sin `alt`); no se comprobó si los avisos ya existían antes de esta rama.
+- No se probó a mano: Esc y devolución del foco en el modal, el enlace `#preferencias-cookies`, la edición de `bannerText` y `btnConfigure` en Tina, el arrastre del carrusel de testimonios y `prefers-reduced-motion` en el navegador.
+
+Fallas que quedan por encima de 90 y fuera del alcance:
+
+- `/productos/`: `list` y `listitem` (el `<ul>` del catálogo recibe sus `<li>` a través de un `<astro-slot>`) y `heading-order` (un `<h3>` de tarjeta sin `<h2>` previo).
+- `/contacto/`: `color-contrast` en `content-subtle` sobre `surface-raised` (4.49:1, ya anotado en `CLAUDE.md`) y en el botón verde de WhatsApp (2.74:1, decisión de diseño).

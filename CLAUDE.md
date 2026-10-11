@@ -106,7 +106,8 @@ Colecciones:
   defecto, código inyectado, el WhatsApp
   comercial (lo usan "Solicitar cotización" y el botón flotante, que se
   enciende con `whatsappButton.enabled`), el placeholder de la búsqueda
-  (`search`), el catálogo PDF (`catalog`), los íconos de cada categoría de Woo
+  (`search`), el catálogo PDF (`catalog`: sin archivo, sus enlaces no se
+  dibujan en el mega menú, el panel ☰ ni el footer), los íconos de cada categoría de Woo
   (`categoryIcons`, los usan el header y la Home) y los datos de la empresa
   (`company`: dirección, teléfono, correos, horario y `serviceEmail`, el
   correo que muestra `/servicio-tecnico`; vacío, no se muestra) y los textos
@@ -137,7 +138,8 @@ Colecciones:
   tiempo de lectura se calcula en build (`readingMinutes`, 200 palabras/min).
 - `news` — textos y SEO de `/noticias`.
 - `maintenance` — modo mantenimiento del sitio.
-- `cookieConsent` — textos del banner de cookies.
+- `cookieConsent` — textos del banner de cookies (`bannerText`,
+  `btnConfigure`) y del modal de categorías. Ver **Cookies**.
 - `productPage` — etiqueta ("Uso Profesional Médico") y sellos de la ficha de
   producto, iguales para todos los productos.
 - `formConfig` — por formulario (`contacto`, `cotizacion`,
@@ -281,6 +283,17 @@ son fijos en el código, no en Tina.
   `.htaccess` que niega el acceso) solo para los contadores y los hashes de
   IP del límite.
 
+### Cookies
+
+`CookieConsentReact.tsx` (ver `specs/13-rendimiento-accesibilidad-cookies.md`)
+tiene tres vistas: `hidden`, `banner` y `settings`. Sin consentimiento guardado
+muestra el banner: una tarjeta fija abajo a la izquierda, sin overlay, que no
+bloquea la página ni atrapa el foco. "Configurar", un enlace
+`#preferencias-cookies` o el evento `open-cookie-consent` abren el modal de
+categorías, un `<dialog>` nativo con `scrollLock`. La elección se guarda en
+`localStorage["medical-digital-cookie-consent:v1"]`. En mobile el banner se
+dibuja por encima del botón de WhatsApp y de la barra fija de la ficha.
+
 ### Modo mantenimiento
 
 `BaseLayout.astro` consulta la colección `maintenance` en build time; con
@@ -370,11 +383,12 @@ con los pasos `darkest`, `dark`, `medium`, `light` y `lightest`. `DEFAULT` repit
 Fondos: `background-white` y `background-soft`. Degradados: `bg-gradient-primary`
 y `bg-gradient-overlay`. Los hex viven solo en `tailwind.config.mjs`.
 
-**Tipografías**: Rubik. Escala aprobada: `display`, `heading-h1` → `heading-h4`,
+**Tipografías**: Rubik variable, autoalojada con `@fontsource-variable/rubik`
+(se importa en `global.css` y se sirve desde `/_astro/`; no hay pedidos a
+Google Fonts). Escala aprobada: `display`, `heading-h1` → `heading-h4`,
 `subtitle`, `body-lg|md|sm`, `caption`, `overline`, `link` y `stat`, en px fijos.
-La escala provisional anterior (`heading-xxl` → `caption-sm`) y Space Mono
-(`font-mono`) siguen definidas porque hay componentes que todavía las usan; no
-forman parte del UI Kit.
+La escala provisional anterior (`heading-xxl` → `caption-sm`) sigue definida
+porque hay componentes que todavía la usan; no forma parte del UI Kit.
 
 **Botones**: variantes `btn-primary`, `btn-secondary`, `btn-inverse` (sobre
 fondo oscuro), `btn-link` y `btn-navigation` (el "Contacto" del header,
@@ -382,8 +396,12 @@ rectangular). Tamaños `btn-lg` (48px, por defecto), `btn-md` (40px) y `btn-sm`
 (32px). Cada variante funciona sin `.btn`. Estados: hover, pressed (`:active`),
 disabled (`disabled` o `aria-disabled="true"`) y el focus visible global.
 
-Pendientes de decisión de diseño: el texto blanco sobre `brand-primary-medium`
-(`btn-primary`, `btn-navigation`) y el hover de `btn-link` quedan en 4.08:1, y
+`btn-primary`, `btn-navigation` y el "Cotiza aquí" del header usan
+`brand-primary-dark` de fondo (6.3:1 con texto blanco) y `brand-primary-darkest`
+en hover: **no pongas texto blanco sobre `brand-primary-medium`**, queda en
+4.07:1.
+
+Pendientes de decisión de diseño: el hover de `btn-link` queda en 4.08:1 y
 `btn-sm` mide 32px frente al target táctil de 44×44.
 
 El botón flotante de WhatsApp usa el verde de la referencia (token `whatsapp`,
