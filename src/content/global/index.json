@@ -121,5 +121,6 @@
     "title": "Medical Digital",
     "description": "Medical Digital cuida la salud del Perú con tecnología médica de marcas líderes en diagnóstico y soporte vital."
   },
+  "analytics": { "ga4Id": "" },
   "codeInjection": { "head": "", "bodyEnd": "" }
 }

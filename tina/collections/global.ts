@@ -243,6 +243,19 @@ export const globalCollection: Collection = {
     },
     {
       type: "object",
+      name: "analytics",
+      label: "Analítica",
+      fields: [
+        {
+          name: "ga4Id",
+          label: "ID de medición de GA4",
+          description: "Formato G-XXXXXXXXXX. Vacío, no se carga Google Analytics.",
+          type: "string",
+        },
+      ],
+    },
+    {
+      type: "object",
       name: "codeInjection",
       label: "Código inyectado (analytics, píxeles)",
       description: "HTML crudo. Se inserta tal cual; un error aquí puede romper el sitio.",
