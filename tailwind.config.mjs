@@ -171,10 +171,6 @@ export default {
           '0%':   { opacity: '1', transform: 'translateY(0)' },
           '100%': { opacity: '0', transform: 'translateY(16px)' },
         },
-        'fade-up': {
-          '0%':   { opacity: '0', transform: 'translateY(16px)' },
-          '100%': { opacity: '1', transform: 'translateY(0)' },
-        },
         marquee: {
           '0%':   { transform: 'translateX(0)' },
           '100%': { transform: 'translateX(-50%)' },
@@ -187,7 +183,6 @@ export default {
         'modal-out': 'modal-out 200ms ease-in both',
         'sheet-in': 'sheet-in 300ms ease-out both',
         'sheet-out': 'sheet-out 200ms ease-in both',
-        'fade-up': 'fade-up 600ms cubic-bezier(0.22, 1, 0.36, 1) both',
         marquee: 'marquee 40s linear infinite',
       },
     },
