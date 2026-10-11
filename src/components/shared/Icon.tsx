@@ -7,7 +7,6 @@ import {
   PiGraduationCapLight,
   PiHandshakeLight,
   PiHeadsetLight,
-  PiHeartbeatLight,
   PiHeartLight,
   PiHospitalLight,
   PiLightbulbLight,
@@ -19,18 +18,19 @@ import {
   PiStethoscopeLight,
   PiTruckLight,
   PiUserLight,
-  PiWindLight,
 } from "react-icons/pi";
+import { AmbulanceSirenIcon, HeartPulseIcon, LungsIcon } from "./designIcons";
 
 const ICONS: Record<string, IconType> = {
   heart: PiHeartLight,
-  "heart-pulse": PiHeartbeatLight,
+  "heart-pulse": HeartPulseIcon,
   ambulance: PiAmbulanceLight,
+  "ambulance-siren": AmbulanceSirenIcon,
   stethoscope: PiStethoscopeLight,
   hospital: PiHospitalLight,
   "kit-medical": PiFirstAidLight,
   monitor: PiMonitorLight,
-  lungs: PiWindLight,
+  lungs: LungsIcon,
   bed: PiBedLight,
   "user-doctor": PiUserLight,
   microscope: PiMicroscopeLight,

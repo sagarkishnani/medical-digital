@@ -41,8 +41,8 @@
   "whatsappButton": { "enabled": true },
   "catalog": { "label": "Catálogo PDF · Medicina General Perú" },
   "categoryIcons": [
-    { "categorySlug": "cardiologia", "icon": "heart" },
-    { "categorySlug": "emergencia", "icon": "ambulance" },
+    { "categorySlug": "cardiologia", "icon": "heart-pulse" },
+    { "categorySlug": "emergencia", "icon": "ambulance-siren" },
     { "categorySlug": "consultorio-clinico", "icon": "stethoscope" },
     { "categorySlug": "hospitalizacion", "icon": "hospital" },
     { "categorySlug": "sala-de-operaciones", "icon": "kit-medical" },
