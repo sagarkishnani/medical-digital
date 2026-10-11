@@ -355,6 +355,9 @@ con `react-icons/fa6` (las redes se mapean en `src/components/shared/socialLinks
 y el ícono PDF es `BsFiletypePdf` (`react-icons/bs`). Cuando el
 editor elige el ícono en Tina, las opciones están en `src/lib/icons.ts` y se
 dibujan con `src/components/shared/Icon.tsx`.
+Los íconos de especialidad que entregó diseño (corazón con pulso, pulmones y
+ambulancia con sirena) viven en `src/components/shared/designIcons.ts`
+como `GenIcon` de `react-icons`, con `currentColor` (ver `specs/15-iconos-especialidades.md`).
 
 Componentes reutilizables (úsalos antes de escribir uno nuevo):
 
