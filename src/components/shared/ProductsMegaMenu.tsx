@@ -72,10 +72,12 @@ export default function ProductsMegaMenu({ id, open, categories, categoryIcons, 
               Habla con un asesor
             </button>
           </p>
-          {catalog?.label && (
+          {catalog?.label && catalog.file && (
             <a
-              {...(catalog.file ? { href: mediaUrl(catalog.file), target: "_blank", rel: "noopener noreferrer" } : {})}
-              className="flex cursor-pointer items-center gap-1.5 font-medium text-brand-secondary-dark"
+              href={mediaUrl(catalog.file)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1.5 font-medium text-brand-secondary-dark"
             >
               <BsFiletypePdf aria-hidden="true" className="h-5 w-5 text-brand-primary" />
               {catalog.label || "Catálogo PDF"}

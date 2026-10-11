@@ -43,8 +43,7 @@ export default function SiteMenu({ id, open, locale, global, categories, onNavig
   const emails = (company?.emails || []).filter(Boolean);
   const phoneDigits = (company?.phone || "").replace(/\D/g, "");
   const social = (global?.footer?.social || []).filter((item: any) => item?.url && SOCIAL_ICONS[item.network]);
-  const catalog = global?.catalog?.label ? global.catalog : null;
-  const catalogLinkProps = catalog?.file ? { href: mediaUrl(catalog.file), target: "_blank", rel: "noopener noreferrer" } : {};
+  const catalogUrl = global?.catalog?.label && global.catalog.file ? mediaUrl(global.catalog.file) : "";
   const categoryIcons = global?.categoryIcons || [];
   const iconFor = (slug: string) => categoryIcons.find((entry: any) => entry?.categorySlug === slug)?.icon;
 
@@ -59,8 +58,8 @@ export default function SiteMenu({ id, open, locale, global, categories, onNavig
   ].filter(Boolean) as { icon: IconType; content: ReactNode }[];
 
   const catalogLink = (className: string) =>
-    catalog && (
-      <a {...catalogLinkProps} className={className}>
+    catalogUrl && (
+      <a href={catalogUrl} target="_blank" rel="noopener noreferrer" className={className}>
         <BsFiletypePdf aria-hidden="true" className="h-[22px] w-[22px]" />
         <span className="lg:hidden">Descargar catálogo PDF</span>
         <span className="hidden lg:inline">Catálogo PDF</span>
@@ -200,7 +199,7 @@ export default function SiteMenu({ id, open, locale, global, categories, onNavig
             )}
           </div>
 
-          {(social.length > 0 || catalog) && (
+          {(social.length > 0 || catalogUrl) && (
             <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between lg:border-t lg:border-line lg:pt-7">
               {social.length > 0 && (
                 <ul className="flex gap-2">
@@ -223,7 +222,7 @@ export default function SiteMenu({ id, open, locale, global, categories, onNavig
                 </ul>
               )}
               {catalogLink(
-                "flex h-14 cursor-pointer items-center justify-center gap-2.5 rounded-pill border border-brand-secondary-dark px-7 text-body-md font-medium text-brand-secondary-dark transition-colors hover:bg-surface-raised lg:ml-auto",
+                "flex h-14 items-center justify-center gap-2.5 rounded-pill border border-brand-secondary-dark px-7 text-body-md font-medium text-brand-secondary-dark transition-colors hover:bg-surface-raised lg:ml-auto",
               )}
             </div>
           )}

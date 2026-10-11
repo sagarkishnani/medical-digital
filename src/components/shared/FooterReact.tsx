@@ -42,9 +42,7 @@ export default function FooterReact({ query, variables, data: initialData, local
   const complaintsBook = footer?.complaintsBook?.url && footer.complaintsBook.label ? footer.complaintsBook : null;
   const emails = (company?.emails || []).filter(Boolean);
   const phoneDigits = (company?.phone || "").replace(/\D/g, "");
-  const catalogLinkProps = catalog?.file
-    ? { href: mediaUrl(catalog.file), target: "_blank", rel: "noopener noreferrer" }
-    : {};
+  const catalogUrl = catalog?.file ? mediaUrl(catalog.file) : "";
 
   const isLastOfOddColumns = (index: number) => columns.length % 2 === 1 && index === columns.length - 1;
 
@@ -88,7 +86,7 @@ export default function FooterReact({ query, variables, data: initialData, local
   return (
     <footer className="bg-brand-secondary-dark text-white">
       <div className="container-xl flex flex-col gap-7 pb-6 pt-8 xl:gap-10 xl:pb-7 xl:pt-12">
-        {footer?.catalogTitle && (
+        {footer?.catalogTitle && catalogUrl && (
           <div className="flex flex-col gap-3.5 rounded-[20px] bg-white/5 px-4 py-5 md:flex-row md:items-center md:justify-between md:gap-6 md:rounded-2xl md:py-6 md:pl-8 md:pr-7">
             <div className="flex items-center gap-3.5 md:gap-[18px]">
               <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-lg bg-brand-primary md:h-14 md:w-14 md:rounded-[14px]">
@@ -99,7 +97,9 @@ export default function FooterReact({ query, variables, data: initialData, local
               </p>
             </div>
             <a
-              {...catalogLinkProps}
+              href={catalogUrl}
+              target="_blank"
+              rel="noopener noreferrer"
               className="btn-primary w-full md:w-auto"
               data-tina-field={tinaField(footer, "catalogButtonLabel")}
             >

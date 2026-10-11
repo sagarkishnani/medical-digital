@@ -106,7 +106,7 @@ export const globalCollection: Collection = {
       type: "object",
       name: "catalog",
       label: "Catálogo PDF",
-      description: "Sin archivo, los enlaces al catálogo se muestran pero no descargan nada.",
+      description: "Sin archivo, los enlaces al catálogo no se muestran (menú de productos, panel del menú y banner del footer).",
       fields: [
         { name: "label", label: "Texto del enlace en el menú de productos", type: "string" },
         { name: "file", label: "Archivo PDF", type: "image" },
