@@ -86,9 +86,9 @@ export default function TestimonialsReact({ query, variables, data: initialData 
         </div>
 
         <div ref={slider.viewportRef} className="overflow-hidden">
-          <ul className="-ml-6 flex">
+          <div className="-ml-6 flex">
             {items.map((item: any, index: number) => (
-              <li
+              <div
                 key={index}
                 className="min-w-0 flex-[0_0_100%] pl-6 md:flex-[0_0_50%] lg:flex-[0_0_33.333%]"
                 role="group"
@@ -121,9 +121,9 @@ export default function TestimonialsReact({ query, variables, data: initialData 
                     </span>
                   </figcaption>
                 </figure>
-              </li>
+              </div>
             ))}
-          </ul>
+          </div>
         </div>
 
         <div className="flex items-center justify-between md:hidden">
