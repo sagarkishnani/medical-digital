@@ -6,7 +6,7 @@ import type {
   CookieConsentQueryVariables,
 } from "../../../tina/__generated__/types";
 import { lockScroll, unlockScroll } from "../../utils/scrollLock";
-import { CONSENT_KEY, readConsent } from "../../utils/consent";
+import { CONSENT_EVENT, CONSENT_KEY, readConsent } from "../../utils/consent";
 
 interface Props {
   query: string;
@@ -159,6 +159,11 @@ export default function CookieConsentReact({
 
   const persistAndClose = (next: Record<string, boolean>) => {
     writeConsent(next);
+    window.dispatchEvent(
+      new CustomEvent(CONSENT_EVENT, {
+        detail: { necesaria: true, funcional: !!next.funcional, analitica: !!next.analitica },
+      })
+    );
     setConsented(true);
     setView("hidden");
   };
