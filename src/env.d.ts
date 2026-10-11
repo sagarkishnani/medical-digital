@@ -2,6 +2,7 @@
 
 interface ImportMetaEnv {
   readonly BASE_URL: string;
+  readonly SITE_INDEXABLE: boolean;
   readonly PUBLIC_FORMS_ENDPOINT?: string;
   readonly PUBLIC_TURNSTILE_SITE_KEY?: string;
 }

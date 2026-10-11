@@ -26,9 +26,17 @@ function resolveSite() {
   return PRODUCTION_SITE;
 }
 
+const site = resolveSite();
+const indexable = site === PRODUCTION_SITE;
+
+if (!indexable) console.warn(`Build no indexable (site: ${site}). Define SITE_URL para producción.`);
+
 export default defineConfig({
-  site: resolveSite(),
+  site,
   base,
+  vite: {
+    define: { 'import.meta.env.SITE_INDEXABLE': JSON.stringify(indexable) },
+  },
   image: {
     domains: [...wooImageDomains, 'i.ytimg.com'],
   },
