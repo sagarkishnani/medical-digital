@@ -1,10 +1,11 @@
-import { useState, useEffect, useCallback } from "react";
-import { useTina } from "tinacms/dist/react";
+import { useState, useEffect, useCallback, useRef } from "react";
+import { tinaField, useTina } from "tinacms/dist/react";
 import { TinaMarkdown } from "tinacms/dist/rich-text";
 import type {
   CookieConsentQuery,
   CookieConsentQueryVariables,
 } from "../../../tina/__generated__/types";
+import { lockScroll, unlockScroll } from "../../utils/scrollLock";
 
 interface Props {
   query: string;
@@ -18,6 +19,8 @@ interface Category {
   description?: string | null;
   alwaysActive?: boolean | null;
 }
+
+type View = "hidden" | "banner" | "settings";
 
 const STORAGE_KEY = "medical-digital-cookie-consent:v1";
 
@@ -62,11 +65,11 @@ function Toggle({
       disabled={disabled}
       onClick={() => !disabled && onChange?.(!on)}
       className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors ${
-        on ? "bg-[#D93B32]" : "bg-[#d1d5db]"
+        on ? "bg-accent" : "bg-greyscale-medium/35"
       } ${disabled ? "opacity-60 cursor-not-allowed" : "cursor-pointer"}`}
     >
       <span
-        className={`inline-block h-5 w-5 transform rounded-full bg-white shadow transition-transform ${
+        className={`inline-block h-5 w-5 transform rounded-full bg-surface shadow transition-transform ${
           on ? "translate-x-[22px]" : "translate-x-[2px]"
         }`}
       />
@@ -87,6 +90,9 @@ export default function CookieConsentReact({
   const cc = (data?.cookieConsent as any) || (initialData?.cookieConsent as any);
 
   const categories: Category[] = (cc?.categories || []).filter(Boolean);
+  const bannerText =
+    cc?.bannerText || "Usamos cookies para que la web funcione y, con tu permiso, para entender cómo la usas.";
+  const btnConfigure = cc?.btnConfigure || "Configurar";
   const title = cc?.title || "Personalizar las preferencias de consentimiento";
   const intro = cc?.intro;
   const showMoreText = cc?.showMoreText || "Mostrar más";
@@ -96,9 +102,11 @@ export default function CookieConsentReact({
   const btnAccept = cc?.btnAccept || "Aceptar todo";
   const alwaysActiveLabel = cc?.alwaysActiveLabel || "Siempre activa";
 
-  const [open, setOpen] = useState(false);
+  const [view, setView] = useState<View>("hidden");
+  const [consented, setConsented] = useState(true);
   const [prefs, setPrefs] = useState<Record<string, boolean>>({});
   const [expanded, setExpanded] = useState<string | null>(null);
+  const dialogRef = useRef<HTMLDialogElement>(null);
 
   /* Build the default prefs (alwaysActive forced ON, rest from saved or false) */
   const buildPrefs = useCallback(
@@ -117,11 +125,12 @@ export default function CookieConsentReact({
   useEffect(() => {
     const saved = readConsent();
     setPrefs(buildPrefs(saved));
-    if (!saved) setOpen(true);
+    setConsented(!!saved);
+    if (!saved) setView("banner");
 
-    const reopen = () => {
+    const openSettings = () => {
       setPrefs(buildPrefs(readConsent()));
-      setOpen(true);
+      setView("settings");
     };
     const onClick = (e: MouseEvent) => {
       const target = (e.target as HTMLElement)?.closest?.(
@@ -129,21 +138,39 @@ export default function CookieConsentReact({
       );
       if (target) {
         e.preventDefault();
-        reopen();
+        openSettings();
       }
     };
-    window.addEventListener("open-cookie-consent", reopen);
+    window.addEventListener("open-cookie-consent", openSettings);
     document.addEventListener("click", onClick);
     return () => {
-      window.removeEventListener("open-cookie-consent", reopen);
+      window.removeEventListener("open-cookie-consent", openSettings);
       document.removeEventListener("click", onClick);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    const dialog = dialogRef.current;
+    if (!dialog) return;
+    if (view === "settings") {
+      if (!dialog.open) dialog.showModal();
+      lockScroll();
+      return unlockScroll;
+    }
+    if (dialog.open) dialog.close();
+  }, [view]);
+
+  const openSettings = () => {
+    setPrefs(buildPrefs(readConsent()));
+    setView("settings");
+  };
+  const closeSettings = () => setView(readConsent() ? "hidden" : "banner");
+
   const persistAndClose = (next: Record<string, boolean>) => {
     writeConsent(next);
-    setOpen(false);
+    setConsented(true);
+    setView("hidden");
   };
 
   const acceptAll = () => {
@@ -162,80 +189,98 @@ export default function CookieConsentReact({
     persistAndClose(next);
   };
 
-  // An island that server-renders to `null` makes Astro's React renderer log a
-  // misleading "Invalid hook call" for every page. Rendering an empty hidden
-  // node instead keeps the build output clean and costs nothing.
-  if (!open) return <div hidden aria-hidden="true" />;
+  const showBanner = view === "banner" || (view === "settings" && !consented);
 
   return (
-    <div
-      className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50"
-      role="dialog"
-      aria-modal="true"
-      aria-label={title}
-    >
-      <div className="w-full max-w-[480px] max-h-[88vh] overflow-y-auto rounded-2xl bg-surface shadow-2xl">
-        <div className="p-5 md:p-7">
-          {/* Header */}
-          <div className="flex items-start justify-between gap-4 mb-3">
-            <h2 className="text-[#0a0a0a] text-[17px] md:text-[19px] font-medium leading-snug">
-              {title}
-            </h2>
+    <>
+      {showBanner && (
+        <div
+          role="region"
+          aria-label="Aviso de cookies"
+          className="fixed inset-x-4 bottom-[calc(88px_+_max(16px,env(safe-area-inset-bottom)))] z-[100] animate-sheet-in rounded-xl border border-line bg-surface p-5 shadow-lg md:bottom-6 md:left-6 md:right-auto md:w-[440px] max-lg:[body:has([data-mobile-bottom-bar])_&]:bottom-[calc(88px_+_max(16px,env(safe-area-inset-bottom)))]"
+        >
+          <p className="text-body-sm text-content-muted" data-tina-field={tinaField(cc, "bannerText")}>
+            {bannerText}
+          </p>
+          <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center">
             <button
               type="button"
-              onClick={() => setOpen(false)}
-              aria-label="Cerrar"
-              className="shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-[#717274] hover:bg-[#f2f3f5] transition-colors"
+              onClick={openSettings}
+              className="btn-link self-start text-body-sm font-medium sm:mr-auto sm:self-auto"
+              data-tina-field={tinaField(cc, "btnConfigure")}
             >
-              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+              {btnConfigure}
+            </button>
+            <div className="grid grid-cols-2 gap-2 sm:flex">
+              <button type="button" onClick={rejectAll} className="btn-secondary btn-md px-3 sm:px-5">
+                {btnReject}
+              </button>
+              <button type="button" onClick={acceptAll} className="btn-primary btn-md px-3 sm:px-5">
+                {btnAccept}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      <dialog
+        ref={dialogRef}
+        aria-label={title}
+        onClose={closeSettings}
+        onClick={(event) => event.target === dialogRef.current && closeSettings()}
+        className="max-h-[88vh] w-[calc(100%-2rem)] max-w-[480px] overflow-y-auto rounded-2xl bg-surface p-0 text-content shadow-2xl backdrop:bg-brand-secondary-darkest/55 open:animate-modal-in backdrop:animate-fade-in"
+      >
+        <div className="p-5 md:p-7">
+          <div className="mb-3 flex items-start justify-between gap-4">
+            <h2 className="text-subtitle text-content">{title}</h2>
+            <button
+              type="button"
+              onClick={closeSettings}
+              aria-label="Cerrar"
+              className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-content-subtle transition-colors hover:bg-surface-raised"
+            >
+              <svg className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2} aria-hidden="true">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
           </div>
 
-          {/* Intro */}
-          <div className="prose prose-sm max-w-none prose-p:text-[#3f3f3f] prose-p:text-[13px] prose-p:leading-[20px] mb-1">
+          <div className="prose prose-sm mb-1 max-w-none prose-p:text-body-sm prose-p:text-content-muted">
             {intro && <TinaMarkdown content={intro} />}
           </div>
-          <a
-            href={showMoreUrl}
-            className="text-[#D93B32] text-[13px] font-medium hover:underline"
-          >
+          <a href={showMoreUrl} className="text-body-sm font-medium text-accent hover:underline">
             {showMoreText}
           </a>
 
-          {/* Categories (accordion) */}
-          <div className="mt-4 divide-y divide-[#eceaec] border-t border-[#eceaec]">
+          <div className="mt-4 divide-y divide-line border-t border-line">
             {categories.map((c, i) => {
               const id = c.key || String(i);
               const isOpen = expanded === id;
               return (
                 <div key={id}>
                   <div className="flex items-center justify-between gap-3 py-3">
-                    {/* Name + chevron toggle the accordion */}
                     <button
                       type="button"
                       onClick={() => setExpanded(isOpen ? null : id)}
                       aria-expanded={isOpen}
-                      className="flex items-center gap-2 min-w-0 flex-1 text-left"
+                      className="flex min-w-0 flex-1 items-center gap-2 text-left"
                     >
                       <svg
-                        className={`w-3.5 h-3.5 shrink-0 text-[#717274] transition-transform duration-200 ${
+                        className={`h-3.5 w-3.5 shrink-0 text-content-subtle transition-transform duration-200 ${
                           isOpen ? "rotate-90" : ""
                         }`}
                         fill="none"
                         viewBox="0 0 24 24"
                         stroke="currentColor"
                         strokeWidth={2.5}
+                        aria-hidden="true"
                       >
                         <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
                       </svg>
-                      <span className="text-[#0a0a0a] text-[14px] font-semibold truncate">
-                        {c.name}
-                      </span>
+                      <span className="truncate text-body-sm font-semibold text-content">{c.name}</span>
                     </button>
                     {c.alwaysActive ? (
-                      <span className="shrink-0 text-[#D93B32] text-[11px] font-semibold uppercase tracking-wider">
+                      <span className="shrink-0 text-overline uppercase tracking-wider text-accent">
                         {alwaysActiveLabel}
                       </span>
                     ) : (
@@ -248,16 +293,13 @@ export default function CookieConsentReact({
                       />
                     )}
                   </div>
-                  {/* Collapsible description */}
                   <div
                     className={`grid transition-all duration-200 ease-out ${
                       isOpen ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"
                     }`}
                   >
                     <div className="overflow-hidden">
-                      <p className="text-[#717274] text-[12.5px] leading-[19px] pb-4 pl-[22px] pr-1">
-                        {c.description}
-                      </p>
+                      <p className="pb-4 pl-[22px] pr-1 text-caption text-content-muted">{c.description}</p>
                     </div>
                   </div>
                 </div>
@@ -265,32 +307,19 @@ export default function CookieConsentReact({
             })}
           </div>
 
-          {/* Buttons */}
-          <div className="mt-5 flex flex-col sm:flex-row gap-2">
-            <button
-              type="button"
-              onClick={rejectAll}
-              className="flex-1 px-4 py-2.5 rounded-[8px] border border-[#D93B32] text-[#D93B32] text-[13px] font-semibold hover:bg-[#D93B32]/[0.04] transition-colors"
-            >
-              {btnReject}
-            </button>
-            <button
-              type="button"
-              onClick={savePrefs}
-              className="flex-1 px-4 py-2.5 rounded-[8px] border border-[#D93B32] text-[#D93B32] text-[13px] font-semibold hover:bg-[#D93B32]/[0.04] transition-colors"
-            >
+          <div className="mt-5 grid grid-cols-2 gap-2">
+            <button type="button" onClick={savePrefs} className="btn-secondary btn-md col-span-2 px-3">
               {btnSave}
             </button>
-            <button
-              type="button"
-              onClick={acceptAll}
-              className="flex-1 px-4 py-2.5 rounded-[8px] bg-[#D93B32] text-white text-[13px] font-semibold hover:bg-[#A32C26] transition-colors"
-            >
+            <button type="button" onClick={rejectAll} className="btn-secondary btn-md px-3">
+              {btnReject}
+            </button>
+            <button type="button" onClick={acceptAll} className="btn-primary btn-md px-3">
               {btnAccept}
             </button>
           </div>
         </div>
-      </div>
-    </div>
+      </dialog>
+    </>
   );
 }
