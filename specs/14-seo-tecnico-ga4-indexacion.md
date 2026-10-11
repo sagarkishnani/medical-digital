@@ -207,3 +207,49 @@ Cada paso compila (`npm run build`) y se puede commitear por separado.
 - Píxeles de otras plataformas.
 
 Cada una, si llega, va en su propia spec.
+
+## Notas de implementación
+
+- **Paso 4 sin cambios de código.** `sitemap-0.xml` lista 67 URLs: las 68 páginas del build menos el 404, que `@astrojs/sitemap` ya excluye. El `filter` de `/admin` queda como estaba.
+- **`src/utils/ga4.ts` (`resolveGa4Id`).** La validación del formato vive en un módulo aparte para avisar una sola vez por build y no una por página.
+- **El ID llega al script por `<meta name="ga4-id">`.** Un `<script>` procesado por Astro no recibe props. Sin ID válido o en un build no indexable no se emite ni la meta ni el script.
+- **Un solo `page_view` por URL.** Con `ClientRouter`, `astro:page-load` también se dispara en la carga inicial; el script recuerda la última URL enviada para no duplicar. En `/productos` no hay `ClientRouter` y cuenta solo el envío inicial.
+- **Sin consentimiento también se apaga.** Al cargar una página sin "Analítica" aceptada se pone `ga-disable-<ID>` y se borran las cookies `_ga` que hubiera, por si el consentimiento se retiró en otra pestaña.
+- **Borrado de cookies.** Se intenta en el host y en cada dominio padre, porque `gtag.js` las escribe en el dominio más alto que acepta el navegador.
+- **Política de privacidad.** Se agregó la sección "4. Cookies y analítica" y "Derechos del usuario" pasó a ser la 5.
+- **`check:standard` y los builds no indexables.** El script marca como error un `robots.txt` con `Disallow: /`. El workflow de GitHub corre sin variables de Amplify, así que compila como producción y pasa; solo falla si se ejecuta sobre un build de staging.
+- **Builds de verificación.** Se hicieron con `astro build` contra el servidor local de Tina ya en marcha, no con `npm run build`: `TINA_BRANCH` apunta a TinaCloud y su índice todavía no tiene el campo `analytics`.
+
+## QA realizada
+
+Builds locales (`astro build`, catálogo real de Woo, 68 páginas):
+
+| Build | Resultado |
+|---|---|
+| `SITE_URL=https://medicaldigitalperu.com` | Sin aviso. Ninguna página con meta `robots`. `robots.txt` con `Disallow: /admin/` y `Sitemap: https://medicaldigitalperu.com/sitemap-index.xml` |
+| `AWS_APP_ID` + `AWS_BRANCH=staging` (simula staging) | Aviso `Build no indexable (site: https://staging.<app>.amplifyapp.com)`. 68 de 68 páginas con `noindex, nofollow`. `robots.txt` con `Disallow: /` y sin `Sitemap` |
+| `ga4Id` vacío | Ningún HTML menciona `googletagmanager`, `google-analytics` ni carga el script de analítica |
+| `ga4Id: "G-TEST123456"`, indexable | Las 68 páginas llevan la meta y el script |
+| `ga4Id: "G-TEST123456"`, simulando staging | Ninguna página lleva la meta ni el script |
+| `ga4Id: "UA-123"` | Un aviso en el build y ninguna página lleva la meta ni el script |
+
+Navegador (Chrome, build con `G-TEST123456` servido en local):
+
+- Sin consentimiento guardado: ningún pedido a Google y el banner visible.
+- "Aceptar todo": `gtag.js` se carga sin recargar, sale un `page_view` y un pedido a `/g/collect`, y aparecen `_ga` y `_ga_TEST123456`.
+- Home → `/nosotros` → `/contacto` con view transitions: un `page_view` por página, tres en total.
+- Carga directa de la Home y de `/productos` con "Analítica" aceptada: un solo `page_view` en cada una.
+- "Rechazar todo" desde el modal: `ga-disable-G-TEST123456` en `true`, sin cookies `_ga` y un evento de prueba posterior no genera pedido.
+- `/politicas-de-privacidad` menciona Google Analytics y el enlace sale como `href="#preferencias-cookies"`.
+- `sitemap-0.xml`: 67 URLs (Home, `/productos`, 7 categorías, 45 fichas, `/noticias`, 6 noticias, `/nosotros`, `/marcas`, `/contacto`, `/servicio-tecnico` y las dos legales), sin `/admin` ni `/404`.
+- `npm run typecheck`: sin errores. `npm run check:standard` sobre el build de producción: 0 errores y los mismos dos avisos de la SPEC 13 (17 páginas sin `og:image` y 9 imágenes sin `alt`).
+
+Pendiente, no se pudo comprobar en local:
+
+- La meta `noindex` y el `robots.txt` en el staging y en un preview de PR reales de Amplify (aquí se simularon con sus variables).
+- `npm run build` completo contra TinaCloud.
+- El campo "ID de medición de GA4" en el panel de Tina: está en el schema y en los tipos generados, pero no se abrió `/admin`.
+- Clic real en el enlace "Preferencias de cookies" de la política y el resto del comportamiento del banner (Esc, foco), que no cambió de código salvo el evento.
+- Lighthouse mobile de la Home en el preview.
+- DebugView de GA4 con el ID real, que el cliente todavía no entregó.
+- Definir `SITE_URL=https://medicaldigitalperu.com` en la rama `main` de Amplify y revisar el HTML de producción tras el primer deploy.

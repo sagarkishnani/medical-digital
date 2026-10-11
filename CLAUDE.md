@@ -25,6 +25,10 @@ los previews de PR, `<rama>.<app>.amplifyapp.com` en las ramas, con `/` → `-`)
 y fuera de Amplify cae a `https://medicaldigitalperu.com`. Solo se define para
 un dominio propio. La lógica vive en `resolveSite()` de `astro.config.mjs`.
 
+**En la rama `main` de Amplify, `SITE_URL=https://medicaldigitalperu.com` es
+obligatoria.** Sin ella el sitio resuelve a `main.<app>.amplifyapp.com` y
+producción sale con `noindex` y sin GA4. Ver **Indexación y analítica**.
+
 **`TINA_BRANCH` importa más de lo que parece.** TinaCloud indexa el contenido
 **por rama**, y el valor se hornea dentro de `tina/__generated__/client.ts` al
 correr `tinacms build`: *no* se lee en runtime. Compilar un árbol contra el
@@ -110,9 +114,10 @@ Colecciones:
   dibujan en el mega menú, el panel ☰ ni el footer), los íconos de cada categoría de Woo
   (`categoryIcons`, los usan el header y la Home) y los datos de la empresa
   (`company`: dirección, teléfono, correos, horario y `serviceEmail`, el
-  correo que muestra `/servicio-tecnico`; vacío, no se muestra) y los textos
+  correo que muestra `/servicio-tecnico`; vacío, no se muestra), los textos
   del modal de cotización (`quote`: consentimiento, línea de destino, éxito y
-  error).
+  error) y el ID de GA4 (`analytics.ga4Id`; vacío, no se carga Google
+  Analytics).
 - `home` — contenido de la portada: slider, destacados (los marca Woo),
   especialidades (categorías de Woo), "Conoce más", marcas, testimonios y
   noticias (los 3 últimos posts). Cada marca lleva `slug` (el de WooCommerce)
@@ -293,6 +298,37 @@ bloquea la página ni atrapa el foco. "Configurar", un enlace
 categorías, un `<dialog>` nativo con `scrollLock`. La elección se guarda en
 `localStorage["medical-digital-cookie-consent:v1"]`. En mobile el banner se
 dibuja por encima del botón de WhatsApp y de la barra fija de la ficha.
+
+La clave y la lectura viven en `src/utils/consent.ts` (`CONSENT_KEY`,
+`readConsent`, `hasConsent("funcional" | "analitica")`): todo script que
+dependa del consentimiento lo lee de ahí. Al guardar cualquier elección el
+banner emite `cookie-consent-change` en `window`, con
+`detail: { necesaria, funcional, analitica }`.
+
+### Indexación y analítica
+
+Ver `specs/14-seo-tecnico-ga4-indexacion.md`. `astro.config.mjs` decide una
+vez si el build es indexable (`site === PRODUCTION_SITE`) y lo expone como
+`import.meta.env.SITE_INDEXABLE`. Staging, los previews de PR y
+`main.<app>.amplifyapp.com` no lo son; el build local sí, porque cae al
+dominio de producción.
+
+Un build no indexable avisa en consola (`Build no indexable (site: …)`),
+emite `<meta name="robots" content="noindex, nofollow">` en todas las páginas,
+responde `Disallow: /` sin la línea `Sitemap` en `robots.txt` y no carga GA4.
+`npm run check:standard` falla a propósito sobre un build así.
+
+GA4 (`src/components/shared/Analytics.astro`, montado en el `<head>` de
+`BaseLayout`) usa `global.analytics.ga4Id`. Un ID que no cumpla
+`G-XXXXXXXXXX` se trata como vacío y el build avisa (`src/utils/ga4.ts`).
+`gtag.js` se pide solo con "Analítica" aceptada, al cargar o al recibir
+`cookie-consent-change`, sin recargar. El `page_view` se envía a mano
+(`send_page_view: false`): uno al cargar y uno por cada `astro:page-load`,
+sin repetir la misma URL. Al retirar el consentimiento pone
+`window["ga-disable-<ID>"]` y borra las cookies `_ga` y `_ga_*`. **No pegues
+GA4 en `codeInjection.head`**: cargaría sin consentimiento.
+
+El sitemap (`@astrojs/sitemap`) excluye `/admin`; el 404 no entra.
 
 ### Modo mantenimiento
 
