@@ -30,7 +30,7 @@ export default defineConfig({
   site: resolveSite(),
   base,
   image: {
-    domains: wooImageDomains,
+    domains: [...wooImageDomains, 'i.ytimg.com'],
   },
   prefetch: {
     prefetchAll: true,

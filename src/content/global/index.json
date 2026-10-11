@@ -12,9 +12,9 @@
     "cta": { "label": "Cotiza aquí" },
     "panel": {
       "cards": [
-        { "image": "/uploads/menu/tarjeta-productos.webp", "title": "Nuestros productos", "text": "Equipos por especialidad médica", "url": "/productos" },
-        { "image": "/uploads/menu/tarjeta-servicio-tecnico.webp", "imageAlt": "Técnico probando un desfibrilador Schiller con un analizador en el laboratorio", "title": "Servicio posventa", "text": "Mantenimiento y repuestos", "url": "/servicio-tecnico" },
-        { "image": "/uploads/menu/tarjeta-noticias.webp", "title": "Noticias", "text": "Capacitaciones y actividades", "url": "/noticias" }
+        { "image": "/uploads/menu/menu-productos.webp", "imageAlt": "Desfibriladores Schiller con su bolso de transporte y electrodos", "title": "Nuestros productos", "text": "Equipos por especialidad médica", "url": "/productos" },
+        { "image": "/uploads/menu/menu-servicio-posventa.webp", "imageAlt": "Técnico midiendo una placa electrónica con un osciloscopio", "title": "Servicio posventa", "text": "Mantenimiento y repuestos", "url": "/servicio-tecnico" },
+        { "image": "/uploads/menu/menu-noticias.webp", "imageAlt": "Médica revisando una tableta frente a un monitor con imágenes diagnósticas", "title": "Noticias", "text": "Capacitaciones y actividades", "url": "/noticias" }
       ],
       "columns": [
         {

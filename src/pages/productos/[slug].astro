@@ -12,6 +12,7 @@ import ProductCard from "../../components/productos/ProductCard.astro";
 import client from "../../../tina/__generated__/client";
 import { getRankedProducts } from "../../lib/woo/catalog";
 import { extrasFor, getProductExtras } from "../../lib/woo/extras";
+import { resolveYouTubePoster } from "../../lib/woo/youtubePoster";
 import { buildProductPage, type ProductPageData } from "../../lib/woo/productPage";
 import type { WooProduct, WooProductExtras } from "../../lib/woo/types";
 import { buildQuoteUrl } from "../../utils/whatsapp";
@@ -42,6 +43,8 @@ interface LabelWithIcon {
 const { product, extras, page } = Astro.props;
 const { details, related } = page;
 const base = import.meta.env.BASE_URL || "/";
+const videoPoster = extras.video?.kind === "youtube" ? await resolveYouTubePoster(extras.video.id) : null;
+const VIDEO_POSTER_WIDTHS = [640, 960, 1280];
 const siteUrl = new URL(base, Astro.site || "https://medicaldigitalperu.com").href;
 
 let whatsappNumber = "";
@@ -287,7 +290,20 @@ const breadcrumbLink = "-my-3 inline-block py-3";
             aria-haspopup="dialog"
             class="group relative flex aspect-video w-full items-center justify-center overflow-hidden rounded-[20px] bg-brand-secondary-dark lg:rounded-3xl"
           >
-            {extras.video.kind === "youtube" && (
+            {videoPoster ? (
+              <Image
+                src={videoPoster.src}
+                alt=""
+                width={videoPoster.width}
+                height={videoPoster.height}
+                widths={VIDEO_POSTER_WIDTHS.filter((width) => width <= videoPoster.width)}
+                sizes="(min-width: 1280px) 760px, (min-width: 1024px) 60vw, 100vw"
+                format="webp"
+                loading="lazy"
+                decoding="async"
+                class="absolute inset-0 h-full w-full object-cover"
+              />
+            ) : extras.video.kind === "youtube" && (
               <img
                 src={`https://i.ytimg.com/vi/${extras.video.id}/hqdefault.jpg`}
                 alt=""

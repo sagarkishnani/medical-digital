@@ -4,7 +4,8 @@
       "eyebrow": "Bienvenido a Medical Digital",
       "title": "Tecnología e innovación en diagnóstico médico",
       "text": "Más de 18 años equipando clínicas y hospitales del Perú con marcas líderes a nivel mundial.",
-      "image": "/uploads/home/slide-tecnologia-diagnostico.webp",
+      "image": "/uploads/home/slide-medicos-electrocardiografo.webp",
+      "imageAlt": "Médico explicando un electrocardiógrafo a un equipo de profesionales de la salud",
       "ctaLabel": "Ver productos",
       "ctaUrl": "/productos"
     },
@@ -12,7 +13,8 @@
       "eyebrow": "Servicio técnico certificado",
       "title": "Tus equipos siempre operativos",
       "text": "Mantenimiento preventivo y correctivo, repuestos originales y capacitación para tu equipo médico.",
-      "image": "/uploads/home/slide-servicio-tecnico-laboratorio.webp",
+      "image": "/uploads/home/slide-servicio-tecnico-desfibrilador.webp",
+      "imageAlt": "Técnico probando un desfibrilador con un analizador en el laboratorio",
       "ctaLabel": "Solicitar servicio",
       "ctaUrl": "/servicio-tecnico"
     },
@@ -21,6 +23,7 @@
       "title": "Aliados que confían en nosotros",
       "text": "Clínicas, hospitales y marcas líderes del mundo nos eligen como su socio en tecnología médica.",
       "image": "/uploads/home/slide-aliados.webp",
+      "imageAlt": "Representantes de Medical Digital saludando a autoridades y médicos de un hospital",
       "ctaLabel": "Conoce las marcas",
       "ctaUrl": "/marcas"
     }

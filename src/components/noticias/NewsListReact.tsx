@@ -96,7 +96,7 @@ export default function NewsListReact({ title, intro, posts, categories, emptyTe
           {featured && (
             <a
               href={featured.href}
-              className="group hidden overflow-hidden rounded-2xl bg-surface-raised transition-shadow duration-300 motion-reduce:transition-none can-hover:hover:shadow-xl md:grid lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)]"
+              className="group hidden overflow-hidden rounded-2xl bg-surface-raised transition-shadow duration-300 motion-reduce:transition-none can-hover:hover:shadow-md md:grid lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)]"
             >
               <div className="aspect-[16/10] overflow-hidden">
                 {featured.image && (

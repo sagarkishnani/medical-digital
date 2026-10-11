@@ -11,6 +11,7 @@ import {
 import { SOCIAL_ICONS, SOCIAL_NAMES } from "./socialLinks";
 import { BsFiletypePdf } from "react-icons/bs";
 import { mediaUrl } from "../../utils/mediaUrl";
+import { withBase } from "../../utils/url";
 import { tField, localizeHref } from "../../utils/i18n";
 import type { Locale } from "../../i18n/config";
 
@@ -218,15 +219,15 @@ export default function FooterReact({ query, variables, data: initialData, local
           <p data-tina-field={tinaField(footer, "legal")}>
             © {new Date().getFullYear()} {tField(footer, "legal", locale)}
           </p>
-          <p>
-            Desarrollado por{" "}
+          <p className="flex items-center gap-1.5">
+            Desarrollado por
             <a
               href={TWNSTUDIOS_CREDIT_URL}
               target="_blank"
               rel="noopener"
-              className="transition-colors duration-300 hover:text-white"
+              className="opacity-80 transition-opacity duration-300 motion-reduce:transition-none can-hover:hover:opacity-100"
             >
-              TWNSTUDIOS
+              <img src={withBase("/twnstudios-logo-white.svg")} alt="TWNSTUDIOS" width={980} height={117} className="h-3 w-auto" />
             </a>
           </p>
         </div>
