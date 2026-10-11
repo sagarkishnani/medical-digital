@@ -245,7 +245,7 @@ export default function HeaderReact({ query, variables, data: initialData, local
               type="button"
               onClick={openQuote}
               onMouseEnter={closeMegaOnLeave}
-              className="hidden min-w-[120px] shrink basis-[200px] items-center justify-center whitespace-nowrap bg-brand-primary px-4 text-nav-cta text-white transition-colors hover:bg-brand-primary-dark lg:flex"
+              className="hidden min-w-[120px] shrink basis-[200px] items-center justify-center whitespace-nowrap bg-brand-primary-dark px-4 text-nav-cta text-white transition-colors hover:bg-brand-primary-darkest lg:flex"
               data-tina-field={tinaField(nav.cta, "label")}
             >
               {tField(nav.cta, "label", locale)}
