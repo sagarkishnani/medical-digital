@@ -9,4 +9,11 @@ return [
   'fallback_email'   => '',
   'turnstile_secret' => '',
   'allowed_origins'  => [],
+
+  // Rebuild por webhook de WooCommerce (rebuild-hook.php). Con alguna vacía, el relevo responde 503.
+  // webhook_secret: openssl rand -hex 32; es el mismo que va en los webhooks de Woo.
+  'webhook_secret'   => '',
+  'github_repo'      => 'sagarkishnani/medical-digital',
+  // Token fine-grained con Contents read and write, solo sobre este repo.
+  'github_token'     => '',
 ];
