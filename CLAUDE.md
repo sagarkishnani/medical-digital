@@ -25,9 +25,11 @@ los previews de PR, `<rama>.<app>.amplifyapp.com` en las ramas, con `/` → `-`)
 y fuera de Amplify cae a `https://medicaldigitalperu.com`. Solo se define para
 un dominio propio. La lógica vive en `resolveSite()` de `astro.config.mjs`.
 
-**En la rama `main` de Amplify, `SITE_URL=https://medicaldigitalperu.com` es
-obligatoria.** Sin ella el sitio resuelve a `main.<app>.amplifyapp.com` y
-producción sale con `noindex` y sin GA4. Ver **Indexación y analítica**.
+**Producción no se compila en Amplify**, sino en GitHub Actions
+(`.github/workflows/deploy.yml`), que fija `SITE_URL=https://medicaldigitalperu.com`
+y `TINA_BRANCH=main`. Amplify queda para staging y los previews de PR: un build
+de su rama `main` resuelve a `main.<app>.amplifyapp.com` y sale con `noindex` y
+sin GA4. Ver **Producción** e **Indexación y analítica**.
 
 **`TINA_BRANCH` importa más de lo que parece.** TinaCloud indexa el contenido
 **por rama**, y el valor se hornea dentro de `tina/__generated__/client.ts` al
@@ -170,8 +172,10 @@ navegador. Ver `specs/01-catalogo-productos-woo.md` y `specs/06-ficha-producto.m
 - Las imágenes pasan por `astro:assets` (`image.domains` se deriva de
   `WOO_STORE_URL` en `astro.config.mjs`) y se sirven desde `dist/`.
 - Los productos no son componente doble: se editan en Woo, no en Tina.
-- **Un cambio en Woo no aparece hasta el siguiente deploy.** Hay que volver a
-  desplegar (push o "Redeploy" en Amplify).
+- **Un cambio en Woo no aparece hasta el siguiente deploy.** En producción lo
+  disparan los webhooks de producto (ver **Producción**); un cambio que no
+  toca ningún producto (renombrar una categoría o una marca) espera al deploy
+  diario. En staging hay que volver a desplegar ("Redeploy" en Amplify).
 
 Rutas: `/productos`, `/productos/categoria/[slug]` y `/productos/[slug]`.
 
@@ -264,8 +268,9 @@ son fijos en el código, no en Tina.
   campo, éxito, honeypot) están en `src/components/shared/FormStatus.tsx`.
   `FORM_FIELDS` y las `FORMS` del PHP deben cambiar juntas.
 - **Endpoint:** `PUBLIC_FORMS_ENDPOINT`; vacía, `send-email.php` del mismo
-  dominio. Amplify no ejecuta PHP: sin backend, el formulario valida y
-  muestra el error con WhatsApp.
+  dominio. En producción es el de `httpdocs`, junto al sitio. Amplify no
+  ejecuta PHP: en staging, sin backend, el formulario valida y muestra el
+  error con WhatsApp.
 - **Destinatarios:** colección `formConfig` → `/form-config.json` en build
   (un cambio necesita redeploy). Sin destinatarios, usa `fallback_email`.
 - **Secretos:** solo en `public/site-config.php`, que se sube a mano junto a
@@ -329,6 +334,38 @@ sin repetir la misma URL. Al retirar el consentimiento pone
 GA4 en `codeInjection.head`**: cargaría sin consentimiento.
 
 El sitemap (`@astrojs/sitemap`) excluye `/admin`; el 404 no entra.
+
+### Producción
+
+Ver `specs/16-pase-a-produccion.md` y la guía `wordpress/README.md`. El sitio
+se publica en el Plesk del cliente, en la carpeta `httpdocs` de
+`medicaldigitalperu.com`, **la misma donde vive WordPress**. Astro sirve el
+sitio público; WordPress queda para `/wp-admin/`, `/wp-json/` y
+`/wp-content/`. Staging y los previews de PR siguen en Amplify.
+
+- **Deploy:** `.github/workflows/deploy.yml` ("Deploy a producción") compila
+  `main` y sube `dist/` con `rsync` por SSH (secrets `PLESK_*`). Corre con
+  cada push a `main`, con cada webhook de producto (`repository_dispatch`,
+  tipo `woo-catalog-changed`), todos los días a las 04:00 de Lima y a mano.
+  No depende de `estandar.yml`.
+- **Raíz compartida:** en la raíz de `httpdocs` no se borra nada; `--delete`
+  solo corre dentro de las carpetas de primer nivel de `dist/`. El workflow
+  se detiene si `dist/` trae un nombre de WordPress (`wp-content`,
+  `index.php`, `wp-*.php`…): **no crees una página ni una carpeta en
+  `public/` con esos nombres.**
+- **Webhook:** `public/rebuild-hook.php` recibe los webhooks de producto de
+  WooCommerce, valida la firma con `webhook_secret` y dispara el workflow con
+  `github_token`. Las tres claves viven en `site-config.php`. No guarda nada
+  en disco.
+- **Servidor:** el `.htaccess` de `httpdocs` se edita a mano; el deploy no lo
+  toca, ni `site-config.php`, ni `data/`. Su bloque está versionado en
+  `wordpress/htaccess-astro.conf` (índice, redirecciones `301` de las URLs
+  viejas de WordPress y 404 de Astro), con la reversa en
+  `htaccess-reversa.conf` y la variante para nginx en `nginx-astro.conf`.
+  **Una ruta nueva de WordPress que deba ser pública se agrega ahí.**
+- **Prueba de humo:** al final del deploy comprueba la home, `robots.txt`,
+  `/wp-json/`, `rebuild-hook.php`, una redirección y el 404. Si falla, el job
+  queda en rojo; lo subido no se revierte solo.
 
 ### Modo mantenimiento
 
