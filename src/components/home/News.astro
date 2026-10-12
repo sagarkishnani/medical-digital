@@ -1,0 +1,34 @@
+---
+import NewsReact from "./NewsReact";
+import type { NewsPost } from "./NewsReact";
+import type { PostConnectionQuery } from "../../../tina/__generated__/types";
+import { mediaUrl } from "../../utils/mediaUrl";
+import { withBase } from "../../utils/url";
+import { formatNewsDate, readingMinutes, sortByDate } from "../../utils/news";
+
+interface Props {
+  query: string;
+  variables: object;
+  data: any;
+  posts: PostConnectionQuery;
+}
+
+const { query, variables, data } = Astro.props;
+const nodes = (Astro.props.posts.postConnection?.edges || [])
+  .map((edge) => edge?.node)
+  .filter((node): node is NonNullable<typeof node> => Boolean(node));
+
+const posts: NewsPost[] = sortByDate(nodes)
+  .slice(0, 3)
+  .map((post) => ({
+    href: withBase(`/noticias/${post._sys.filename}`),
+    title: post.title,
+    excerpt: post.excerpt || "",
+    image: post.coverImage ? mediaUrl(post.coverImage) : "",
+    tag: post.category || "",
+    date: post.date ? formatNewsDate(post.date) : "",
+    readTime: `${readingMinutes(post.body)} min`,
+  }));
+---
+
+<NewsReact query={query} variables={variables} data={data} posts={posts} client:tina />

@@ -1,0 +1,19 @@
+---
+import BrandGridReact from "./BrandGridReact";
+
+interface Section {
+  query: string;
+  variables: object;
+  data: any;
+}
+
+interface Props {
+  page: Section;
+  home: Section;
+  productCounts: Record<string, number>;
+}
+
+const { page, home, productCounts } = Astro.props;
+---
+
+<BrandGridReact page={page} home={home} productCounts={productCounts} client:tina />

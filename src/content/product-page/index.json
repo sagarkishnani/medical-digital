@@ -1,0 +1,16 @@
+{
+  "tag": {
+    "label": "Uso Profesional Médico",
+    "icon": "stethoscope"
+  },
+  "badges": [
+    {
+      "label": "Entrega e instalación",
+      "icon": "truck"
+    },
+    {
+      "label": "Capacitación incluida",
+      "icon": "graduation-cap"
+    }
+  ]
+}

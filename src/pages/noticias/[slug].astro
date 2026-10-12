@@ -1,0 +1,168 @@
+---
+import type { InferGetStaticPropsType } from "astro";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import PostBody from "../../components/blog/PostBody";
+import NewsCard from "../../components/noticias/NewsCard";
+import ShareButtonsReact from "../../components/noticias/ShareButtonsReact";
+import { toNewsCard } from "../../components/noticias/buildNewsCards";
+import client from "../../../tina/__generated__/client";
+import { mediaUrl } from "../../utils/mediaUrl";
+import { withBase } from "../../utils/url";
+import { buildAdvisorUrl } from "../../utils/whatsapp";
+import { NEWS_AUTHOR, categorySlug, formatNewsDate, readingMinutes, sortByDate } from "../../utils/news";
+
+export async function getStaticPaths() {
+  const RELATED_COUNT = 3;
+  const result = await client.queries.postConnection();
+  const posts = sortByDate(
+    (result.data?.postConnection?.edges || [])
+      .map((edge) => edge?.node)
+      .filter((node): node is NonNullable<typeof node> => Boolean(node)),
+  );
+  return posts.map((post) => ({
+    params: { slug: post._sys.filename },
+    props: {
+      post,
+      related: posts
+        .filter((item) => item._sys.filename !== post._sys.filename)
+        .slice(0, RELATED_COUNT)
+        .map(toNewsCard),
+    },
+  }));
+}
+
+type Props = InferGetStaticPropsType<typeof getStaticPaths>;
+
+const { post, related } = Astro.props;
+
+const globalResult = await client.queries.global({ relativePath: "index.json" }).catch(() => null);
+const global = globalResult?.data?.global;
+const siteUrl = Astro.site || "https://medicaldigitalperu.com";
+const canonical = new URL(Astro.url.pathname, siteUrl).href;
+
+const category = post.category || "";
+const author = post.author?.trim() || NEWS_AUTHOR;
+const date = post.date ? formatNewsDate(post.date) : "";
+const readTime = `${readingMinutes(post.body)} min`;
+const cover = mediaUrl(post.coverImage);
+const coverAbsolute = cover ? new URL(cover, siteUrl).href : "";
+const newsHref = withBase("/noticias");
+const categoryHref = `${newsHref}?categoria=${categorySlug(category)}`;
+
+const seoTitle = post.seo?.title?.trim() || `${post.title} | Medical Digital`;
+const seoDescription = post.seo?.description?.trim() || post.excerpt;
+
+const organization = {
+  "@type": "Organization",
+  name: "Medical Digital",
+  url: new URL(withBase("/"), siteUrl).href,
+  ...(global?.nav?.logo ? { logo: new URL(mediaUrl(global.nav.logo), siteUrl).href } : {}),
+};
+
+const jsonLd = [
+  {
+    "@context": "https://schema.org",
+    "@type": "BlogPosting",
+    headline: post.title,
+    description: seoDescription,
+    ...(coverAbsolute ? { image: coverAbsolute } : {}),
+    ...(post.date ? { datePublished: post.date } : {}),
+    author: post.author?.trim() ? { "@type": "Person", name: post.author.trim() } : organization,
+    publisher: organization,
+    mainEntityOfPage: canonical,
+    ...(category ? { articleSection: category } : {}),
+  },
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Inicio", item: new URL(withBase("/"), siteUrl).href },
+      { "@type": "ListItem", position: 2, name: "Noticias", item: new URL(`${newsHref}/`, siteUrl).href },
+      { "@type": "ListItem", position: 3, name: post.title },
+    ],
+  },
+];
+---
+
+<BaseLayout
+  title={seoTitle}
+  description={seoDescription}
+  ogImage={cover || undefined}
+  ogType="article"
+  article={{ publishedTime: post.date || undefined, section: category || undefined }}
+  jsonLd={jsonLd}
+>
+  <article>
+    <header class="mx-auto flex max-w-[820px] flex-col gap-3.5 px-4 pb-5 pt-6 md:gap-5 md:px-8 md:pb-10 md:pt-12">
+      <nav aria-label="Miga de pan">
+        <ol class="flex flex-wrap items-center gap-2 text-body-sm text-content-subtle">
+          <li class="hidden md:list-item"><a href={withBase("/")} class="-my-3 inline-block py-3">Inicio</a></li>
+          <li aria-hidden="true" class="hidden md:list-item">/</li>
+          <li><a href={newsHref} class="-my-3 inline-block py-3">Noticias</a></li>
+          {category && (
+            <>
+              <li aria-hidden="true">/</li>
+              <li><a href={categoryHref} class="-my-3 inline-block py-3 text-brand-secondary-dark">{category}</a></li>
+            </>
+          )}
+        </ol>
+      </nav>
+      {category && (
+        <span class="self-start rounded-pill bg-brand-tertiary-lightest px-2.5 py-1 text-caption font-medium text-brand-tertiary-dark md:px-3">
+          {category}
+        </span>
+      )}
+      <h1 class="text-heading-h2 text-brand-secondary-dark text-balance md:text-heading-h1">{post.title}</h1>
+      <div class="flex items-center justify-between gap-4 border-y border-line py-3 md:py-4">
+        <div class="flex items-center gap-2.5 md:gap-3">
+          <div aria-hidden="true" class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-brand-secondary-dark text-caption font-medium text-white md:h-11 md:w-11 md:text-body-sm">MD</div>
+          <div class="flex flex-col gap-0.5">
+            <span class="text-body-sm font-medium text-brand-secondary-dark">{author}</span>
+            <span class="text-caption text-content-subtle">
+              {post.date && <time datetime={post.date}>{date}</time>} · {readTime}<span class="hidden md:inline"> de lectura</span>
+            </span>
+          </div>
+        </div>
+        <ShareButtonsReact client:visible url={canonical} title={post.title} />
+      </div>
+    </header>
+
+    {cover && (
+      <div class="mx-auto max-w-[1120px] px-4 md:px-8">
+        <div class="aspect-[16/10] overflow-hidden rounded-xl bg-surface-raised md:aspect-[16/8] md:rounded-2xl">
+          <img src={cover} alt="" width={1120} height={560} fetchpriority="high" class="h-full w-full object-cover" />
+        </div>
+      </div>
+    )}
+
+    <div class="mx-auto flex max-w-[720px] flex-col gap-4 px-4 pb-10 pt-7 md:gap-5 md:px-8 md:pb-20 md:pt-12">
+      <p class="text-body-lg text-brand-secondary-dark md:text-heading-h4 md:font-normal">{post.excerpt}</p>
+      <PostBody content={post.body} />
+      <div class="mt-2 flex flex-col gap-3.5 rounded-xl bg-brand-secondary-dark p-5 text-white md:mt-5 md:flex-row md:items-center md:justify-between md:gap-5 md:rounded-2xl md:px-8 md:py-7">
+        <p class="text-body-lg font-medium">¿Te ayudamos a elegir el equipo ideal?</p>
+        <button
+          type="button"
+          data-quote-name="Asesoría comercial"
+          data-quote-url={buildAdvisorUrl(global?.whatsapp || "")}
+          aria-haspopup="dialog"
+          class="btn-primary shrink-0 whitespace-nowrap"
+        >
+          Hablar con un asesor
+        </button>
+      </div>
+    </div>
+  </article>
+
+  {related.length > 0 && (
+    <section class="hidden bg-surface-raised md:block" aria-labelledby="sigue-leyendo">
+      <div class="container-xl flex flex-col gap-8 py-20">
+        <h2 id="sigue-leyendo" class="text-heading-h2 text-brand-secondary-dark">Sigue leyendo</h2>
+        <ul class="grid grid-cols-2 gap-7 lg:grid-cols-3">
+          {related.map((item) => (
+            <li><NewsCard post={item} variant="related" /></li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  )}
+</BaseLayout>

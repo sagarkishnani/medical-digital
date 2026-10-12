@@ -1,9 +1,17 @@
 import { defineConfig } from "tinacms";
 import { globalCollection } from "./collections/global";
 import { homeCollection } from "./collections/home";
+import { aboutCollection } from "./collections/about";
+import { contactCollection } from "./collections/contact";
+import { serviceCollection } from "./collections/service";
+import { brandsPageCollection } from "./collections/brandsPage";
+import { legalCollection } from "./collections/legal";
 import { postCollection } from "./collections/post";
+import { newsCollection } from "./collections/news";
 import { maintenanceCollection } from "./collections/maintenance";
 import { cookieConsentCollection } from "./collections/cookieConsent";
+import { productPageCollection } from "./collections/productPage";
+import { formConfigCollection } from "./collections/formConfig";
 
 /**
  * TinaCMS schema — the single source of truth for the shape of the content.
@@ -35,9 +43,17 @@ export default defineConfig({
     collections: [
       globalCollection,
       homeCollection,
+      aboutCollection,
+      contactCollection,
+      serviceCollection,
+      brandsPageCollection,
+      legalCollection,
       postCollection,
+      newsCollection,
       maintenanceCollection,
       cookieConsentCollection,
+      productPageCollection,
+      formConfigCollection,
     ],
   },
 });

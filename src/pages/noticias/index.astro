@@ -1,0 +1,52 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import NewsListReact from "../../components/noticias/NewsListReact";
+import { toNewsCard } from "../../components/noticias/buildNewsCards";
+import client from "../../../tina/__generated__/client";
+import { NEWS_CATEGORIES } from "../../../tina/collections/post";
+import { categorySlug, sortByDate } from "../../utils/news";
+import { withBase } from "../../utils/url";
+
+const [newsResult, connectionResult] = await Promise.all([
+  client.queries.news({ relativePath: "index.json" }),
+  client.queries.postConnection(),
+]);
+
+const news = newsResult.data.news;
+const posts = sortByDate(
+  (connectionResult.data?.postConnection?.edges || [])
+    .map((edge) => edge?.node)
+    .filter((node): node is NonNullable<typeof node> => Boolean(node)),
+).map(toNewsCard);
+
+const categories = NEWS_CATEGORIES.map((label) => ({ label, slug: categorySlug(label) }));
+
+const siteUrl = Astro.site || "https://medicaldigitalperu.com";
+const breadcrumb = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  itemListElement: [
+    { "@type": "ListItem", position: 1, name: "Inicio", item: new URL(withBase("/"), siteUrl).href },
+    { "@type": "ListItem", position: 2, name: news.title },
+  ],
+};
+---
+
+<BaseLayout
+  title={news.seo?.title || `${news.title} | Medical Digital`}
+  description={news.seo?.description || news.intro || undefined}
+  viewTransitions={false}
+  jsonLd={[breadcrumb]}
+>
+  <section class="mx-auto w-full max-w-[1280px] pb-12 md:px-8 md:pb-24 md:pt-12">
+    <NewsListReact
+      client:load
+      title={news.title}
+      intro={news.intro || ""}
+      posts={posts}
+      categories={categories}
+      emptyText={news.emptyText || "Pronto publicaremos noticias en esta categoría."}
+      homeHref={withBase("/")}
+    />
+  </section>
+</BaseLayout>

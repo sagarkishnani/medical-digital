@@ -1,0 +1,13 @@
+---
+import PoliciesReact from "./PoliciesReact";
+
+interface Props {
+  query: string;
+  variables: object;
+  data: any;
+}
+
+const { query, variables, data } = Astro.props;
+---
+
+<PoliciesReact query={query} variables={variables} data={data} client:visible />

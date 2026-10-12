@@ -1,21 +1,32 @@
 ---
-/**
- * Data half of the dual-component pattern: it resolves the CMS query at BUILD
- * time and hands `{ query, variables, data }` to the React island, which wraps
- * them in useTina() so the CMS visual editor updates it live.
- */
+import { getImage } from "astro:assets";
 import HeaderReact from "./HeaderReact";
+import type { HeaderCategory } from "./HeaderReact";
 import client from "../../../tina/__generated__/client";
+import { getCategories, getProducts } from "../../lib/woo/store";
 import type { Locale } from "../../i18n/config";
 
 interface Props {
   locale: Locale;
-  theme?: "light" | "dark";
 }
 
-const { locale, theme = "dark" } = Astro.props;
+const { locale } = Astro.props;
 
-const result = await client.queries.global({ relativePath: "index.json" });
+const [result, wooCategories, products] = await Promise.all([
+  client.queries.global({ relativePath: "index.json" }),
+  getCategories(),
+  getProducts(),
+]);
+
+const categories: HeaderCategory[] = await Promise.all(
+  wooCategories
+    .filter((category) => category.count > 0)
+    .map(async ({ slug, name, count }) => {
+      const cover = products.find((product) => product.categories.some((c) => c.slug === slug))?.images[0];
+      const image = cover ? await getImage({ src: cover.src, inferSize: true, width: 128, format: "webp" }) : null;
+      return { slug, name, count, image: image?.src ?? "" };
+    }),
+);
 ---
 
 <HeaderReact
@@ -23,6 +34,7 @@ const result = await client.queries.global({ relativePath: "index.json" });
   variables={result.variables}
   data={result.data}
   locale={locale}
-  theme={theme}
+  currentPath={Astro.url.pathname}
+  categories={categories}
   client:load
 />

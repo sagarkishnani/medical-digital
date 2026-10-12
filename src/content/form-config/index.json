@@ -1,0 +1,22 @@
+{
+  "forms": [
+    {
+      "formType": "contacto",
+      "label": "Contacto",
+      "enabled": true,
+      "recipients": ["info@medicaldigitalperu.com"]
+    },
+    {
+      "formType": "cotizacion",
+      "label": "Cotización",
+      "enabled": true,
+      "recipients": ["ventas@medicaldigitalperu.com"]
+    },
+    {
+      "formType": "servicio-tecnico",
+      "label": "Servicio técnico",
+      "enabled": true,
+      "recipients": ["servicio.tecnico@medicaldigitalperu.com"]
+    }
+  ]
+}

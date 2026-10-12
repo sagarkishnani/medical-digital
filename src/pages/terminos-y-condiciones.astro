@@ -1,0 +1,8 @@
+---
+import LegalPage from "../components/legal/LegalPage.astro";
+import client from "../../tina/__generated__/client";
+
+const result = await client.queries.legal({ relativePath: "index.json" });
+---
+
+<LegalPage legalDocument={result.data.legal.terms} />

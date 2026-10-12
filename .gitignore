@@ -7,3 +7,5 @@ tina/__generated__/
 
 # PHP backend secrets — never versioned (see public/config.example.php)
 public/site-config.php
+# Contadores y límite por IP que crea send-email.php en el servidor
+public/data/

@@ -1,0 +1,13 @@
+---
+import AboutIntroReact from "./AboutIntroReact";
+
+interface Props {
+  query: string;
+  variables: object;
+  data: any;
+}
+
+const { query, variables, data } = Astro.props;
+---
+
+<AboutIntroReact query={query} variables={variables} data={data} client:tina />
