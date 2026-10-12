@@ -5,7 +5,7 @@ export const newsCollection: Collection = {
   label: "Noticias (listado)",
   path: "src/content/news",
   format: "json",
-  ui: { allowedActions: { create: false, delete: false } },
+  ui: { allowedActions: { create: false, delete: false }, router: () => "/noticias" },
   fields: [
     { name: "title", label: "Título", type: "string", required: true },
     { name: "intro", label: "Bajada", description: "Solo se muestra en desktop y tablet.", type: "string", ui: { component: "textarea" } },

@@ -5,7 +5,7 @@ export const serviceCollection: Collection = {
   label: "Servicio técnico",
   path: "src/content/service",
   format: "json",
-  ui: { allowedActions: { create: false, delete: false } },
+  ui: { allowedActions: { create: false, delete: false }, router: () => "/servicio-tecnico" },
   fields: [
     {
       type: "object",

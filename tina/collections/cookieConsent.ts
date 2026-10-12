@@ -5,7 +5,7 @@ export const cookieConsentCollection: Collection = {
   label: "Consentimiento de cookies (banner y modal)",
   path: "src/content/cookie-consent",
   format: "json",
-  ui: { allowedActions: { create: false, delete: false } },
+  ui: { allowedActions: { create: false, delete: false }, router: () => "/" },
   fields: [
     { name: "bannerText", label: "Texto del banner", type: "string", ui: { component: "textarea" } },
     { name: "btnConfigure", label: "Texto del enlace 'Configurar'", type: "string" },

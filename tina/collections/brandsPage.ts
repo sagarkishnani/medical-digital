@@ -5,7 +5,7 @@ export const brandsPageCollection: Collection = {
   label: "Marcas y reseñas",
   path: "src/content/marcas",
   format: "json",
-  ui: { allowedActions: { create: false, delete: false } },
+  ui: { allowedActions: { create: false, delete: false }, router: () => "/marcas" },
   fields: [
     {
       type: "object",

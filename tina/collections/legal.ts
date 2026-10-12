@@ -39,7 +39,7 @@ export const legalCollection: Collection = {
   label: "Legales",
   path: "src/content/legal",
   format: "json",
-  ui: { allowedActions: { create: false, delete: false } },
+  ui: { allowedActions: { create: false, delete: false }, router: () => "/terminos-y-condiciones" },
   fields: [
     { type: "object", name: "terms", label: "Términos y condiciones", fields: legalDocumentFields },
     { type: "object", name: "privacy", label: "Políticas de privacidad", fields: legalDocumentFields },
