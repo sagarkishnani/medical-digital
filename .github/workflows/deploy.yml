@@ -1,0 +1,57 @@
+name: Deploy a producción
+
+on:
+  push:
+    branches: [main]
+  repository_dispatch:
+    types: [woo-catalog-changed]
+  schedule:
+    # 04:00 en Lima (UTC-5): red de seguridad por si se pierde algún webhook de WooCommerce.
+    - cron: "0 9 * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: deploy
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Instalar dependencias
+        run: npm ci
+
+      - name: Build
+        env:
+          TINA_CLIENT_ID: ${{ secrets.TINA_CLIENT_ID }}
+          TINA_TOKEN: ${{ secrets.TINA_TOKEN }}
+          TINA_BRANCH: main
+          SITE_URL: https://medicaldigitalperu.com
+          WOO_STORE_URL: ${{ secrets.WOO_STORE_URL }}
+          WOO_CONSUMER_KEY: ${{ secrets.WOO_CONSUMER_KEY }}
+          WOO_CONSUMER_SECRET: ${{ secrets.WOO_CONSUMER_SECRET }}
+        run: npm run build
+
+      # La raíz se comparte con WordPress: un nombre suyo en dist/ acabaría en el rsync --delete de esa carpeta.
+      - name: Verificar nombres protegidos
+        working-directory: dist
+        run: |
+          shopt -s nullglob
+          protected=(wp-admin wp-content wp-includes index.php xmlrpc.php wp-*.php .well-known cgi-bin)
+          found=()
+          for name in "${protected[@]}"; do
+            if [ -e "$name" ]; then found+=("$name"); fi
+          done
+          if [ "${#found[@]}" -gt 0 ]; then
+            echo "::error::dist/ contiene nombres reservados para WordPress o el hosting: ${found[*]}"
+            exit 1
+          fi
