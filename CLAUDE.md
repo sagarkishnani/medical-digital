@@ -431,17 +431,16 @@ semánticos, y por eso el tema se puede cambiar sin tocar una sola clase.
 | Token | Para qué | Valor |
 |---|---|---|
 | `surface` | Fondo de la página | `#FFFFFF` |
-| `surface-raised` | Tarjetas | `#F7F7F8` |
-| `content` | Texto principal (azul marino de marca) | `#3A4066` |
-| `content-muted` | Texto secundario | `#3F3F3F` |
-| `content-subtle` | Metadatos | `#717274` |
-| `line` | Bordes | `#E5E7EB` |
-| `accent` | Marca legible sobre el fondo | `#B8242A` |
+| `surface-raised` | Tarjetas, footer | `#F5F5F5` |
+| `content` | Texto principal (azul marino de marca) | `#1F2B5B` |
+| `content-muted` | Texto secundario | `#4B5563` |
+| `content-subtle` | Metadatos | `#6B7280` |
+| `line` / `line-strong` | Bordes | `#E5E7EB` / `#CBD1D9` |
+| `accent` | Marca legible sobre el fondo | `#A32C26` |
 
-`content`, `content-muted` y `content-subtle` cumplen 4.5:1 sobre `surface` y
-`surface-raised`, **salvo `content-subtle` sobre `surface-raised` (4.4975:1)**:
-no lo uses para texto dentro de tarjetas hasta oscurecerlo. Si cambias
-un tono, vuelve a medir.
+Los tonos de texto cumplen 4.5:1 sobre su fondo, **salvo `content-subtle` sobre
+`surface-raised` (4.43:1)**: no lo uses para texto dentro de tarjetas o footer
+hasta oscurecerlo. Si cambias un tono, vuelve a medir.
 
 **Nunca escribas `text-white/65` ni `bg-white/5`**: asumen fondo oscuro y rompen
 el tema. Las únicas excepciones legítimas son los bloques con fondo oscuro fijo
@@ -459,30 +458,14 @@ con los pasos `darkest`, `dark`, `medium`, `light` y `lightest`. `DEFAULT` repit
 Fondos: `background-white` y `background-soft`. Degradados: `bg-gradient-primary`
 y `bg-gradient-overlay`. Los hex viven solo en `tailwind.config.mjs`.
 
-**Tipografías**: Rubik variable, autoalojada con `@fontsource-variable/rubik`
-(se importa en `global.css` y se sirve desde `/_astro/`; no hay pedidos a
-Google Fonts). Escala aprobada: `display`, `heading-h1` → `heading-h4`,
-`subtitle`, `body-lg|md|sm`, `caption`, `overline`, `link` y `stat`, en px fijos.
-La escala provisional anterior (`heading-xxl` → `caption-sm`) sigue definida
-porque hay componentes que todavía la usan; no forma parte del UI Kit.
+**Azul marino**: `brand-secondary` (`#1F2B5B`), `brand-secondary-dark`
+(`#18214A`), `brand-secondary-darkest` (`#111833`), `brand-secondary-light`
+(`#8C95B8`), `brand-secondary-lightest` (`#E6E9F2`). Son hex estimados desde el
+Figma: confírmalos con el diseño.
 
-**Botones**: variantes `btn-primary`, `btn-secondary`, `btn-inverse` (sobre
-fondo oscuro), `btn-link` y `btn-navigation` (el "Contacto" del header,
-rectangular). Tamaños `btn-lg` (48px, por defecto), `btn-md` (40px) y `btn-sm`
-(32px). Cada variante funciona sin `.btn`. Estados: hover, pressed (`:active`),
-disabled (`disabled` o `aria-disabled="true"`) y el focus visible global.
-
-`btn-primary`, `btn-navigation` y el "Cotiza aquí" del header usan
-`brand-primary-dark` de fondo (6.3:1 con texto blanco) y `brand-primary-darkest`
-en hover: **no pongas texto blanco sobre `brand-primary-medium`**, queda en
-4.07:1.
-
-Pendientes de decisión de diseño: el hover de `btn-link` queda en 4.08:1 y
-`btn-sm` mide 32px frente al target táctil de 44×44.
-
-El botón flotante de WhatsApp usa el verde de la referencia (token `whatsapp`,
-`#51C859`) por decisión de diseño: el ícono blanco queda en 2.15:1 frente al
-3:1 que pide el estándar para componentes.
+**Tipografías**: Rubik (títulos), Rubik (cuerpo),
+Space Mono (acentos técnicos). La escala está como utilidades de Tailwind
+(`heading-xxl` → `caption-sm`).
 
 
 ### Panel del CMS
