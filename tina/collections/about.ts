@@ -6,7 +6,7 @@ export const aboutCollection: Collection = {
   label: "Nosotros",
   path: "src/content/about",
   format: "json",
-  ui: { allowedActions: { create: false, delete: false } },
+  ui: { allowedActions: { create: false, delete: false }, router: () => "/nosotros" },
   fields: [
     {
       type: "object",

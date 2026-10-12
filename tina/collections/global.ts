@@ -11,7 +11,7 @@ export const globalCollection: Collection = {
   label: "Global (nav / footer / SEO)",
   path: "src/content/global",
   format: "json",
-  ui: { allowedActions: { create: false, delete: false } },
+  ui: { allowedActions: { create: false, delete: false }, router: () => "/" },
   fields: [
     {
       type: "object",

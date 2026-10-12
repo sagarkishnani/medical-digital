@@ -6,7 +6,7 @@ export const homeCollection: Collection = {
   label: "Home",
   path: "src/content/home",
   format: "json",
-  ui: { allowedActions: { create: false, delete: false } },
+  ui: { allowedActions: { create: false, delete: false }, router: () => "/" },
   fields: [
     {
       type: "object",

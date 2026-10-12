@@ -7,6 +7,7 @@ export const postCollection: Collection = {
   label: "Noticias",
   path: "src/content/blog",
   format: "mdx",
+  ui: { router: ({ document }) => `/noticias/${document._sys.filename}` },
   fields: [
     {
       name: "title",

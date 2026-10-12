@@ -5,7 +5,7 @@ export const contactCollection: Collection = {
   label: "Contacto",
   path: "src/content/contact",
   format: "json",
-  ui: { allowedActions: { create: false, delete: false } },
+  ui: { allowedActions: { create: false, delete: false }, router: () => "/contacto" },
   fields: [
     {
       type: "object",
