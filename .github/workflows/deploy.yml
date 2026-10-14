@@ -126,6 +126,9 @@ jobs:
 
           code="$(probe /producto/prueba-de-humo/)"
           expect "/producto/<slug>/ responde 301 ($code)" "$(status_is "$code" 301)"
+          if [ "$code" != "301" ]; then
+            echo "::error::El deploy sí se subió. Falta la parte definitiva de wordpress/htaccess-astro.conf en el .htaccess del servidor (wordpress/README.md, paso C3)."
+          fi
           expect "/producto/<slug>/ lleva a /productos/<slug>/" "$(grep -qiE '^location: .*/productos/prueba-de-humo/' headers.txt && echo ok || echo fail)"
 
           code="$(probe /ruta-que-no-existe-md/)"
