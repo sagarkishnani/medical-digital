@@ -3,51 +3,132 @@
     "logo": "/uploads/marca/logo-medical-digital.svg",
     "logoAlt": "Medical Digital",
     "links": [
-      { "label": "Productos", "url": "/productos", "productsMenu": true },
-      { "label": "Marcas y reseñas", "url": "/marcas" },
-      { "label": "Servicio técnico", "url": "/servicio-tecnico" },
-      { "label": "Noticias", "url": "/noticias" },
-      { "label": "Contacto", "url": "/contacto" }
+      {
+        "label": "Productos",
+        "url": "/productos",
+        "productsMenu": true
+      },
+      {
+        "label": "Marcas y reseñas",
+        "url": "/marcas"
+      },
+      {
+        "label": "Servicio técnico",
+        "url": "/servicio-tecnico"
+      },
+      {
+        "label": "Noticias",
+        "url": "/noticias"
+      },
+      {
+        "label": "Contacto",
+        "url": "/contacto"
+      }
     ],
-    "cta": { "label": "Cotiza aquí" },
+    "cta": {
+      "label": "Cotiza aquí"
+    },
     "panel": {
       "cards": [
-        { "image": "/uploads/menu/menu-productos.webp", "imageAlt": "Desfibriladores Schiller con su bolso de transporte y electrodos", "title": "Nuestros productos", "text": "Equipos por especialidad médica", "url": "/productos" },
-        { "image": "/uploads/menu/menu-servicio-posventa.webp", "imageAlt": "Técnico midiendo una placa electrónica con un osciloscopio", "title": "Servicio posventa", "text": "Mantenimiento y repuestos", "url": "/servicio-tecnico" },
-        { "image": "/uploads/menu/menu-noticias.webp", "imageAlt": "Médica revisando una tableta frente a un monitor con imágenes diagnósticas", "title": "Noticias", "text": "Capacitaciones y actividades", "url": "/noticias" }
+        {
+          "image": "/uploads/menu/menu-productos.webp",
+          "imageAlt": "Desfibriladores Schiller con su bolso de transporte y electrodos",
+          "title": "Nuestros productos",
+          "text": "Equipos por especialidad médica",
+          "url": "/productos"
+        },
+        {
+          "image": "/uploads/menu/menu-servicio-posventa.webp",
+          "imageAlt": "Técnico midiendo una placa electrónica con un osciloscopio",
+          "title": "Servicio posventa",
+          "text": "Mantenimiento y repuestos",
+          "url": "/servicio-tecnico"
+        },
+        {
+          "image": "/uploads/menu/menu-noticias.webp",
+          "imageAlt": "Médica revisando una tableta frente a un monitor con imágenes diagnósticas",
+          "title": "Noticias",
+          "text": "Capacitaciones y actividades",
+          "url": "/noticias"
+        }
       ],
       "columns": [
         {
           "title": "Sobre nosotros",
           "links": [
-            { "label": "Quiénes somos", "url": "/nosotros#quienes" },
-            { "label": "Misión y visión", "url": "/nosotros#mision" },
-            { "label": "Valores", "url": "/nosotros#valores" },
-            { "label": "Políticas", "url": "/nosotros#politicas" }
+            {
+              "label": "Quiénes somos",
+              "url": "/nosotros#quienes"
+            },
+            {
+              "label": "Misión y visión",
+              "url": "/nosotros#mision"
+            },
+            {
+              "label": "Valores",
+              "url": "/nosotros#valores"
+            },
+            {
+              "label": "Políticas",
+              "url": "/nosotros#politicas"
+            }
           ]
         },
         {
           "title": "Atención al cliente",
           "links": [
-            { "label": "Soporte técnico", "url": "/servicio-tecnico" },
-            { "label": "Contacto", "url": "/contacto" }
+            {
+              "label": "Soporte técnico",
+              "url": "/servicio-tecnico"
+            },
+            {
+              "label": "Contacto",
+              "url": "/contacto"
+            }
           ]
         }
       ],
       "contactTitle": "Contáctanos"
     }
   },
-  "search": { "placeholder": "¿Qué equipo estás buscando?" },
-  "whatsappButton": { "enabled": true },
-  "catalog": { "label": "Catálogo PDF · Medicina General Perú" },
+  "search": {
+    "placeholder": "¿Qué equipo estás buscando?"
+  },
+  "whatsappButton": {
+    "enabled": true
+  },
+  "catalog": {
+    "label": "Catálogo PDF · Medicina General Perú"
+  },
   "categoryIcons": [
-    { "categorySlug": "cardiologia", "icon": "heart-pulse" },
-    { "categorySlug": "emergencia", "icon": "ambulance-siren" },
-    { "categorySlug": "consultorio-clinico", "icon": "stethoscope" },
-    { "categorySlug": "hospitalizacion", "icon": "hospital" },
-    { "categorySlug": "sala-de-operaciones", "icon": "kit-medical" },
-    { "categorySlug": "sistemas-clinicos", "icon": "monitor" },
-    { "categorySlug": "diagnostico-respiratorio", "icon": "lungs" }
+    {
+      "categorySlug": "cardiologia",
+      "icon": "heart-pulse"
+    },
+    {
+      "categorySlug": "emergencia",
+      "icon": "ambulance-siren"
+    },
+    {
+      "categorySlug": "consultorio-clinico",
+      "icon": "stethoscope"
+    },
+    {
+      "categorySlug": "hospitalizacion",
+      "icon": "hospital"
+    },
+    {
+      "categorySlug": "sala-de-operaciones",
+      "icon": "kit-medical"
+    },
+    {
+      "categorySlug": "sistemas-clinicos",
+      "icon": "monitor"
+    },
+    {
+      "categorySlug": "diagnostico-respiratorio",
+      "icon": "lungs"
+    }
   ],
   "footer": {
     "tagline": "Más de 18 años equipando a las instituciones de salud del Perú con tecnología médica de marcas líderes.",
@@ -57,45 +138,108 @@
       {
         "title": "Productos",
         "links": [
-          { "label": "Cardiología", "url": "/productos/categoria/cardiologia" },
-          { "label": "Emergencia", "url": "/productos/categoria/emergencia" },
-          { "label": "Diagnóstico respiratorio", "url": "/productos/categoria/diagnostico-respiratorio" },
-          { "label": "Hospitalización", "url": "/productos/categoria/hospitalizacion" },
-          { "label": "Ver todos", "url": "/productos" }
+          {
+            "label": "Cardiología",
+            "url": "/productos/categoria/cardiologia"
+          },
+          {
+            "label": "Emergencia",
+            "url": "/productos/categoria/emergencia"
+          },
+          {
+            "label": "Diagnóstico respiratorio",
+            "url": "/productos/categoria/diagnostico-respiratorio"
+          },
+          {
+            "label": "Hospitalización",
+            "url": "/productos/categoria/hospitalizacion"
+          },
+          {
+            "label": "Ver todos",
+            "url": "/productos"
+          }
         ]
       },
       {
         "title": "Medical Digital",
         "links": [
-          { "label": "Nosotros", "url": "/nosotros" },
-          { "label": "Marcas y reseñas", "url": "/marcas" },
-          { "label": "Servicio técnico", "url": "/servicio-tecnico" },
-          { "label": "Noticias", "url": "/noticias" },
-          { "label": "Trabaja con nosotros", "url": "/contacto" }
+          {
+            "label": "Nosotros",
+            "url": "/nosotros"
+          },
+          {
+            "label": "Marcas y reseñas",
+            "url": "/marcas"
+          },
+          {
+            "label": "Servicio técnico",
+            "url": "/servicio-tecnico"
+          },
+          {
+            "label": "Noticias",
+            "url": "/noticias"
+          },
+          {
+            "label": "Trabaja con nosotros",
+            "url": "/contacto"
+          }
         ]
       },
       {
         "title": "Legales",
         "links": [
-          { "label": "Términos y condiciones", "url": "/terminos-y-condiciones" },
-          { "label": "Políticas de privacidad", "url": "/politicas-de-privacidad" },
-          { "label": "Devoluciones y garantías", "url": "/nosotros?politica=devoluciones-y-garantias#politicas" },
-          { "label": "Código de ética y conducta", "url": "/nosotros?politica=codigo-de-etica#politicas" }
+          {
+            "label": "Términos y condiciones",
+            "url": "/terminos-y-condiciones"
+          },
+          {
+            "label": "Políticas de privacidad",
+            "url": "/politicas-de-privacidad"
+          },
+          {
+            "label": "Devoluciones y garantías",
+            "url": "/nosotros?politica=devoluciones-y-garantias#politicas"
+          },
+          {
+            "label": "Código de ética y conducta",
+            "url": "/nosotros?politica=codigo-de-etica#politicas"
+          }
         ]
       }
     ],
     "contactTitle": "Estamos para ayudarte",
     "certificationsTitle": "Certificaciones",
     "certifications": [
-      { "code": "ISO 9001:2015", "name": "Sistema de Gestión de Calidad" },
-      { "code": "BPA", "name": "Buenas Prácticas de Almacenamiento" },
-      { "code": "ISO 13485", "name": "Dispositivos médicos" }
+      {
+        "code": "ISO 9001:2015",
+        "name": "Sistema de Gestión de Calidad"
+      },
+      {
+        "code": "BPA",
+        "name": "Buenas Prácticas de Almacenamiento"
+      },
+      {
+        "code": "ISO 13485",
+        "name": "Dispositivos médicos"
+      }
     ],
-    "complaintsBook": { "label": "Libro de Reclamaciones", "url": "" },
+    "complaintsBook": {
+      "label": "Libro de Reclamaciones",
+      "url": ""
+    },
     "social": [
-      { "network": "linkedin", "url": "https://www.linkedin.com/company/medicaldigitalpe/" },
-      { "network": "facebook", "url": "https://www.facebook.com/medicaldigital" },
-      { "network": "instagram", "url": "https://www.instagram.com/medicaldigital/" }
+      {
+        "network": "linkedin",
+        "url": "https://www.linkedin.com/company/medicaldigitalpe/"
+      },
+      {
+        "network": "facebook",
+        "url": "https://www.facebook.com/medicaldigital"
+      },
+      {
+        "network": "instagram",
+        "url": "https://www.instagram.com/medicaldigital/"
+      }
     ],
     "legal": "Medical Digital Perú · Todos los derechos reservados"
   },
@@ -113,14 +257,22 @@
   "company": {
     "address": "Las Palomas 392 #86\nSurquillo, Lima – Perú",
     "phone": "(+51) 1 222-0571",
-    "emails": ["info@medicaldigitalperu.com", "ventas@medicaldigitalperu.com"],
-    "hours": "Lunes a viernes · 8:30 a 18:00",
+    "emails": [
+      "info@medicaldigitalperu.com",
+      "ventas@medicaldigitalperu.com"
+    ],
+    "hours": "Lunes a viernes · 9:00 a 18:00",
     "serviceEmail": "servicio.tecnico@medicaldigitalperu.com"
   },
   "seo": {
     "title": "Medical Digital",
     "description": "Medical Digital cuida la salud del Perú con tecnología médica de marcas líderes en diagnóstico y soporte vital."
   },
-  "analytics": { "ga4Id": "" },
-  "codeInjection": { "head": "", "bodyEnd": "" }
+  "analytics": {
+    "ga4Id": ""
+  },
+  "codeInjection": {
+    "head": "",
+    "bodyEnd": ""
+  }
 }
