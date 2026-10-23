@@ -4,19 +4,26 @@
       "formType": "contacto",
       "label": "Contacto",
       "enabled": true,
-      "recipients": ["info@medicaldigitalperu.com"]
+      "recipients": [
+        "info@medicaldigitalperu.com",
+        "sagarkishnani67@gmail.com"
+      ]
     },
     {
       "formType": "cotizacion",
       "label": "Cotización",
       "enabled": true,
-      "recipients": ["ventas@medicaldigitalperu.com"]
+      "recipients": [
+        "ventas@medicaldigitalperu.com"
+      ]
     },
     {
       "formType": "servicio-tecnico",
       "label": "Servicio técnico",
       "enabled": true,
-      "recipients": ["servicio.tecnico@medicaldigitalperu.com"]
+      "recipients": [
+        "servicio.tecnico@medicaldigitalperu.com"
+      ]
     }
   ]
 }
