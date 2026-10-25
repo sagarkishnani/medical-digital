@@ -9,3 +9,6 @@ tina/__generated__/
 public/site-config.php
 # Contadores y límite por IP que crea send-email.php en el servidor
 public/data/
+
+# Medios procesados, uploads.json y backups de scripts/media (ver specs/17)
+.cache/
