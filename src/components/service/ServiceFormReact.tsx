@@ -25,7 +25,7 @@ interface Props {
 
 const labelClass = "flex flex-col gap-1.5 text-body-sm text-content-muted md:gap-2";
 const controlClass =
-  "w-full rounded-xl border border-line bg-surface-raised px-3.5 text-body-md text-brand-secondary-dark placeholder:text-content-muted focus:border-brand-secondary-dark focus:bg-surface focus:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 aria-[invalid=true]:border-semantics-error-dark md:px-4";
+  "w-full rounded-xl border border-line bg-surface-raised px-3.5 text-body-md text-brand-secondary-dark placeholder:text-content-subtle focus:border-brand-secondary-dark focus:bg-surface focus:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 aria-[invalid=true]:border-semantics-error-dark md:px-4";
 const inputClass = `${controlClass} h-[50px] md:h-[52px]`;
 const cardClass = "flex flex-col gap-3.5 rounded-[22px] bg-surface p-[22px] md:gap-[22px] md:rounded-[28px] md:p-12";
 

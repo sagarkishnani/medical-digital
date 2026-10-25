@@ -24,7 +24,7 @@ interface Props {
 
 const labelClass = "flex flex-col gap-2 text-body-sm text-content-muted";
 const controlClass =
-  "h-[52px] w-full rounded-lg border border-line bg-surface-raised px-4 text-body-md text-brand-secondary-dark placeholder:text-content-muted focus:border-brand-secondary-dark focus:bg-surface focus:outline-none aria-[invalid=true]:border-semantics-error-dark";
+  "h-[52px] w-full rounded-lg border border-line bg-surface-raised px-4 text-body-md text-brand-secondary-dark placeholder:text-content-subtle focus:border-brand-secondary-dark focus:bg-surface focus:outline-none aria-[invalid=true]:border-semantics-error-dark";
 const cardClass = "flex flex-col gap-3.5 rounded-2xl bg-surface p-[22px] md:gap-6 md:p-11";
 
 const FIELDS = FORM_FIELDS.contacto;
