@@ -265,8 +265,18 @@ son fijos en el código, no en Tina.
 - **Cliente:** `src/hooks/useFormSubmission.ts` valida con
   `src/utils/formValidation.ts`, maneja los estados (cargando, éxito y error)
   y llama a `src/utils/submitForm.ts`. Las piezas visuales (error junto al
-  campo, éxito, honeypot) están en `src/components/shared/FormStatus.tsx`.
-  `FORM_FIELDS` y las `FORMS` del PHP deben cambiar juntas.
+  campo, éxito, honeypot y contador de caracteres) están en
+  `src/components/shared/FormStatus.tsx`.
+- **Reglas** (ver `specs/18-validaciones-formularios.md`): obligatorio,
+  mínimo, máximo y formato de cada campo viven en `FORM_FIELDS` y en las
+  `FORMS` del PHP, que deben cambiar juntas en el mismo commit. Los inputs
+  toman su `maxLength` de `FORM_FIELDS`. Se valida al enviar y, después del
+  primer intento, cada campo al salir de él. El teléfono acepta solo dígitos
+  (7 a 11).
+- **Marca de Servicio técnico:** un `<select>` con `getBrands()` (las marcas
+  de Woo en build, orden alfabético) y "Otra marca" al final. Con "Otra
+  marca" aparece `brandOther`, y el hook envía ese texto en `brand`: el PHP
+  solo recibe `brand`.
 - **Endpoint:** `PUBLIC_FORMS_ENDPOINT`; vacía, `send-email.php` del mismo
   dominio. En producción es el de `httpdocs`, junto al sitio. Amplify no
   ejecuta PHP: en staging, sin backend, el formulario valida y muestra el
