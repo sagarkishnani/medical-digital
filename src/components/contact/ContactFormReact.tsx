@@ -1,7 +1,18 @@
+import { useState } from "react";
 import { useTina, tinaField } from "tinacms/dist/react";
-import { FieldError, FormError, FormSuccess, HoneypotField, SENDING_LABEL, fieldA11yProps } from "../shared/FormStatus";
+import {
+  CharacterCount,
+  FieldError,
+  FormError,
+  FormSuccess,
+  HoneypotField,
+  SENDING_LABEL,
+  characterCountId,
+  fieldA11yProps,
+} from "../shared/FormStatus";
 import Turnstile from "../shared/Turnstile";
 import { useFormSubmission } from "../../hooks/useFormSubmission";
+import { FORM_FIELDS } from "../../utils/formValidation";
 
 interface Props {
   query: string;
@@ -13,17 +24,22 @@ interface Props {
 
 const labelClass = "flex flex-col gap-2 text-body-sm text-content-muted";
 const controlClass =
-  "h-[52px] w-full rounded-lg border border-line bg-surface-raised px-4 text-body-md text-brand-secondary-dark focus:border-brand-secondary-dark focus:bg-surface focus:outline-none aria-[invalid=true]:border-semantics-error-dark";
+  "h-[52px] w-full rounded-lg border border-line bg-surface-raised px-4 text-body-md text-brand-secondary-dark placeholder:text-content-muted focus:border-brand-secondary-dark focus:bg-surface focus:outline-none aria-[invalid=true]:border-semantics-error-dark";
 const cardClass = "flex flex-col gap-3.5 rounded-2xl bg-surface p-[22px] md:gap-6 md:p-11";
 
+const FIELDS = FORM_FIELDS.contacto;
+const MESSAGE_MAX = FIELDS.message.maxLength;
+
 const TEXT_FIELDS = [
-  { name: "firstName", label: "Nombre", type: "text", autoComplete: "given-name", required: true },
-  { name: "lastName", label: "Apellidos", type: "text", autoComplete: "family-name", required: true },
-  { name: "phone", label: "Teléfono móvil", type: "tel", autoComplete: "tel", required: true },
-  { name: "email", label: "Correo electrónico", type: "email", autoComplete: "email", required: true },
-  { name: "position", label: "Cargo", type: "text", autoComplete: "organization-title", required: false },
-  { name: "institution", label: "Institución", type: "text", autoComplete: "organization", required: true },
+  { name: "firstName", label: "Nombre", type: "text", autoComplete: "given-name", required: true, placeholder: "Ej. María" },
+  { name: "lastName", label: "Apellidos", type: "text", autoComplete: "family-name", required: true, placeholder: "Ej. Pérez García" },
+  { name: "phone", label: "Teléfono móvil", type: "tel", autoComplete: "tel", required: true, placeholder: "Ej. 987654321" },
+  { name: "email", label: "Correo electrónico", type: "email", autoComplete: "email", required: true, placeholder: "nombre@institucion.com" },
+  { name: "position", label: "Cargo", type: "text", autoComplete: "organization-title", required: false, placeholder: "Ej. Jefe de compras" },
+  { name: "institution", label: "Institución", type: "text", autoComplete: "organization", required: true, placeholder: "Nombre de la institución" },
 ];
+
+const NUMERIC_PROPS = { inputMode: "numeric" as const, pattern: "[0-9]*" };
 
 function RequiredMark({ required }: { required: boolean }) {
   return required ? <span aria-hidden="true">*</span> : null;
@@ -31,7 +47,8 @@ function RequiredMark({ required }: { required: boolean }) {
 
 export default function ContactFormReact({ query, variables, data: initialData, specialties, whatsappUrl }: Props) {
   const { data } = useTina({ query, variables, data: initialData });
-  const { formId, status, errors, handleSubmit, clearFieldError, reset, captcha } = useFormSubmission("contacto");
+  const { formId, status, errors, handleSubmit, clearFieldError, handleBlur, reset, captcha } = useFormSubmission("contacto");
+  const [messageLength, setMessageLength] = useState(0);
   const form = data?.contact?.form;
   if (!form) return <div hidden />;
 
@@ -39,7 +56,14 @@ export default function ContactFormReact({ query, variables, data: initialData, 
     return (
       <div className={cardClass}>
         <FormSuccess title={form.successTitle || "¡Mensaje enviado!"} text={form.successText} className="py-14">
-          <button type="button" onClick={reset} className="btn-link min-h-11">
+          <button
+            type="button"
+            onClick={() => {
+              setMessageLength(0);
+              reset();
+            }}
+            className="btn-link min-h-11"
+          >
             {form.successReset || "Enviar otro mensaje"}
           </button>
         </FormSuccess>
@@ -52,7 +76,7 @@ export default function ContactFormReact({ query, variables, data: initialData, 
   const fieldId = (name: string) => `${formId}-${name}`;
 
   return (
-    <form className={`relative ${cardClass}`} noValidate onSubmit={handleSubmit} onInput={clearFieldError}>
+    <form className={`relative ${cardClass}`} noValidate onSubmit={handleSubmit} onInput={clearFieldError} onBlur={handleBlur}>
       {form.title && (
         <h2 className="text-heading-h3 text-brand-secondary-dark md:text-heading-h2" data-tina-field={tinaField(form, "title")}>
           {form.title}
@@ -74,6 +98,9 @@ export default function ContactFormReact({ query, variables, data: initialData, 
               type={field.type}
               autoComplete={field.autoComplete}
               required={field.required}
+              placeholder={field.placeholder}
+              maxLength={FIELDS[field.name].maxLength}
+              {...(field.type === "tel" ? NUMERIC_PROPS : {})}
               className={controlClass}
               {...fieldA11yProps(formId, field.name, errors[field.name])}
             />
@@ -126,11 +153,17 @@ export default function ContactFormReact({ query, variables, data: initialData, 
           <textarea
             id={fieldId("message")}
             name="message"
-            rows={4}
-            className={`${controlClass} h-[130px] resize-none py-3.5`}
-            {...fieldA11yProps(formId, "message", errors.message)}
+            rows={5}
+            maxLength={MESSAGE_MAX}
+            placeholder="Cuéntanos en qué podemos ayudarte"
+            onInput={(event) => setMessageLength(event.currentTarget.value.length)}
+            className={`${controlClass} h-[160px] resize-none py-3.5`}
+            {...fieldA11yProps(formId, "message", errors.message, characterCountId(formId, "message"))}
           />
-          <FieldError formId={formId} name="message" message={errors.message} />
+          <div className="flex items-start justify-between gap-3">
+            <FieldError formId={formId} name="message" message={errors.message} />
+            <CharacterCount formId={formId} name="message" length={messageLength} max={MESSAGE_MAX} />
+          </div>
         </div>
       </div>
 
