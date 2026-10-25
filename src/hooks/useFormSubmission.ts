@@ -1,7 +1,7 @@
 import { useCallback, useId, useState } from "react";
-import type { FormEvent } from "react";
+import type { FocusEvent, FormEvent } from "react";
 import { turnstileEnabled } from "../components/shared/Turnstile";
-import { validateForm } from "../utils/formValidation";
+import { OTHER_BRAND_VALUE, validateField, validateForm } from "../utils/formValidation";
 import type { FieldErrors, FormType, FormValues } from "../utils/formValidation";
 import { submitForm } from "../utils/submitForm";
 
@@ -22,6 +22,11 @@ function readValues(form: HTMLFormElement): { values: FormValues; honeypot: stri
   return { values, honeypot };
 }
 
+function withChosenBrand(values: FormValues): FormValues {
+  const { brandOther, ...rest } = values;
+  return rest.brand === OTHER_BRAND_VALUE ? { ...rest, brand: brandOther } : rest;
+}
+
 function focusFirstInvalid(form: HTMLFormElement, errors: FieldErrors) {
   for (const element of Array.from(form.elements)) {
     if (element instanceof HTMLElement && "name" in element && errors[element.name as string]) {
@@ -37,6 +42,7 @@ export function useFormSubmission(formType: FormType, extraValues: FormValues = 
   const [errors, setErrors] = useState<FieldErrors>({});
   const [captchaToken, setCaptchaToken] = useState("");
   const [captchaResetSignal, setCaptchaResetSignal] = useState(0);
+  const [attempted, setAttempted] = useState(false);
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -44,6 +50,7 @@ export function useFormSubmission(formType: FormType, extraValues: FormValues = 
     const form = event.currentTarget;
     const { values, honeypot } = readValues(form);
     Object.assign(values, extraValues);
+    setAttempted(true);
 
     const fieldErrors = validateForm(formType, values);
     if (turnstileEnabled && !captchaToken) fieldErrors.captcha = CAPTCHA_MESSAGE;
@@ -55,7 +62,7 @@ export function useFormSubmission(formType: FormType, extraValues: FormValues = 
 
     setErrors({});
     setStatus("sending");
-    const result = await submitForm({ formType, values, honeypot, captchaToken });
+    const result = await submitForm({ formType, values: withChosenBrand(values), honeypot, captchaToken });
     if (result.success) {
       setStatus("success");
       return;
@@ -74,8 +81,17 @@ export function useFormSubmission(formType: FormType, extraValues: FormValues = 
     setErrors(({ [name]: _cleared, ...rest }) => rest);
   };
 
+  const handleBlur = (event: FocusEvent<HTMLFormElement>) => {
+    const name = (event.target as EventTarget as HTMLInputElement).name;
+    if (!attempted || !name) return;
+    const { values } = readValues(event.currentTarget);
+    const error = validateField(formType, name, { ...values, ...extraValues });
+    setErrors(({ [name]: _previous, ...rest }) => (error ? { ...rest, [name]: error } : rest));
+  };
+
   const reset = useCallback(() => {
     setStatus("idle");
+    setAttempted(false);
     setErrors({});
     setCaptchaToken("");
   }, []);
@@ -86,6 +102,7 @@ export function useFormSubmission(formType: FormType, extraValues: FormValues = 
     errors,
     handleSubmit,
     clearFieldError,
+    handleBlur,
     reset,
     captcha: { onToken: setCaptchaToken, resetSignal: captchaResetSignal },
   };
