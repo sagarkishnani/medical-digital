@@ -1,0 +1,9 @@
+{
+  "enabled": true,
+  "campaign": "promo-1",
+  "delaySeconds": 5,
+  "title": "Conoce nuestras promociones",
+  "text": "Equipos médicos con precios especiales por tiempo limitado.",
+  "buttonLabel": "Ver productos",
+  "buttonUrl": "/productos"
+}
