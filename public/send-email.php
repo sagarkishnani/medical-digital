@@ -9,8 +9,6 @@ ini_set('display_errors', '0');
 
 const RATE_LIMIT_MAX = 5;
 const RATE_LIMIT_WINDOW = 600;
-const MAX_TEXT_LENGTH = 120;
-const MAX_MESSAGE_LENGTH = 3000;
 const MAX_LINK_LENGTH = 500;
 const DATA_DIR = __DIR__ . '/data';
 
@@ -20,51 +18,52 @@ const FORMS = [
         'prefix'  => 'CON',
         'subject' => 'Nuevo contacto web',
         'fields'  => [
-            'firstName'   => ['label' => 'Nombre', 'required' => true],
-            'lastName'    => ['label' => 'Apellidos', 'required' => true],
-            'phone'       => ['label' => 'Teléfono', 'required' => true, 'kind' => 'phone'],
-            'email'       => ['label' => 'Correo', 'required' => true, 'kind' => 'email'],
-            'position'    => ['label' => 'Cargo'],
-            'institution' => ['label' => 'Institución', 'required' => true],
-            'location'    => ['label' => 'Ubicación', 'required' => true],
-            'specialty'   => ['label' => 'Especialidad'],
-            'message'     => ['label' => 'Mensaje', 'kind' => 'message'],
+            'firstName'   => ['label' => 'Nombre', 'required' => true, 'kind' => 'name', 'min' => 3, 'max' => 50],
+            'lastName'    => ['label' => 'Apellidos', 'required' => true, 'kind' => 'name', 'min' => 3, 'max' => 100],
+            'phone'       => ['label' => 'Teléfono', 'required' => true, 'kind' => 'phone', 'max' => 11],
+            'email'       => ['label' => 'Correo', 'required' => true, 'kind' => 'email', 'max' => 100],
+            'position'    => ['label' => 'Cargo', 'min' => 3, 'max' => 50],
+            'institution' => ['label' => 'Institución', 'required' => true, 'min' => 3, 'max' => 100],
+            'location'    => ['label' => 'Ubicación', 'required' => true, 'max' => 120],
+            'specialty'   => ['label' => 'Especialidad', 'max' => 120],
+            'message'     => ['label' => 'Mensaje', 'kind' => 'message', 'min' => 10, 'max' => 500],
         ],
     ],
     'cotizacion' => [
         'prefix'  => 'COT',
         'subject' => 'Nueva solicitud de cotización',
         'fields'  => [
-            'product'     => ['label' => 'Producto', 'kind' => 'reference'],
-            'productUrl'  => ['label' => 'Enlace del producto', 'kind' => 'url'],
-            'name'        => ['label' => 'Nombre y apellido', 'required' => true],
-            'institution' => ['label' => 'Institución', 'required' => true],
-            'email'       => ['label' => 'Correo', 'required' => true, 'kind' => 'email'],
-            'phone'       => ['label' => 'Teléfono', 'required' => true, 'kind' => 'phone'],
-            'message'     => ['label' => 'Cantidad, plazo o consulta', 'kind' => 'message'],
+            'product'     => ['label' => 'Producto', 'kind' => 'reference', 'max' => MAX_LINK_LENGTH],
+            'productUrl'  => ['label' => 'Enlace del producto', 'kind' => 'url', 'max' => MAX_LINK_LENGTH],
+            'name'        => ['label' => 'Nombre y apellido', 'required' => true, 'kind' => 'name', 'min' => 3, 'max' => 100],
+            'institution' => ['label' => 'Institución', 'required' => true, 'min' => 3, 'max' => 100],
+            'email'       => ['label' => 'Correo', 'required' => true, 'kind' => 'email', 'max' => 100],
+            'phone'       => ['label' => 'Teléfono', 'required' => true, 'kind' => 'phone', 'max' => 11],
+            'message'     => ['label' => 'Cantidad, plazo o consulta', 'kind' => 'message', 'min' => 10, 'max' => 500],
         ],
     ],
     'servicio-tecnico' => [
         'prefix'  => 'SVT',
         'subject' => 'Nueva solicitud de servicio técnico',
         'fields'  => [
-            'firstName'   => ['label' => 'Nombres', 'required' => true],
-            'lastName'    => ['label' => 'Apellidos', 'required' => true],
-            'email'       => ['label' => 'Correo', 'required' => true, 'kind' => 'email'],
-            'phone'       => ['label' => 'Teléfono', 'required' => true, 'kind' => 'phone'],
-            'institution' => ['label' => 'Institución', 'required' => true],
-            'brand'       => ['label' => 'Marca', 'required' => true],
-            'model'       => ['label' => 'Modelo', 'required' => true],
-            'serial'      => ['label' => 'Serie', 'required' => true],
-            'message'     => ['label' => 'Mensaje del incidente', 'required' => true, 'kind' => 'message'],
+            'firstName'   => ['label' => 'Nombres', 'required' => true, 'kind' => 'name', 'min' => 3, 'max' => 50],
+            'lastName'    => ['label' => 'Apellidos', 'required' => true, 'kind' => 'name', 'min' => 3, 'max' => 100],
+            'email'       => ['label' => 'Correo', 'required' => true, 'kind' => 'email', 'max' => 100],
+            'phone'       => ['label' => 'Teléfono', 'required' => true, 'kind' => 'phone', 'max' => 11],
+            'institution' => ['label' => 'Institución', 'required' => true, 'min' => 3, 'max' => 100],
+            'brand'       => ['label' => 'Marca', 'required' => true, 'min' => 2, 'max' => 50],
+            'model'       => ['label' => 'Modelo', 'required' => true, 'min' => 1, 'max' => 50],
+            'serial'      => ['label' => 'Serie', 'required' => true, 'min' => 1, 'max' => 50],
+            'message'     => ['label' => 'Mensaje del incidente', 'required' => true, 'kind' => 'message', 'min' => 10, 'max' => 500],
         ],
     ],
 ];
 
 const ERROR_MESSAGES = [
     'required' => 'Este campo es obligatorio.',
+    'name'     => 'Usa solo letras, espacios, apóstrofo o guion.',
     'email'    => 'Ingresa un correo válido, por ejemplo nombre@institucion.com.',
-    'phone'    => 'Ingresa un teléfono válido, de 7 a 15 dígitos.',
+    'phone'    => 'Ingresa un teléfono válido, solo números, de 7 a 11 dígitos.',
     'consent'  => 'Debes aceptar la política de datos personales.',
 ];
 
@@ -332,12 +331,6 @@ function cleanText(string $value, bool $multiline): string
     return trim((string) preg_replace($pattern, ' ', $value));
 }
 
-function isValidPhone(string $value): bool
-{
-    $digits = strlen((string) preg_replace('/\D/', '', $value));
-    return (bool) preg_match('/^[+\d\s()-]+$/', $value) && $digits >= 7 && $digits <= 15;
-}
-
 function validateSubmission(array $fields, array $input): array
 {
     $values = [];
@@ -346,23 +339,24 @@ function validateSubmission(array $fields, array $input): array
     foreach ($fields as $name => $rule) {
         $kind = $rule['kind'] ?? 'text';
         $value = cleanText(stringValue($input[$name] ?? ''), $kind === 'message');
-        $maxLength = match ($kind) {
-            'message' => MAX_MESSAGE_LENGTH,
-            'reference', 'url' => MAX_LINK_LENGTH,
-            default => MAX_TEXT_LENGTH,
-        };
+        $minLength = $rule['min'] ?? 0;
+        $maxLength = $rule['max'];
 
         if ($kind === 'url' && $value !== '' && !preg_match('#^https?://#i', $value)) $value = '';
         if (in_array($kind, ['reference', 'url'], true)) $value = mb_substr($value, 0, $maxLength);
 
         if ($value === '') {
             if (!empty($rule['required'])) $errors[$name] = ERROR_MESSAGES['required'];
+        } elseif ($kind === 'phone') {
+            if (!preg_match('/^\d{7,11}$/', $value)) $errors[$name] = ERROR_MESSAGES['phone'];
+        } elseif (mb_strlen($value) < $minLength) {
+            $errors[$name] = "Escribe al menos {$minLength} caracteres.";
         } elseif (mb_strlen($value) > $maxLength) {
             $errors[$name] = "Escribe como máximo {$maxLength} caracteres.";
         } elseif ($kind === 'email' && !filter_var($value, FILTER_VALIDATE_EMAIL)) {
             $errors[$name] = ERROR_MESSAGES['email'];
-        } elseif ($kind === 'phone' && !isValidPhone($value)) {
-            $errors[$name] = ERROR_MESSAGES['phone'];
+        } elseif ($kind === 'name' && !preg_match("/^[\\p{L}\\s'-]+$/u", $value)) {
+            $errors[$name] = ERROR_MESSAGES['name'];
         }
         $values[$name] = $value;
     }
