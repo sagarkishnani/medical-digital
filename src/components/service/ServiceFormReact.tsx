@@ -2,12 +2,14 @@ import { useTina, tinaField } from "tinacms/dist/react";
 import { FieldError, FormError, FormSuccess, HoneypotField, SENDING_LABEL, fieldA11yProps } from "../shared/FormStatus";
 import Turnstile from "../shared/Turnstile";
 import { useFormSubmission } from "../../hooks/useFormSubmission";
+import type { WooBrand } from "../../lib/woo/types";
 
 interface Props {
   query: string;
   variables: object;
   data: any;
   whatsappUrl: string;
+  brands: WooBrand[];
 }
 
 const labelClass = "flex flex-col gap-1.5 text-body-sm text-content-muted md:gap-2";

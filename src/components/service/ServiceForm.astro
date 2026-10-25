@@ -1,14 +1,16 @@
 ---
 import ServiceFormReact from "./ServiceFormReact";
+import type { WooBrand } from "../../lib/woo/types";
 
 interface Props {
   query: string;
   variables: object;
   data: any;
   whatsappUrl: string;
+  brands: WooBrand[];
 }
 
-const { query, variables, data, whatsappUrl } = Astro.props;
+const { query, variables, data, whatsappUrl, brands } = Astro.props;
 ---
 
-<ServiceFormReact query={query} variables={variables} data={data} whatsappUrl={whatsappUrl} client:visible />
+<ServiceFormReact query={query} variables={variables} data={data} whatsappUrl={whatsappUrl} brands={brands} client:visible />

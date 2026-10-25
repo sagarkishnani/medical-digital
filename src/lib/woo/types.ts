@@ -3,6 +3,11 @@ export interface WooImage {
   alt: string;
 }
 
+export interface WooBrand {
+  slug: string;
+  name: string;
+}
+
 export interface WooCategory {
   id: number;
   name: string;
