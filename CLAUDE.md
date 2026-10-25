@@ -151,6 +151,9 @@ Colecciones:
   producto, iguales para todos los productos.
 - `formConfig` — por formulario (`contacto`, `cotizacion`,
   `servicio-tecnico`): `enabled` y `recipients[]`. Ver **Formularios**.
+- `promoPopup` — popup de promoción en todo el sitio: `enabled`,
+  `campaign`, `delaySeconds` (vacío, 5), imagen opcional, título, texto y
+  botón. Ver **Popup de promoción**.
 
 
 ### Catálogo de WooCommerce
@@ -376,6 +379,15 @@ sitio público; WordPress queda para `/wp-admin/`, `/wp-json/` y
 - **Prueba de humo:** al final del deploy comprueba la home, `robots.txt`,
   `/wp-json/`, `rebuild-hook.php`, una redirección y el 404. Si falla, el job
   queda en rojo; lo subido no se revierte solo.
+
+### Popup de promoción
+
+`PromoPopup.astro` (montado en `BaseLayout`) solo dibuja la isla con
+`enabled: true`. `PromoPopupReact` abre un `<dialog>` nativo con `scrollLock`
+a los `delaySeconds`. Al cerrarlo, o al hacer clic en el botón, guarda
+`campaign` en `localStorage["medical-digital-promo-dismissed"]` y no vuelve a
+salir hasta que `campaign` cambie en Tina. Dentro del editor de Tina se abre
+siempre y sin espera. Un cambio necesita deploy.
 
 ### Modo mantenimiento
 
