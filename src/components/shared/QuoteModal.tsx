@@ -5,6 +5,7 @@ import { PiEnvelopeSimpleLight, PiXLight } from "react-icons/pi";
 import { FieldError, FormError, FormSuccess, HoneypotField, SENDING_LABEL, fieldA11yProps } from "./FormStatus";
 import Turnstile from "./Turnstile";
 import { useFormSubmission } from "../../hooks/useFormSubmission";
+import { FORM_FIELDS } from "../../utils/formValidation";
 
 export interface QuoteProduct {
   name: string;
@@ -32,6 +33,8 @@ interface Props {
 const fieldBaseClass =
   "w-full rounded-lg border border-line bg-surface px-4 text-body-sm text-brand-secondary-dark placeholder:text-content-subtle focus:border-brand-secondary-dark focus:outline-none focus-visible:ring-0 focus-visible:ring-offset-0 aria-[invalid=true]:border-semantics-error-dark";
 
+const RULES = FORM_FIELDS.cotizacion;
+
 const FIELDS = [
   { name: "name", label: "Nombre y apellido", type: "text", autoComplete: "name" },
   { name: "institution", label: "Institución", type: "text", autoComplete: "organization" },
@@ -44,7 +47,7 @@ export default function QuoteModal({ product, texts, onClose }: Props) {
   const [shown, setShown] = useState<QuoteProduct | null>(product);
   const [closing, setClosing] = useState(false);
   const [openCount, setOpenCount] = useState(0);
-  const { formId, status, errors, handleSubmit, clearFieldError, reset, captcha } = useFormSubmission("cotizacion", {
+  const { formId, status, errors, handleSubmit, clearFieldError, handleBlur, reset, captcha } = useFormSubmission("cotizacion", {
     product: shown?.name ?? "",
     productUrl: shown?.productUrl ?? "",
   });
@@ -105,6 +108,7 @@ export default function QuoteModal({ product, texts, onClose }: Props) {
           className="relative flex flex-col gap-5 p-6 md:p-9"
           onSubmit={handleSubmit}
           onInput={clearFieldError}
+          onBlur={handleBlur}
           noValidate
         >
           <div className="flex items-start justify-between gap-4">
@@ -139,6 +143,8 @@ export default function QuoteModal({ product, texts, onClose }: Props) {
                   autoComplete={field.autoComplete}
                   required
                   placeholder={`${field.label}*`}
+                  maxLength={RULES[field.name].maxLength}
+                  {...(field.type === "tel" ? { inputMode: "numeric" as const } : {})}
                   className={`${fieldBaseClass} h-[50px]`}
                   {...fieldA11yProps(formId, field.name, errors[field.name])}
                 />
@@ -153,6 +159,7 @@ export default function QuoteModal({ product, texts, onClose }: Props) {
                 id={fieldId("message")}
                 name="message"
                 rows={3}
+                maxLength={RULES.message.maxLength}
                 placeholder="Cantidad, plazo o consulta adicional"
                 className={`${fieldBaseClass} h-24 resize-none py-3.5`}
                 {...fieldA11yProps(formId, "message", errors.message)}
