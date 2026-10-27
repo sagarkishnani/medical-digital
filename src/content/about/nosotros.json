@@ -14,7 +14,7 @@
     "imageAlt": "Especialista de Medical Digital"
   },
   "visionMission": {
-    "image": "/uploads/nosotros/vision-mision-especialista.webp",
+    "image": "/uploads/nosotros/nosotros-mision-vision-1.webp",
     "imageAlt": "Especialista de Medical Digital",
     "visionTitle": "Visión",
     "vision": "Ser la empresa líder en soluciones de equipamiento médico en el Perú, reconocida por su excelencia técnica, innovación continua y capacidad de acompañar la operación ininterrumpida de las instituciones de salud en todo el país. Buscamos transformar el servicio técnico en salud mediante tecnología, prácticas sostenibles y un equipo altamente capacitado que contribuya al bienestar y la seguridad de los pacientes.",
@@ -24,11 +24,31 @@
   "values": {
     "title": "Nuestros valores",
     "items": [
-      { "icon": "handshake", "name": "Compromiso", "text": "Acompañamos a cada institución antes, durante y después de la compra." },
-      { "icon": "shield-check", "name": "Integridad", "text": "Actuamos con ética y transparencia en cada relación comercial." },
-      { "icon": "lightbulb", "name": "Innovación", "text": "Traemos tecnología médica de vanguardia de marcas líderes." },
-      { "icon": "headset", "name": "Servicio", "text": "Soporte técnico certificado y respuesta oportuna." },
-      { "icon": "medal", "name": "Excelencia", "text": "Procesos de calidad certificados en toda la operación." }
+      {
+        "icon": "handshake",
+        "name": "Compromiso",
+        "text": "Acompañamos a cada institución antes, durante y después de la compra."
+      },
+      {
+        "icon": "shield-check",
+        "name": "Integridad",
+        "text": "Actuamos con ética y transparencia en cada relación comercial."
+      },
+      {
+        "icon": "lightbulb",
+        "name": "Innovación",
+        "text": "Traemos tecnología médica de vanguardia de marcas líderes."
+      },
+      {
+        "icon": "headset",
+        "name": "Servicio",
+        "text": "Soporte técnico certificado y respuesta oportuna."
+      },
+      {
+        "icon": "medal",
+        "name": "Excelencia",
+        "text": "Procesos de calidad certificados en toda la operación."
+      }
     ]
   },
   "policies": {
