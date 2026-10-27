@@ -1,6 +1,6 @@
 import sanitizeHtml from "sanitize-html";
 import { loadEnv } from "vite";
-import type { WooCategory, WooImage, WooProduct } from "./types";
+import type { WooBrand, WooCategory, WooImage, WooProduct } from "./types";
 
 if (!import.meta.env.SSR) {
   throw new Error("src/lib/woo/store.ts solo puede ejecutarse en build. Desde una isla no se importa.");
@@ -258,17 +258,30 @@ async function loadCategories(): Promise<WooCategory[]> {
     .map(({ id, name, slug, count }) => ({ id, name: decodeEntities(name), slug, count }));
 }
 
-async function loadBrandLogos(): Promise<Map<string, WooImage>> {
+async function loadRawBrands(): Promise<WcBrand[]> {
   const storeUrl = getStoreUrl();
-  if (!storeUrl) return new Map();
+  if (!storeUrl) return [];
 
   const { body } = await fetchJson<WcBrand[]>(storeUrl, `products/brands?per_page=${PAGE_SIZE}`);
-  return projectBrandLogos(body, storeUrl);
+  return body;
+}
+
+async function loadBrandLogos(): Promise<Map<string, WooImage>> {
+  return projectBrandLogos(await getRawBrands(), getStoreUrl());
+}
+
+async function loadBrands(): Promise<WooBrand[]> {
+  return (await getRawBrands())
+    .filter((brand) => SLUG_PATTERN.test(brand.slug) && brand.name?.trim())
+    .map(({ slug, name }) => ({ slug, name: decodeEntities(name).trim() }))
+    .sort((a, b) => a.name.localeCompare(b.name, "es"));
 }
 
 let rawProductsPromise: Promise<WcProduct[]> | undefined;
 let productsPromise: Promise<WooProduct[]> | undefined;
+let rawBrandsPromise: Promise<WcBrand[]> | undefined;
 let brandLogosPromise: Promise<Map<string, WooImage>> | undefined;
+let brandsPromise: Promise<WooBrand[]> | undefined;
 let categoriesPromise: Promise<WooCategory[]> | undefined;
 const featuredPromises = new Map<number, Promise<WooProduct[]>>();
 
@@ -277,9 +290,19 @@ function getRawProducts(): Promise<WcProduct[]> {
   return rawProductsPromise;
 }
 
+function getRawBrands(): Promise<WcBrand[]> {
+  rawBrandsPromise ??= loadRawBrands();
+  return rawBrandsPromise;
+}
+
 function getBrandLogos(): Promise<Map<string, WooImage>> {
   brandLogosPromise ??= loadBrandLogos();
   return brandLogosPromise;
+}
+
+export function getBrands(): Promise<WooBrand[]> {
+  brandsPromise ??= loadBrands();
+  return brandsPromise;
 }
 
 export function getProducts(): Promise<WooProduct[]> {

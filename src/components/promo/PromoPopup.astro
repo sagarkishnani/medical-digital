@@ -1,0 +1,21 @@
+---
+import client from "../../../tina/__generated__/client";
+import PromoPopupReact from "./PromoPopupReact";
+
+let result: Awaited<ReturnType<typeof client.queries.promoPopup>> | null = null;
+try {
+  result = await client.queries.promoPopup({ relativePath: "index.json" });
+} catch {}
+---
+
+{
+  result?.data.promoPopup.enabled && (
+    <PromoPopupReact
+      client:idle
+      transition:persist="promo-popup"
+      query={result.query}
+      variables={result.variables}
+      data={result.data}
+    />
+  )
+}

@@ -14,6 +14,7 @@ import { getLocale, tField } from "../utils/i18n";
 import { isLocale } from "../i18n/config";
 import "../styles/global.css";
 import CookieConsent from "../components/cookies/CookieConsent.astro";
+import PromoPopup from "../components/promo/PromoPopup.astro";
 import WhatsAppButton from "../components/shared/WhatsAppButton.astro";
 import Analytics from "../components/shared/Analytics.astro";
 
@@ -151,6 +152,7 @@ try {
         <Footer locale={locale} />
         {globalData?.whatsappButton?.enabled && globalData?.whatsapp && <WhatsAppButton phone={globalData.whatsapp} desktopOnly={hideWhatsAppButton} />}
         <CookieConsent />
+        <PromoPopup />
       </>
     )}
     <Fragment set:html={injectBodyEnd} />

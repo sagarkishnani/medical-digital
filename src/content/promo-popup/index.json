@@ -1,0 +1,11 @@
+{
+  "enabled": true,
+  "campaign": "promo-1",
+  "delaySeconds": 5,
+  "image": "/uploads/promo/promo-desfibriladores-schiller.webp",
+  "imageAlt": "Desfibriladores Schiller con su maletín y electrodos",
+  "title": "Conoce nuestras promociones",
+  "text": "Equipos médicos con precios especiales por tiempo limitado.",
+  "buttonLabel": "Ver productos",
+  "buttonUrl": "/productos"
+}

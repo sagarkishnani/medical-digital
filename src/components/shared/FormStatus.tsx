@@ -25,6 +25,22 @@ export function FieldError({ formId, name, message }: { formId: string; name: st
   );
 }
 
+export function characterCountId(formId: string, name: string): string {
+  return `${formId}-${name}-count`;
+}
+
+export function CharacterCount({ formId, name, length, max }: { formId: string; name: string; length: number; max: number }) {
+  return (
+    <p
+      id={characterCountId(formId, name)}
+      aria-live="polite"
+      className={`text-right text-body-sm ${length > max ? "text-semantics-error-dark" : "text-content-muted"}`}
+    >
+      {length}/{max}
+    </p>
+  );
+}
+
 export function FormError({ message, whatsappUrl }: { message: string; whatsappUrl?: string }) {
   return (
     <div role="alert" className="flex flex-col gap-2 rounded-lg bg-semantics-error-lightest px-4 py-3 text-body-sm text-semantics-error-dark">

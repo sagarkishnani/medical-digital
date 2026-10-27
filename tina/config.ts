@@ -12,6 +12,7 @@ import { maintenanceCollection } from "./collections/maintenance";
 import { cookieConsentCollection } from "./collections/cookieConsent";
 import { productPageCollection } from "./collections/productPage";
 import { formConfigCollection } from "./collections/formConfig";
+import { promoPopupCollection } from "./collections/promoPopup";
 
 /**
  * TinaCMS schema — the single source of truth for the shape of the content.
@@ -54,6 +55,7 @@ export default defineConfig({
       cookieConsentCollection,
       productPageCollection,
       formConfigCollection,
+      promoPopupCollection,
     ],
   },
 });

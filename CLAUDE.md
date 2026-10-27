@@ -151,6 +151,9 @@ Colecciones:
   producto, iguales para todos los productos.
 - `formConfig` — por formulario (`contacto`, `cotizacion`,
   `servicio-tecnico`): `enabled` y `recipients[]`. Ver **Formularios**.
+- `promoPopup` — popup de promoción en todo el sitio: `enabled`,
+  `campaign`, `delaySeconds` (vacío, 5), imagen opcional, título, texto y
+  botón. Ver **Popup de promoción**.
 
 
 ### Catálogo de WooCommerce
@@ -265,8 +268,18 @@ son fijos en el código, no en Tina.
 - **Cliente:** `src/hooks/useFormSubmission.ts` valida con
   `src/utils/formValidation.ts`, maneja los estados (cargando, éxito y error)
   y llama a `src/utils/submitForm.ts`. Las piezas visuales (error junto al
-  campo, éxito, honeypot) están en `src/components/shared/FormStatus.tsx`.
-  `FORM_FIELDS` y las `FORMS` del PHP deben cambiar juntas.
+  campo, éxito, honeypot y contador de caracteres) están en
+  `src/components/shared/FormStatus.tsx`.
+- **Reglas** (ver `specs/18-validaciones-formularios.md`): obligatorio,
+  mínimo, máximo y formato de cada campo viven en `FORM_FIELDS` y en las
+  `FORMS` del PHP, que deben cambiar juntas en el mismo commit. Los inputs
+  toman su `maxLength` de `FORM_FIELDS`. Se valida al enviar y, después del
+  primer intento, cada campo al salir de él. El teléfono acepta solo dígitos
+  (7 a 11).
+- **Marca de Servicio técnico:** un `<select>` con `getBrands()` (las marcas
+  de Woo en build, orden alfabético) y "Otra marca" al final. Con "Otra
+  marca" aparece `brandOther`, y el hook envía ese texto en `brand`: el PHP
+  solo recibe `brand`.
 - **Endpoint:** `PUBLIC_FORMS_ENDPOINT`; vacía, `send-email.php` del mismo
   dominio. En producción es el de `httpdocs`, junto al sitio. Amplify no
   ejecuta PHP: en staging, sin backend, el formulario valida y muestra el
@@ -366,6 +379,15 @@ sitio público; WordPress queda para `/wp-admin/`, `/wp-json/` y
 - **Prueba de humo:** al final del deploy comprueba la home, `robots.txt`,
   `/wp-json/`, `rebuild-hook.php`, una redirección y el 404. Si falla, el job
   queda en rojo; lo subido no se revierte solo.
+
+### Popup de promoción
+
+`PromoPopup.astro` (montado en `BaseLayout`) solo dibuja la isla con
+`enabled: true`. `PromoPopupReact` abre un `<dialog>` nativo con `scrollLock`
+a los `delaySeconds`. Al cerrarlo, o al hacer clic en el botón, guarda
+`campaign` en `localStorage["medical-digital-promo-dismissed"]` y no vuelve a
+salir hasta que `campaign` cambie en Tina. Dentro del editor de Tina se abre
+siempre y sin espera. Un cambio necesita deploy.
 
 ### Modo mantenimiento
 
