@@ -22,6 +22,7 @@ const digits = phone.replace(/\D/g, "");
         desktopOnly && "max-lg:hidden",
       ]}
     >
+      <span aria-hidden="true" class="pointer-events-none absolute inset-0 -z-10 rounded-full bg-whatsapp motion-safe:animate-whatsapp-pulse" />
       <FaWhatsapp aria-hidden="true" className="h-8 w-8" />
     </a>
   )
