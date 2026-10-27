@@ -175,6 +175,10 @@ export default {
           '0%':   { transform: 'translateX(0)' },
           '100%': { transform: 'translateX(-50%)' },
         },
+        'whatsapp-pulse': {
+          '0%':   { transform: 'scale(1)', opacity: '0.6' },
+          '70%, 100%': { transform: 'scale(1.6)', opacity: '0' },
+        },
       },
       animation: {
         'fade-in': 'fade-in 300ms ease-out both',
@@ -184,6 +188,7 @@ export default {
         'sheet-in': 'sheet-in 300ms ease-out both',
         'sheet-out': 'sheet-out 200ms ease-in both',
         marquee: 'marquee 40s linear infinite',
+        'whatsapp-pulse': 'whatsapp-pulse 2s ease-out infinite',
       },
     },
   },
