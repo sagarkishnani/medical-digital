@@ -288,11 +288,16 @@ son fijos en el código, no en Tina.
   (un cambio necesita redeploy). Sin destinatarios, usa `fallback_email`.
 - **Secretos:** solo en `public/site-config.php`, que se sube a mano junto a
   `send-email.php` y está en `.gitignore` (plantilla en
-  `public/config.example.php`). Sin ese archivo o con el SMTP vacío, el PHP
-  responde un error JSON.
-- **SMTP:** PHPMailer 7.1.1 copiado en `public/phpmailer/` (sin Composer),
-  con STARTTLS a `smtp.office365.com:587`. El buzón del cliente necesita
-  SMTP AUTH habilitado en Microsoft 365. Se envía un correo al equipo
+  `public/config.example.php`). Sin ese archivo o con alguna clave `graph_*`
+  vacía, el PHP responde un error JSON.
+- **Envío:** Microsoft Graph (`/users/<buzón>/sendMail`) con una app de Entra
+  y token de aplicación (`graph_tenant_id`, `graph_client_id`,
+  `graph_client_secret`, `graph_sender`). SMTP AUTH no sirve: el buzón tiene
+  MFA. El permiso `Application Mail.Send` se da en Exchange (RBAC for
+  Applications) con un ámbito que solo contiene el buzón remitente; **no lo
+  agregues en "Permisos de API" de Entra**, porque abriría todos los buzones.
+  El secreto vence a los 24 meses: renovarlo en Entra y en `site-config.php`.
+  El remitente se ve con el nombre del buzón en M365. Se envía un correo al equipo
   (correlativo `CON-`, `COT-` o `SVT-` y `Reply-To` del usuario) y una
   confirmación al usuario, con `Reply-To` del primer destinatario del
   formulario; si la confirmación falla, el envío igual cuenta.

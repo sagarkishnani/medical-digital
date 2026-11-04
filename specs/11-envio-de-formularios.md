@@ -325,3 +325,22 @@ return [
   - La edición en `/admin`.
   - Las fichas de producto con catálogo real (el build local va sin Woo).
 
+
+## Envío con Microsoft Graph (2026-11-03)
+
+El SMTP de Microsoft 365 nunca funcionó en producción: el buzón remitente (`importaciones@medicaldigitalperu.com`) tiene MFA y el tenant no ofrece contraseña de aplicación, así que SMTP AUTH responde `535 5.7.3`. Se reemplazó por Microsoft Graph y se retiró PHPMailer.
+
+- **App de Entra:** "Medical Digital Web - Formularios", inquilino único, sin URI de redirección y con un secreto de cliente de 24 meses. En "Permisos de API" solo tiene `User.Read` delegado.
+- **Permiso limitado al buzón:** con RBAC for Applications de Exchange Online, no en Entra.
+  - `New-ServicePrincipal` con el ID de aplicación y el **Id. de objeto de la aplicación empresarial**.
+  - `New-ManagementScope "MD Web - Buzon formularios"` con `PrimarySmtpAddress -eq 'importaciones@medicaldigitalperu.com'`.
+  - `New-ManagementRoleAssignment -Role "Application Mail.Send" -CustomResourceScope` sobre ese ámbito.
+  - `Test-ServicePrincipalAuthorization` da `InScope: True` con el buzón remitente y `False` con otro.
+- **Por qué no `Mail.Send` en Entra:** el consentimiento en Entra vale para todos los buzones del tenant. Si el secreto se filtrara, se podría enviar como cualquier persona de la empresa.
+- **PHP:** `send-email.php` pide un token de aplicación (`client_credentials`, scope `https://graph.microsoft.com/.default`) y llama a `POST /v1.0/users/{graph_sender}/sendMail` con `saveToSentItems: false`. Usa el mismo token para el correo interno y la confirmación. `httpPost` usa cURL y, sin cURL, `file_get_contents`, igual que Turnstile.
+- **Diferencias con SMTP:**
+  - Graph solo envía un cuerpo HTML (ya no hay `AltBody`).
+  - El remitente se ve con el nombre del buzón en M365, no con `from_name`. Para cambiarlo, hay que cambiar el nombre para mostrar del buzón, o usar un buzón compartido y agregarlo al ámbito.
+- **Configuración:** `graph_tenant_id`, `graph_client_id`, `graph_client_secret` (el **Valor**, no el ID del secreto) y `graph_sender` en `site-config.php`. Con alguna vacía, responde 503.
+- **Mantenimiento:** el secreto vence a los 24 meses. Hay que crear uno nuevo en Entra, cambiarlo en `site-config.php` y borrar el anterior. El permiso de Exchange puede tardar hasta 2 horas en aplicarse después de cambiarlo.
+- **Servidor:** la carpeta `phpmailer/` que quedó en `httpdocs` ya no se usa y se puede borrar a mano; el deploy no la toca porque ya no está en `dist/`.

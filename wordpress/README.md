@@ -113,7 +113,7 @@ Si pide contraseña, la clave pública no quedó bien autorizada (revisa B3). Si
 ### B5. Anotar la ruta y revisar la raíz
 
 - La ruta de deploy es la carpeta de inicio más `/httpdocs`. Ejemplo: `/var/www/vhosts/medicaldigitalperu.com/httpdocs`.
-- Mira la lista de `httpdocs`. El deploy **solo borra** dentro de estas carpetas: `_astro`, `admin`, `contacto`, `marcas`, `nosotros`, `noticias`, `phpmailer`, `politicas-de-privacidad`, `productos`, `servicio-tecnico`, `terminos-y-condiciones` y `uploads`.
+- Mira la lista de `httpdocs`. El deploy **solo borra** dentro de estas carpetas: `_astro`, `admin`, `contacto`, `marcas`, `nosotros`, `noticias`, `politicas-de-privacidad`, `productos`, `servicio-tecnico`, `terminos-y-condiciones` y `uploads`.
 - Si en `httpdocs` ya existe una carpeta con uno de esos nombres y tiene archivos que quieres conservar, **no sigas**: renómbrala o muévela primero.
 
 ### B6. Clave REST de WooCommerce (solo lectura)
@@ -165,9 +165,9 @@ Este archivo guarda los secretos del PHP. No está en git y el deploy nunca lo s
 
    | Clave | Valor |
    |---|---|
-   | `smtp_host`, `smtp_port` | `smtp.office365.com` y `587` (ya vienen) |
-   | `smtp_user`, `smtp_pass` | Buzón de Microsoft 365 que envía y su contraseña |
-   | `from_name` | `Medical Digital Web` |
+   | `graph_tenant_id`, `graph_sender` | Ya vienen: el inquilino de Medical Digital y el buzón que envía |
+   | `graph_client_id` | Id. de aplicación (cliente) de "Medical Digital Web - Formularios" en Entra |
+   | `graph_client_secret` | El **Valor** del secreto de esa app (no su ID) |
    | `fallback_email` | Correo que recibe los formularios si Tina no tiene destinatarios |
    | `turnstile_secret` | Vacío. Turnstile queda apagado |
    | `allowed_origins` | `[]`. Solo se llena si un preview de Amplify va a enviar con este PHP |
@@ -177,7 +177,7 @@ Este archivo guarda los secretos del PHP. No está en git y el deploy nunca lo s
 
 3. Súbelo a `httpdocs` con Plesk → **Archivos**. Permisos `640` o `600`.
 
-El buzón necesita **SMTP AUTH** habilitado en Microsoft 365 (Centro de administración → Usuarios → el buzón → Correo → Administrar aplicaciones de correo → "SMTP autenticado").
+La app de Entra necesita el rol `Application Mail.Send` de Exchange con un ámbito que contenga solo `graph_sender` (ver `specs/11-envio-de-formularios.md`, "Envío con Microsoft Graph"). El secreto vence a los 24 meses: anota la fecha y renuévalo antes.
 
 Comprobación: abrir `https://medicaldigitalperu.com/site-config.php` en el navegador muestra una página en blanco, nunca las claves.
 
@@ -434,5 +434,5 @@ Una imagen de `/uploads/` reemplazada con el mismo nombre puede tardar en refres
 | Una ruta inexistente responde error 500 en vez de `404` | El Apache del servidor no acepta `[R=404]` | Cambia la última regla del bloque por `RewriteRule . /404.html [L]`. Responde `200` con la página 404; anótalo para corregirlo después |
 | Una ruta inexistente muestra el 404 de WordPress | La parte definitiva no está, o quedó debajo de `# BEGIN WordPress` | Revisa C3: el bloque va arriba |
 | Algo de WordPress dejó de funcionar y su URL no empieza con `/wp-` | Un plugin usa una URL pública fuera de la lista | Agrega esa ruta a la condición `!^/(wp-json|wp-admin|wp-content|wp-includes)` del bloque y avisa para actualizar `htaccess-astro.conf` en el repo |
-| Los formularios muestran el error con WhatsApp | Falta `site-config.php`, el SMTP está vacío o el buzón no tiene SMTP AUTH | Revisa B9 y el registro de errores de PHP en Plesk |
+| Los formularios muestran el error con WhatsApp | Falta `site-config.php`, alguna clave `graph_*` está vacía, el secreto venció o la app no tiene el rol en Exchange | Revisa B9 y el registro de errores de PHP en Plesk |
 | El sitio salió con `noindex` | El workflow se editó y perdió `SITE_URL` | `SITE_URL` debe ser `https://medicaldigitalperu.com` en `deploy.yml` |
