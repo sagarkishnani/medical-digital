@@ -1,9 +1,6 @@
 <?php
 declare(strict_types=1);
 
-use PHPMailer\PHPMailer\Exception as MailerException;
-use PHPMailer\PHPMailer\PHPMailer;
-
 date_default_timezone_set('America/Lima');
 ini_set('display_errors', '0');
 
@@ -11,6 +8,7 @@ const RATE_LIMIT_MAX = 5;
 const RATE_LIMIT_WINDOW = 600;
 const MAX_LINK_LENGTH = 500;
 const DATA_DIR = __DIR__ . '/data';
+const GRAPH_URL = 'https://graph.microsoft.com/v1.0';
 
 // Debe coincidir con FORM_FIELDS de src/utils/formValidation.ts.
 const FORMS = [
@@ -94,11 +92,12 @@ if ($config === null) {
     respond(500, ['success' => false, 'error' => 'El envío de formularios no está configurado.']);
 }
 
-$smtpHost = (string) ($config['smtp_host'] ?? '');
-$smtpUser = (string) ($config['smtp_user'] ?? '');
-$smtpPass = (string) ($config['smtp_pass'] ?? '');
-if ($smtpHost === '' || $smtpUser === '' || $smtpPass === '') {
-    error_log('send-email: credenciales SMTP vacías en site-config.php');
+$graph = [];
+foreach (['tenant_id', 'client_id', 'client_secret', 'sender'] as $key) {
+    $graph[$key] = trim((string) ($config["graph_{$key}"] ?? ''));
+}
+if (in_array('', $graph, true) || !filter_var($graph['sender'], FILTER_VALIDATE_EMAIL)) {
+    error_log('send-email: credenciales de Microsoft Graph vacías en site-config.php');
     respond(503, ['success' => false, 'error' => 'El envío de formularios no está configurado.']);
 }
 
@@ -109,7 +108,7 @@ if (!is_array($input)) respond(400, ['success' => false, 'error' => 'Solicitud i
 if (stringValue($input['website'] ?? '') !== '') respond(200, ['success' => true]);
 
 $clientIp = (string) ($_SERVER['REMOTE_ADDR'] ?? '');
-if (!allowByRateLimit(hash('sha256', $clientIp . $smtpUser))) {
+if (!allowByRateLimit(hash('sha256', $clientIp . $graph['sender']))) {
     respond(429, ['success' => false, 'error' => 'Hiciste varios envíos seguidos. Inténtalo de nuevo en unos minutos.']);
 }
 
@@ -141,36 +140,29 @@ $leadName = $formType === 'cotizacion'
     ? $values['name']
     : trim($values['firstName'] . ' ' . $values['lastName']);
 $leadEmail = $values['email'];
-$fromName = (string) ($config['from_name'] ?? 'Medical Digital Web');
 $siteUrl = siteUrl();
 
-require __DIR__ . '/phpmailer/Exception.php';
-require __DIR__ . '/phpmailer/PHPMailer.php';
-require __DIR__ . '/phpmailer/SMTP.php';
-
 try {
-    $mail = createMailer($config, $fromName);
-    foreach ($recipients as $recipient) $mail->addAddress($recipient);
-    $mail->addReplyTo($leadEmail, $leadName);
-    $mail->Subject = "{$form['subject']} [{$correlativo}] - {$leadName}";
-    $rows = emailRows($form['fields'], $values);
-    $mail->Body = internalEmailHtml($form['subject'], $correlativo, $rows, $siteUrl);
-    $mail->AltBody = internalEmailText($form['subject'], $correlativo, $rows);
-    $mail->send();
-} catch (MailerException $exception) {
+    $token = graphToken($graph);
+    graphSendMail($token, $graph['sender'], [
+        'subject'      => "{$form['subject']} [{$correlativo}] - {$leadName}",
+        'body'         => ['contentType' => 'HTML', 'content' => internalEmailHtml($form['subject'], $correlativo, emailRows($form['fields'], $values), $siteUrl)],
+        'toRecipients' => array_map(fn ($recipient) => graphAddress($recipient), $recipients),
+        'replyTo'      => [graphAddress($leadEmail, $leadName)],
+    ]);
+} catch (RuntimeException $exception) {
     error_log('send-email: ' . $exception->getMessage());
     respond(500, ['success' => false, 'error' => 'No se pudo enviar el formulario.']);
 }
 
 try {
-    $confirmation = createMailer($config, 'Medical Digital');
-    $confirmation->addAddress($leadEmail, $leadName);
-    $confirmation->addReplyTo($recipients[0]);
-    $confirmation->Subject = "Recibimos tu solicitud [{$correlativo}] — Medical Digital";
-    $confirmation->Body = confirmationEmailHtml($leadName, $correlativo, $siteUrl);
-    $confirmation->AltBody = confirmationEmailText($leadName, $correlativo, $siteUrl);
-    $confirmation->send();
-} catch (MailerException $exception) {
+    graphSendMail($token, $graph['sender'], [
+        'subject'      => "Recibimos tu solicitud [{$correlativo}] — Medical Digital",
+        'body'         => ['contentType' => 'HTML', 'content' => confirmationEmailHtml($leadName, $correlativo, $siteUrl)],
+        'toRecipients' => [graphAddress($leadEmail, $leadName)],
+        'replyTo'      => [graphAddress($recipients[0])],
+    ]);
+} catch (RuntimeException $exception) {
     // La confirmación es cortesía: si falla, el envío al equipo ya salió y cuenta como éxito.
     error_log('send-email (confirmación): ' . $exception->getMessage());
 }
@@ -279,34 +271,86 @@ function verifyTurnstile(string $secret, string $token, string $remoteIp): bool
 
     $fields = ['secret' => $secret, 'response' => $token];
     if ($remoteIp !== '') $fields['remoteip'] = $remoteIp;
-    $url = 'https://challenges.cloudflare.com/turnstile/v0/siteverify';
+    [$status, $response] = httpPost(
+        'https://challenges.cloudflare.com/turnstile/v0/siteverify',
+        ['Content-Type: application/x-www-form-urlencoded'],
+        http_build_query($fields),
+    );
+    if ($status !== 200) return false;
 
+    $data = json_decode($response, true);
+    return is_array($data) && !empty($data['success']);
+}
+
+// Devuelve [código HTTP, cuerpo]; un fallo de red es [0, ''].
+function httpPost(string $url, array $headers, string $body): array
+{
     if (function_exists('curl_init')) {
         $curl = curl_init($url);
         curl_setopt_array($curl, [
             CURLOPT_POST           => true,
-            CURLOPT_POSTFIELDS     => http_build_query($fields),
+            CURLOPT_HTTPHEADER     => $headers,
+            CURLOPT_POSTFIELDS     => $body,
             CURLOPT_RETURNTRANSFER => true,
             CURLOPT_CONNECTTIMEOUT => 5,
-            CURLOPT_TIMEOUT        => 10,
+            CURLOPT_TIMEOUT        => 15,
         ]);
         $response = curl_exec($curl);
+        $status = (int) curl_getinfo($curl, CURLINFO_RESPONSE_CODE);
         $failed = $response === false || curl_errno($curl) !== 0;
-        curl_close($curl);
-        if ($failed) return false;
-    } else {
-        $context = stream_context_create(['http' => [
-            'method'  => 'POST',
-            'header'  => 'Content-Type: application/x-www-form-urlencoded',
-            'content' => http_build_query($fields),
-            'timeout' => 10,
-        ]]);
-        $response = @file_get_contents($url, false, $context);
-        if ($response === false) return false;
+        return $failed ? [0, ''] : [$status, (string) $response];
     }
 
-    $data = json_decode((string) $response, true);
-    return is_array($data) && !empty($data['success']);
+    $context = stream_context_create(['http' => [
+        'method'        => 'POST',
+        'header'        => implode("\r\n", $headers),
+        'content'       => $body,
+        'timeout'       => 15,
+        'ignore_errors' => true,
+    ]]);
+    $response = @file_get_contents($url, false, $context);
+    if ($response === false) return [0, ''];
+    preg_match('#^HTTP/\S+\s+(\d{3})#', (string) ($http_response_header[0] ?? ''), $match);
+    return [(int) ($match[1] ?? 0), $response];
+}
+
+// Token de aplicación (client credentials). El permiso Mail.Send está limitado al buzón
+// remitente con RBAC de Exchange, no en Entra: ver specs/11-envio-de-formularios.md.
+function graphToken(array $graph): string
+{
+    [$status, $response] = httpPost(
+        'https://login.microsoftonline.com/' . rawurlencode($graph['tenant_id']) . '/oauth2/v2.0/token',
+        ['Content-Type: application/x-www-form-urlencoded'],
+        http_build_query([
+            'client_id'     => $graph['client_id'],
+            'client_secret' => $graph['client_secret'],
+            'scope'         => 'https://graph.microsoft.com/.default',
+            'grant_type'    => 'client_credentials',
+        ]),
+    );
+    $data = json_decode($response, true);
+    if ($status !== 200 || !is_string($data['access_token'] ?? null)) {
+        throw new RuntimeException("token de Graph rechazado ({$status}): " . (string) ($data['error'] ?? 'sin respuesta'));
+    }
+    return $data['access_token'];
+}
+
+function graphSendMail(string $token, string $sender, array $message): void
+{
+    [$status, $response] = httpPost(
+        GRAPH_URL . '/users/' . rawurlencode($sender) . '/sendMail',
+        ['Authorization: Bearer ' . $token, 'Content-Type: application/json'],
+        (string) json_encode(['message' => $message, 'saveToSentItems' => false], JSON_UNESCAPED_UNICODE),
+    );
+    if ($status !== 202) {
+        $data = json_decode($response, true);
+        throw new RuntimeException("sendMail rechazado ({$status}): " . (string) ($data['error']['code'] ?? 'sin respuesta'));
+    }
+}
+
+function graphAddress(string $email, string $name = ''): array
+{
+    return ['emailAddress' => $name !== '' ? ['address' => $email, 'name' => $name] : ['address' => $email]];
 }
 
 function findFormSettings(string $formType): array
@@ -373,23 +417,6 @@ function siteUrl(): string
     return requestOrigin() . $directory . '/';
 }
 
-function createMailer(array $config, string $fromName): PHPMailer
-{
-    $mail = new PHPMailer(true);
-    $mail->isSMTP();
-    $mail->Host = (string) $config['smtp_host'];
-    $mail->Port = (int) ($config['smtp_port'] ?? 587);
-    $mail->SMTPAuth = true;
-    $mail->Username = (string) $config['smtp_user'];
-    $mail->Password = (string) $config['smtp_pass'];
-    $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
-    $mail->CharSet = PHPMailer::CHARSET_UTF8;
-    $mail->Timeout = 15;
-    $mail->setFrom((string) $config['smtp_user'], $fromName);
-    $mail->isHTML(true);
-    return $mail;
-}
-
 function h(string $value): string
 {
     return htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
@@ -433,13 +460,6 @@ function internalEmailHtml(string $subject, string $correlativo, array $rows, st
     return emailLayout($subject, $content, $siteUrl);
 }
 
-function internalEmailText(string $subject, string $correlativo, array $rows): string
-{
-    $text = "{$subject} [{$correlativo}]\n\n";
-    foreach ($rows as $label => $value) $text .= "{$label}: {$value}\n";
-    return $text;
-}
-
 function confirmationEmailHtml(string $leadName, string $correlativo, string $siteUrl): string
 {
     $greeting = $leadName !== '' ? 'Hola <strong>' . h($leadName) . '</strong>,' : 'Hola,';
@@ -449,10 +469,4 @@ function confirmationEmailHtml(string $leadName, string $correlativo, string $si
         . '<p style="margin:0;color:#717274;font-size:12px;">Este es un mensaje automático. Si necesitas agregar algo, responde a nuestro equipo citando tu código.</p>'
         . '</td></tr>';
     return emailLayout('Confirmación de tu solicitud', $content, $siteUrl);
-}
-
-function confirmationEmailText(string $leadName, string $correlativo, string $siteUrl): string
-{
-    $greeting = $leadName !== '' ? "Hola {$leadName}," : 'Hola,';
-    return "{$greeting}\n\nRecibimos tu solicitud con el código {$correlativo}. Nuestro equipo se comunicará contigo en menos de 24 horas hábiles.\n\nMedical Digital · {$siteUrl}";
 }

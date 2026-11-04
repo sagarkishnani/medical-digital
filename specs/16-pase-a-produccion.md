@@ -37,7 +37,7 @@ Lo que **no** se pudo verificar y es el primer paso de la guía:
 | Ruta | Quién la sirve |
 |---|---|
 | `/`, `/nosotros/`, `/contacto/`, `/marcas/`, `/servicio-tecnico/`, `/productos/…`, `/noticias/…`, `/terminos-y-condiciones/`, `/politicas-de-privacidad/`, `/admin/` (Tina), `/_astro/`, `/uploads/`, `/robots.txt`, `/sitemap-index.xml`, `/search-index.json`, `/form-config.json` | Astro (archivos estáticos) |
-| `/send-email.php`, `/rebuild-hook.php`, `/phpmailer/` | PHP del sitio Astro |
+| `/send-email.php`, `/rebuild-hook.php` | PHP del sitio Astro |
 | `/wp-admin/`, `/wp-login.php`, `/wp-json/…`, `/wp-content/…`, `/wp-includes/…`, `/wp-cron.php`, `/xmlrpc.php` | WordPress |
 | `/?rest_route=…`, `/?p=…`, `/?page_id=…`, `/?preview=…` | WordPress |
 | `/producto/<slug>/`, `/categoria-producto/<slug>/`, `/marca/<slug>/`, `/sitemap_index.xml` | Redirección `301` a su equivalente en Astro |
@@ -157,7 +157,7 @@ wp-admin  wp-content  wp-includes  index.php  xmlrpc.php  wp-*.php  .well-known 
 ### Qué sube el `rsync`
 
 - **Raíz:** `dist/` completo, **sin** `--delete`. Excluye `/.htaccess`, `/*.example.php`, `site-config.php` y `/data/`.
-- **Carpetas de Astro:** un `rsync --delete` por cada carpeta de primer nivel de `dist/` (`_astro/`, `admin/`, `uploads/`, `productos/`, `noticias/`, `phpmailer/`…), para retirar las páginas que ya no existen. `data/` se salta.
+- **Carpetas de Astro:** un `rsync --delete` por cada carpeta de primer nivel de `dist/` (`_astro/`, `admin/`, `uploads/`, `productos/`, `noticias/`…), para retirar las páginas que ya no existen. `data/` se salta.
 
 Nunca se borra nada en la raíz de `httpdocs`. `site-config.php`, `data/` y el `.htaccess` se mantienen a mano en el servidor.
 
@@ -269,7 +269,7 @@ Rama `feat/spec-16-pase-a-produccion` desde `staging`, con PR contra `staging`.
 6. Crear en WooCommerce la clave REST de solo lectura para el deploy, si no se reutiliza la del `.env`.
 7. Crear el token fine-grained de GitHub: solo `sagarkishnani/medical-digital`, permiso Contents read and write, vencimiento a 1 año.
 8. Cargar los Secrets de GitHub del modelo de datos.
-9. Crear `site-config.php` en `httpdocs` desde `public/config.example.php`: SMTP de Microsoft 365, `fallback_email` y las tres claves del webhook.
+9. Crear `site-config.php` en `httpdocs` desde `public/config.example.php`: credenciales de Microsoft Graph, `fallback_email` y las tres claves del webhook.
 10. Confirmar que TinaCloud indexa la rama `main` y que `https://medicaldigitalperu.com` está entre las URLs del proyecto.
 11. Revisar en WordPress si hay un plugin de caché de página. Si lo hay, se desactiva la caché de página antes del pase.
 12. Copiar el `.htaccess` actual como `.htaccess.pre-astro-<fecha>`.
@@ -375,7 +375,7 @@ Rama `feat/spec-16-pase-a-produccion` desde `staging`, con PR contra `staging`.
 | GitHub desactiva el `schedule` tras 60 días sin actividad en el repo | Los webhooks y los push siguen funcionando. La guía indica cómo reactivarlo. |
 | `repository_dispatch` y `schedule` solo corren con el `deploy.yml` de la rama por defecto | `main` es la rama por defecto; el workflow llega con el merge del pase. |
 | El token de GitHub vence y los webhooks dejan de redesplegar | `rebuild-hook.php` lo registra con `error_log`; el cron diario mantiene el catálogo al día. Vencimiento anotado en la Parte D. |
-| El buzón de Microsoft 365 no tiene SMTP AUTH habilitado | Se prueba en la Parte C, paso 8. El formulario muestra el error con WhatsApp mientras tanto. |
+| La app de Entra no tiene el rol `Application Mail.Send` en Exchange, o el secreto venció | Se prueba en la Parte C, paso 8. El formulario muestra el error con WhatsApp mientras tanto. |
 | Una editora publica desde `/admin/` durante el pase | El pase se hace en hora de poco tráfico y se avisa antes. |
 | Una actualización de WordPress reescribe el `.htaccess` | Solo toca su bloque. El de Astro tiene marcadores propios y hay copia en el repo. |
 | Google conserva las URLs viejas de WordPress | Las cuatro redirecciones `301` y el sitemap nuevo. Search Console queda como tarea manual de SPEC 14. |
