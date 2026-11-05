@@ -176,9 +176,8 @@ navegador. Ver `specs/01-catalogo-productos-woo.md` y `specs/06-ficha-producto.m
   `WOO_STORE_URL` en `astro.config.mjs`) y se sirven desde `dist/`.
 - Los productos no son componente doble: se editan en Woo, no en Tina.
 - **Un cambio en Woo no aparece hasta el siguiente deploy.** En producción lo
-  disparan los webhooks de producto (ver **Producción**); un cambio que no
-  toca ningún producto (renombrar una categoría o una marca) espera al deploy
-  diario. En staging hay que volver a desplegar ("Redeploy" en Amplify).
+  disparan los webhooks de producto y, para marcas y categorías, el mu-plugin
+  `medical-term-rebuild.php` (ver **Producción**). En staging hay que volver a desplegar ("Redeploy" en Amplify).
 
 Rutas: `/productos`, `/productos/categoria/[slug]` y `/productos/[slug]`.
 
@@ -363,7 +362,7 @@ sitio público; WordPress queda para `/wp-admin/`, `/wp-json/` y
 
 - **Deploy:** `.github/workflows/deploy.yml` ("Deploy a producción") compila
   `main` y sube `dist/` con `rsync` por SSH (secrets `PLESK_*`). Corre con
-  cada push a `main`, con cada webhook de producto (`repository_dispatch`,
+  cada push a `main`, con cada aviso de Woo (`repository_dispatch`,
   tipo `woo-catalog-changed`), todos los días a las 04:00 de Lima y a mano.
   No depende de `estandar.yml`.
 - **Raíz compartida:** en la raíz de `httpdocs` no se borra nada; `--delete`
@@ -374,7 +373,10 @@ sitio público; WordPress queda para `/wp-admin/`, `/wp-json/` y
 - **Webhook:** `public/rebuild-hook.php` recibe los webhooks de producto de
   WooCommerce, valida la firma con `webhook_secret` y dispara el workflow con
   `github_token`. Las tres claves viven en `site-config.php`. No guarda nada
-  en disco.
+  en disco. Woo no tiene webhooks de marcas ni categorías: los avisa el
+  mu-plugin `wordpress/mu-plugins/medical-term-rebuild.php` (tema
+  `product_term.updated`, firmado con el secreto del primer webhook activo
+  hacia `rebuild-hook.php`), que se sube a mano a `wp-content/mu-plugins/`.
 - **Servidor:** el `.htaccess` de `httpdocs` se edita a mano; el deploy no lo
   toca, ni `site-config.php`, ni `data/`. Su bloque está versionado en
   `wordpress/htaccess-astro.conf` (índice, redirecciones `301` de las URLs

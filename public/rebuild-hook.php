@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-// Recibe los webhooks de productos de WooCommerce y dispara el rebuild en GitHub Actions.
+// Recibe los webhooks de productos, marcas y categorías de WooCommerce y dispara el rebuild en GitHub Actions.
 // Woo no permite mandar el header Authorization que pide GitHub, por eso existe este relevo.
 
 ini_set('display_errors', '0');
@@ -10,6 +10,8 @@ header('X-Content-Type-Options: nosniff');
 
 const GITHUB_EVENT_TYPE = 'woo-catalog-changed';
 const MAX_BODY_BYTES = 262144;
+// Woo no tiene webhooks de marcas ni categorías: este tema lo manda wordpress/mu-plugins/medical-term-rebuild.php.
+const TERM_TOPIC = 'product_term.updated';
 
 if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') respond(405, 'Método no permitido.');
 
@@ -34,7 +36,7 @@ if (!isValidSignature($body, (string)($_SERVER['HTTP_X_WC_WEBHOOK_SIGNATURE'] ??
     respond(401, 'Firma inválida.');
 }
 
-if (!str_starts_with($topic, 'product.')) respond(200, 'Tema ignorado.');
+if (!str_starts_with($topic, 'product.') && $topic !== TERM_TOPIC) respond(200, 'Tema ignorado.');
 
 $product = json_decode($body, true);
 $productId = is_array($product) ? (int)($product['id'] ?? 0) : 0;

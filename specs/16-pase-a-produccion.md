@@ -104,7 +104,7 @@ Esta spec no cambia el contenido de Tina ni los tipos de `src/lib/woo/types.ts`.
 | Ping de Woo al guardar el webhook (`webhook_id=N`, sin tema) | `200` "pong", sin llamar a GitHub |
 | Firma `X-WC-Webhook-Signature` inválida (HMAC-SHA256 del cuerpo, en base64) | `401` |
 | Tema que no empieza con `product.` | `200` "Tema ignorado." |
-| Tema `product.*` con firma válida | `POST https://api.github.com/repos/<github_repo>/dispatches` con `event_type: "woo-catalog-changed"` y `client_payload: { topic, id }`. Responde `200` "Rebuild disparado." |
+| Tema `product.*` o `product_term.updated` con firma válida | `POST https://api.github.com/repos/<github_repo>/dispatches` con `event_type: "woo-catalog-changed"` y `client_payload: { topic, id }`. Responde `200` "Rebuild disparado." |
 | GitHub no responde `204` | `error_log` y `200` "Rebuild no disparado." (Woo desactiva el webhook tras varias entregas fallidas) |
 
 El cuerpo siempre es JSON: `{ "ok": boolean, "message": string }`. No escribe nada en disco.
@@ -240,6 +240,8 @@ Cuatro, en WooCommerce → Ajustes → Avanzado → Webhooks:
 | Astro · producto actualizado | Producto actualizado | ídem | ídem | ídem |
 | Astro · producto eliminado | Producto eliminado | ídem | ídem | ídem |
 | Astro · producto restaurado | Producto restaurado | ídem | ídem | ídem |
+
+Woo no tiene webhooks de marcas ni categorías. Los avisa el mu-plugin `wordpress/mu-plugins/medical-term-rebuild.php` (el mismo de Eres): escucha `created_`, `edited_` y `delete_` de `product_brand` y `product_cat`, agrupa los cambios con Action Scheduler (60 s) y manda a `rebuild-hook.php` el tema `product_term.updated`, firmado con el secreto del primer webhook activo hacia `rebuild-hook.php`.
 
 ## Implementation plan
 
