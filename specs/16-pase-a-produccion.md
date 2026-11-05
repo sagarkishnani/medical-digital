@@ -104,7 +104,7 @@ Esta spec no cambia el contenido de Tina ni los tipos de `src/lib/woo/types.ts`.
 | Ping de Woo al guardar el webhook (`webhook_id=N`, sin tema) | `200` "pong", sin llamar a GitHub |
 | Firma `X-WC-Webhook-Signature` inválida (HMAC-SHA256 del cuerpo, en base64) | `401` |
 | Tema que no empieza con `product.` | `200` "Tema ignorado." |
-| Tema `product.*` con firma válida | `POST https://api.github.com/repos/<github_repo>/dispatches` con `event_type: "woo-catalog-changed"` y `client_payload: { topic, id }`. Responde `200` "Rebuild disparado." |
+| Tema `product.*`, o uno de los seis `action.*` de categoría o marca, con firma válida | `POST https://api.github.com/repos/<github_repo>/dispatches` con `event_type: "woo-catalog-changed"` y `client_payload: { topic, id }`. Responde `200` "Rebuild disparado." |
 | GitHub no responde `204` | `error_log` y `200` "Rebuild no disparado." (Woo desactiva el webhook tras varias entregas fallidas) |
 
 El cuerpo siempre es JSON: `{ "ok": boolean, "message": string }`. No escribe nada en disco.
@@ -232,7 +232,7 @@ RewriteRule ^(nosotros|contacto|marcas|productos|noticias|servicio-tecnico|termi
 
 ### Webhooks en WooCommerce
 
-Cuatro, en WooCommerce → Ajustes → Avanzado → Webhooks:
+Diez, en WooCommerce → Ajustes → Avanzado → Webhooks:
 
 | Nombre | Tema | URL de entrega | Secreto | Versión |
 |---|---|---|---|---|
@@ -240,6 +240,10 @@ Cuatro, en WooCommerce → Ajustes → Avanzado → Webhooks:
 | Astro · producto actualizado | Producto actualizado | ídem | ídem | ídem |
 | Astro · producto eliminado | Producto eliminado | ídem | ídem | ídem |
 | Astro · producto restaurado | Producto restaurado | ídem | ídem | ídem |
+| Astro · categoría creada / editada / eliminada | Acción: `created_product_cat`, `edited_product_cat`, `delete_product_cat` (uno por hook) | ídem | ídem | ídem |
+| Astro · marca creada / editada / eliminada | Acción: `created_product_brand`, `edited_product_brand`, `delete_product_brand` (uno por hook) | ídem | ídem | ídem |
+
+Los de acción llegan con el tema `action.<hook>` y el cuerpo `{"action": "<hook>", "arg": <term_id>}`. `rebuild-hook.php` acepta solo esos seis (`TERM_ACTIONS`) además de `product.*`.
 
 ## Implementation plan
 
@@ -282,7 +286,7 @@ Rama `feat/spec-16-pase-a-produccion` desde `staging`, con PR contra `staging`.
 3. Pegar la **parte definitiva** del bloque en el `.htaccess`.
 4. Purgar la caché de nginx de Plesk y la del plugin de caché, si existen.
 5. Relanzar "Deploy a producción" a mano: la prueba de humo tiene que pasar completa.
-6. Crear los cuatro webhooks de producto. Cada uno debe quedar "Activo" después del ping.
+6. Crear los diez webhooks (producto, categoría y marca). Cada uno debe quedar "Activo" después del ping.
 7. Editar el nombre de un producto en Woo, comprobar que se dispara el workflow con evento `repository_dispatch` y deshacer el cambio.
 8. Enviar los tres formularios (Contacto, Cotización y Servicio técnico) y comprobar el correo al equipo y la confirmación.
 9. Entrar a `/admin/`, guardar un cambio menor y comprobar que el commit en `main` dispara el deploy.
@@ -299,7 +303,7 @@ Rama `feat/spec-16-pase-a-produccion` desde `staging`, con PR contra `staging`.
 1. Desactivar el workflow "Deploy a producción" en GitHub (Actions → Disable workflow).
 2. Reemplazar el bloque de Astro por el de `wordpress/htaccess-reversa.conf`.
 3. Purgar las cachés. El sitio de WordPress vuelve a verse sin borrar ningún archivo.
-4. Desactivar los cuatro webhooks.
+4. Desactivar los diez webhooks.
 
 ## Acceptance criteria
 
@@ -321,7 +325,7 @@ Rama `feat/spec-16-pase-a-produccion` desde `staging`, con PR contra `staging`.
 - [ ] Cada uno de los tres formularios envía el correo y muestra su correlativo (`CON-`, `COT-`, `SVT-`).
 - [ ] Guardar un producto en WooCommerce dispara "Deploy a producción" con evento `repository_dispatch`, y el cambio se ve en el sitio cuando termina.
 - [ ] Un `POST` a `/rebuild-hook.php` sin firma responde `401` y no dispara ningún workflow.
-- [ ] Los cuatro webhooks figuran "Activo" en WooCommerce.
+- [ ] Los diez webhooks figuran "Activo" en WooCommerce.
 - [ ] Un push a `main` dispara "Deploy a producción" y la prueba de humo pasa.
 - [ ] El workflow corre solo a las 04:00 de Lima.
 - [ ] Guardar un cambio en `/admin/` de producción crea un commit en `main` y dispara el deploy.

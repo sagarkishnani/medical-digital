@@ -176,9 +176,9 @@ navegador. Ver `specs/01-catalogo-productos-woo.md` y `specs/06-ficha-producto.m
   `WOO_STORE_URL` en `astro.config.mjs`) y se sirven desde `dist/`.
 - Los productos no son componente doble: se editan en Woo, no en Tina.
 - **Un cambio en Woo no aparece hasta el siguiente deploy.** En producción lo
-  disparan los webhooks de producto (ver **Producción**); un cambio que no
-  toca ningún producto (renombrar una categoría o una marca) espera al deploy
-  diario. En staging hay que volver a desplegar ("Redeploy" en Amplify).
+  disparan los webhooks de producto, categoría y marca (ver **Producción**);
+  lo que no cubren (p. ej. reordenar categorías) espera al deploy diario. En
+  staging hay que volver a desplegar ("Redeploy" en Amplify).
 
 Rutas: `/productos`, `/productos/categoria/[slug]` y `/productos/[slug]`.
 
@@ -363,7 +363,7 @@ sitio público; WordPress queda para `/wp-admin/`, `/wp-json/` y
 
 - **Deploy:** `.github/workflows/deploy.yml` ("Deploy a producción") compila
   `main` y sube `dist/` con `rsync` por SSH (secrets `PLESK_*`). Corre con
-  cada push a `main`, con cada webhook de producto (`repository_dispatch`,
+  cada push a `main`, con cada webhook de Woo (`repository_dispatch`,
   tipo `woo-catalog-changed`), todos los días a las 04:00 de Lima y a mano.
   No depende de `estandar.yml`.
 - **Raíz compartida:** en la raíz de `httpdocs` no se borra nada; `--delete`
@@ -371,7 +371,9 @@ sitio público; WordPress queda para `/wp-admin/`, `/wp-json/` y
   se detiene si `dist/` trae un nombre de WordPress (`wp-content`,
   `index.php`, `wp-*.php`…): **no crees una página ni una carpeta en
   `public/` con esos nombres.**
-- **Webhook:** `public/rebuild-hook.php` recibe los webhooks de producto de
+- **Webhook:** `public/rebuild-hook.php` recibe los webhooks de producto
+  (`product.*`) y los de acción de categoría y marca (`created_`, `edited_` y
+  `delete_` de `product_cat` y `product_brand`, en `TERM_ACTIONS`) de
   WooCommerce, valida la firma con `webhook_secret` y dispara el workflow con
   `github_token`. Las tres claves viven en `site-config.php`. No guarda nada
   en disco.

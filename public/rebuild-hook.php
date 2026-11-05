@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-// Recibe los webhooks de productos de WooCommerce y dispara el rebuild en GitHub Actions.
+// Recibe los webhooks de WooCommerce (productos, categorías y marcas) y dispara el rebuild en GitHub Actions.
 // Woo no permite mandar el header Authorization que pide GitHub, por eso existe este relevo.
 
 ini_set('display_errors', '0');
@@ -10,6 +10,16 @@ header('X-Content-Type-Options: nosniff');
 
 const GITHUB_EVENT_TYPE = 'woo-catalog-changed';
 const MAX_BODY_BYTES = 262144;
+
+// Woo no tiene temas para categorías ni marcas: se crean como webhooks de tipo "Acción" sobre estos hooks de WordPress.
+const TERM_ACTIONS = [
+    'action.created_product_cat',
+    'action.edited_product_cat',
+    'action.delete_product_cat',
+    'action.created_product_brand',
+    'action.edited_product_brand',
+    'action.delete_product_brand',
+];
 
 if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') respond(405, 'Método no permitido.');
 
@@ -34,14 +44,17 @@ if (!isValidSignature($body, (string)($_SERVER['HTTP_X_WC_WEBHOOK_SIGNATURE'] ??
     respond(401, 'Firma inválida.');
 }
 
-if (!str_starts_with($topic, 'product.')) respond(200, 'Tema ignorado.');
+$isProduct = str_starts_with($topic, 'product.');
+$isTerm = in_array($topic, TERM_ACTIONS, true);
+if (!$isProduct && !$isTerm) respond(200, 'Tema ignorado.');
 
-$product = json_decode($body, true);
-$productId = is_array($product) ? (int)($product['id'] ?? 0) : 0;
+// Un webhook de producto trae el producto; uno de acción trae {"action": "<hook>", "arg": <term_id>}.
+$payload = json_decode($body, true);
+$resourceId = is_array($payload) ? (int)($payload[$isProduct ? 'id' : 'arg'] ?? 0) : 0;
 
 $status = dispatchToGithub($repo, $token, [
     'event_type'     => GITHUB_EVENT_TYPE,
-    'client_payload' => ['topic' => $topic, 'id' => $productId],
+    'client_payload' => ['topic' => $topic, 'id' => $resourceId],
 ]);
 
 // Woo desactiva el webhook tras varias entregas fallidas; un fallo de GitHub lo cubre el cron diario.

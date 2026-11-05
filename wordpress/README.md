@@ -23,7 +23,7 @@ El deploy lo hace el workflow "Deploy a producción" (`.github/workflows/deploy.
 | Disparador | Cuándo |
 |---|---|
 | Push a `main` | Cada merge, y cada cambio guardado en `/admin/` de producción |
-| Webhook de WooCommerce | Al crear, actualizar, eliminar o restaurar un producto |
+| Webhook de WooCommerce | Al crear, actualizar, eliminar o restaurar un producto, y al crear, editar o eliminar una categoría o una marca |
 | Diario | 04:00 de Lima, por si se perdió un webhook |
 | Manual | GitHub → Actions → Deploy a producción → **Run workflow** |
 
@@ -281,9 +281,9 @@ Qué comprueba:
 
 Si solo falla el `404` (responde `200` o un error 500), mira **Si algo falla**.
 
-### C6. Crear los webhooks de producto
+### C6. Crear los webhooks de producto, categoría y marca
 
-WordPress → **WooCommerce → Ajustes → Avanzado → Webhooks → Añadir webhook**, cuatro veces:
+WordPress → **WooCommerce → Ajustes → Avanzado → Webhooks → Añadir webhook**, diez veces:
 
 | Nombre | Estado | Tema | URL de entrega | Secreto | Versión de la API |
 |---|---|---|---|---|---|
@@ -291,8 +291,16 @@ WordPress → **WooCommerce → Ajustes → Avanzado → Webhooks → Añadir we
 | Astro · producto actualizado | Activo | Producto actualizado | ídem | ídem | ídem |
 | Astro · producto eliminado | Activo | Producto eliminado | ídem | ídem | ídem |
 | Astro · producto restaurado | Activo | Producto restaurado | ídem | ídem | ídem |
+| Astro · categoría creada | Activo | Acción → `created_product_cat` | ídem | ídem | ídem |
+| Astro · categoría editada | Activo | Acción → `edited_product_cat` | ídem | ídem | ídem |
+| Astro · categoría eliminada | Activo | Acción → `delete_product_cat` | ídem | ídem | ídem |
+| Astro · marca creada | Activo | Acción → `created_product_brand` | ídem | ídem | ídem |
+| Astro · marca editada | Activo | Acción → `edited_product_brand` | ídem | ídem | ídem |
+| Astro · marca eliminada | Activo | Acción → `delete_product_brand` | ídem | ídem | ídem |
 
-Al guardar, Woo manda un ping. Comprobación: los cuatro siguen en estado **Activo** después de guardar.
+Woo no tiene temas para categorías ni marcas. En esos seis, elige el tema **Acción** y escribe el hook en el campo **Evento de acción**, tal cual, sin `action.` delante. `rebuild-hook.php` solo acepta esos seis hooks; cualquier otra acción responde "Tema ignorado.".
+
+Al guardar, Woo manda un ping. Comprobación: los diez siguen en estado **Activo** después de guardar.
 
 Prueba de que el relevo rechaza lo que no viene de Woo:
 
@@ -308,6 +316,7 @@ Tiene que responder `401` con `"Firma inválida."`. Si responde `503`, a `site-c
 2. GitHub → **Actions**: en menos de un minuto aparece una ejecución de "Deploy a producción" con el evento `repository_dispatch`.
 3. Cuando termine, la ficha del producto en el sitio muestra el nombre nuevo.
 4. Deshaz el cambio en Woo. Se dispara otro deploy.
+5. Repite con una categoría (**Productos → Categorías**) y con una marca (**Productos → Marcas**): cambia la descripción, guarda y comprueba que aparece otra ejecución `repository_dispatch`.
 
 ### C8. Probar los formularios
 
@@ -360,7 +369,7 @@ Devuelve el sitio de WordPress sin borrar ningún archivo.
 1. GitHub → **Actions → Deploy a producción → ⋯ → Disable workflow**. Así ni el cron ni un webhook vuelven a desplegar.
 2. En `httpdocs/.htaccess`, reemplaza el bloque `Medical Digital Astro` por el contenido de `wordpress/htaccess-reversa.conf`.
 3. Purga las cachés (C4).
-4. WooCommerce → Webhooks: pasa los cuatro a **Desactivado**.
+4. WooCommerce → Webhooks: pasa los diez a **Desactivado**.
 
 Comprobación: la home y `/nosotros/` vuelven a ser las de WordPress.
 
@@ -378,7 +387,7 @@ Para volver a Astro: pega de nuevo `htaccess-astro.conf` completo, reactiva el w
 |---|---|---|
 | Producto: nombre, fotos, descripción, categoría, marca, ficha técnica, destacado | WooCommerce | Cuando termina el deploy que dispara el webhook (unos minutos) |
 | Producto creado, eliminado o restaurado | WooCommerce | Ídem |
-| Categoría o marca renombrada, sin tocar ningún producto | WooCommerce | En el deploy diario de las 04:00, o lanzando el deploy a mano |
+| Categoría o marca creada, editada (nombre, slug, imagen o logo) o eliminada | WooCommerce | Ídem |
 | Textos, imágenes, noticias, destinatarios de formularios | `/admin/` (Tina) | Cuando termina el deploy que dispara el commit |
 | Código | PR a `staging`, luego a `main` | Cuando termina el deploy del merge |
 
