@@ -23,7 +23,8 @@ El deploy lo hace el workflow "Deploy a producción" (`.github/workflows/deploy.
 | Disparador | Cuándo |
 |---|---|
 | Push a `main` | Cada merge, y cada cambio guardado en `/admin/` de producción |
-| Webhook de WooCommerce | Al crear, actualizar, eliminar o restaurar un producto, y al crear, editar o eliminar una categoría o una marca |
+| Webhook de WooCommerce | Al crear, actualizar, eliminar o restaurar un producto |
+| mu-plugin `medical-term-rebuild.php` | Al crear, editar o eliminar una marca o una categoría |
 | Diario | 04:00 de Lima, por si se perdió un webhook |
 | Manual | GitHub → Actions → Deploy a producción → **Run workflow** |
 
@@ -34,6 +35,7 @@ Archivos de esta carpeta:
 | `htaccess-astro.conf` | Bloque que se pega en el `.htaccess` del servidor, en dos partes |
 | `htaccess-reversa.conf` | Bloque que devuelve el sitio de WordPress |
 | `nginx-astro.conf` | Las mismas reglas para nginx, solo si el modo proxy está apagado |
+| `mu-plugins/medical-term-rebuild.php` | Avisa a `rebuild-hook.php` cuando cambia una marca o una categoría |
 
 ## Qué necesitas a la mano
 
@@ -281,9 +283,9 @@ Qué comprueba:
 
 Si solo falla el `404` (responde `200` o un error 500), mira **Si algo falla**.
 
-### C6. Crear los webhooks de producto, categoría y marca
+### C6. Crear los webhooks de producto
 
-WordPress → **WooCommerce → Ajustes → Avanzado → Webhooks → Añadir webhook**, diez veces:
+WordPress → **WooCommerce → Ajustes → Avanzado → Webhooks → Añadir webhook**, cuatro veces:
 
 | Nombre | Estado | Tema | URL de entrega | Secreto | Versión de la API |
 |---|---|---|---|---|---|
@@ -291,16 +293,8 @@ WordPress → **WooCommerce → Ajustes → Avanzado → Webhooks → Añadir we
 | Astro · producto actualizado | Activo | Producto actualizado | ídem | ídem | ídem |
 | Astro · producto eliminado | Activo | Producto eliminado | ídem | ídem | ídem |
 | Astro · producto restaurado | Activo | Producto restaurado | ídem | ídem | ídem |
-| Astro · categoría creada | Activo | Acción → `created_product_cat` | ídem | ídem | ídem |
-| Astro · categoría editada | Activo | Acción → `edited_product_cat` | ídem | ídem | ídem |
-| Astro · categoría eliminada | Activo | Acción → `delete_product_cat` | ídem | ídem | ídem |
-| Astro · marca creada | Activo | Acción → `created_product_brand` | ídem | ídem | ídem |
-| Astro · marca editada | Activo | Acción → `edited_product_brand` | ídem | ídem | ídem |
-| Astro · marca eliminada | Activo | Acción → `delete_product_brand` | ídem | ídem | ídem |
 
-Woo no tiene temas para categorías ni marcas. En esos seis, elige el tema **Acción** y escribe el hook en el campo **Evento de acción**, tal cual, sin `action.` delante. `rebuild-hook.php` solo acepta esos seis hooks; cualquier otra acción responde "Tema ignorado.".
-
-Al guardar, Woo manda un ping. Comprobación: los diez siguen en estado **Activo** después de guardar.
+Al guardar, Woo manda un ping. Comprobación: los cuatro siguen en estado **Activo** después de guardar.
 
 Prueba de que el relevo rechaza lo que no viene de Woo:
 
@@ -310,13 +304,20 @@ curl -i -X POST https://medicaldigitalperu.com/rebuild-hook.php -d '{}'
 
 Tiene que responder `401` con `"Firma inválida."`. Si responde `503`, a `site-config.php` le falta alguna de las tres claves del webhook.
 
+#### mu-plugin de marcas y categorías
+
+WooCommerce no tiene webhooks de marcas ni categorías: renombrar o borrar una no toca los productos y no dispara nada. `medical-term-rebuild.php` escucha la creación, edición y borrado de términos de `product_brand` y `product_cat` y, 60 segundos después, manda a `rebuild-hook.php` un aviso con el tema `product_term.updated`. Los cambios seguidos dentro de esa ventana salen en un solo deploy. Firma con la URL y el secreto del primer webhook activo que apunte a `rebuild-hook.php`: sin webhooks activos, no avisa.
+
+1. Copia `wordpress/mu-plugins/medical-term-rebuild.php` a `wp-content/mu-plugins/` del WordPress (crea la carpeta si no existe). El deploy no toca WordPress: cada versión nueva de este archivo se sube a mano.
+2. Plugins → **Imprescindibles**: debe aparecer "Medical Digital · Rebuild al editar marcas y categorías". Los mu-plugins no se activan: se cargan solos.
+
 ### C7. Probar el webhook
 
 1. Edita el nombre de un producto en WooCommerce (agrégale un punto) y guarda.
 2. GitHub → **Actions**: en menos de un minuto aparece una ejecución de "Deploy a producción" con el evento `repository_dispatch`.
 3. Cuando termine, la ficha del producto en el sitio muestra el nombre nuevo.
 4. Deshaz el cambio en Woo. Se dispara otro deploy.
-5. Repite con una categoría (**Productos → Categorías**) y con una marca (**Productos → Marcas**): cambia la descripción, guarda y comprueba que aparece otra ejecución `repository_dispatch`.
+5. Renombra una marca o una categoría. En WooCommerce → **Estado → Acciones programadas**, grupo `medical-term-rebuild`, la acción `medical_term_rebuild_deliver` queda **Completada** al minuto, y en GitHub → Actions aparece "Deploy a producción" con evento `repository_dispatch`. Si queda **Fallida**, el registro de la acción trae la respuesta de `rebuild-hook.php`. Deshaz el cambio.
 
 ### C8. Probar los formularios
 
@@ -369,7 +370,7 @@ Devuelve el sitio de WordPress sin borrar ningún archivo.
 1. GitHub → **Actions → Deploy a producción → ⋯ → Disable workflow**. Así ni el cron ni un webhook vuelven a desplegar.
 2. En `httpdocs/.htaccess`, reemplaza el bloque `Medical Digital Astro` por el contenido de `wordpress/htaccess-reversa.conf`.
 3. Purga las cachés (C4).
-4. WooCommerce → Webhooks: pasa los diez a **Desactivado**.
+4. WooCommerce → Webhooks: pasa los cuatro a **Desactivado**.
 
 Comprobación: la home y `/nosotros/` vuelven a ser las de WordPress.
 
@@ -387,7 +388,7 @@ Para volver a Astro: pega de nuevo `htaccess-astro.conf` completo, reactiva el w
 |---|---|---|
 | Producto: nombre, fotos, descripción, categoría, marca, ficha técnica, destacado | WooCommerce | Cuando termina el deploy que dispara el webhook (unos minutos) |
 | Producto creado, eliminado o restaurado | WooCommerce | Ídem |
-| Categoría o marca creada, editada (nombre, slug, imagen o logo) o eliminada | WooCommerce | Ídem |
+| Marca o categoría creada, renombrada o eliminada | WooCommerce | Cuando termina el deploy que dispara el mu-plugin (un minuto de espera más unos minutos de build) |
 | Textos, imágenes, noticias, destinatarios de formularios | `/admin/` (Tina) | Cuando termina el deploy que dispara el commit |
 | Código | PR a `staging`, luego a `main` | Cuando termina el deploy del merge |
 
