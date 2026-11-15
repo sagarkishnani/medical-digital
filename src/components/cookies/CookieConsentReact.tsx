@@ -144,7 +144,10 @@ export default function CookieConsentReact({
     const dialog = dialogRef.current;
     if (!dialog) return;
     if (view === "settings") {
-      if (!dialog.open) dialog.showModal();
+      if (!dialog.open) {
+        dialog.showModal();
+        dialog.focus();
+      }
       lockScroll();
       return unlockScroll;
     }
@@ -221,9 +224,10 @@ export default function CookieConsentReact({
       <dialog
         ref={dialogRef}
         aria-label={title}
+        tabIndex={-1}
         onClose={closeSettings}
         onClick={(event) => event.target === dialogRef.current && closeSettings()}
-        className="max-h-[88vh] w-[calc(100%-2rem)] max-w-[480px] overflow-y-auto rounded-2xl bg-surface p-0 text-content shadow-2xl backdrop:bg-brand-secondary-darkest/55 open:animate-modal-in backdrop:animate-fade-in"
+        className="max-h-[88vh] w-[calc(100%-2rem)] max-w-[480px] overflow-y-auto rounded-2xl bg-surface p-0 focus-visible:ring-0 focus-visible:ring-offset-0 text-content shadow-2xl backdrop:bg-brand-secondary-darkest/55 open:animate-modal-in backdrop:animate-fade-in"
       >
         <div className="p-5 md:p-7">
           <div className="mb-3 flex items-start justify-between gap-4">
