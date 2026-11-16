@@ -60,7 +60,10 @@ export default function QuoteModal({ product, texts, onClose }: Props) {
       setClosing(false);
       setOpenCount((count) => count + 1);
       reset();
-      if (!dialog.open) dialog.showModal();
+      if (!dialog.open) {
+        dialog.showModal();
+        dialog.focus();
+      }
     } else if (dialog.open) {
       setClosing(true);
     }
@@ -80,6 +83,7 @@ export default function QuoteModal({ product, texts, onClose }: Props) {
     <dialog
       ref={dialogRef}
       aria-labelledby={`${formId}-title`}
+      tabIndex={-1}
       onClose={onClose}
       onCancel={(event) => {
         event.preventDefault();
@@ -87,7 +91,7 @@ export default function QuoteModal({ product, texts, onClose }: Props) {
       }}
       onAnimationEnd={finishClosing}
       onClick={(event) => event.target === dialogRef.current && onClose()}
-      className={`w-[calc(100%-2rem)] max-w-[560px] rounded-2xl bg-surface p-0 text-brand-secondary-dark backdrop:bg-brand-secondary-darkest/55 backdrop:backdrop-blur-sm ${closing ? "animate-modal-out backdrop:animate-fade-out" : "open:animate-modal-in backdrop:animate-fade-in"}`}
+      className={`w-[calc(100%-2rem)] max-w-[560px] rounded-2xl bg-surface p-0 focus-visible:ring-0 focus-visible:ring-offset-0 text-brand-secondary-dark backdrop:bg-brand-secondary-darkest/55 backdrop:backdrop-blur-sm ${closing ? "animate-modal-out backdrop:animate-fade-out" : "open:animate-modal-in backdrop:animate-fade-in"}`}
     >
       {shown && status === "success" && (
         <div className="p-6 md:p-9">
