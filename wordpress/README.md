@@ -36,6 +36,7 @@ Archivos de esta carpeta:
 | `htaccess-reversa.conf` | Bloque que devuelve el sitio de WordPress |
 | `nginx-astro.conf` | Las mismas reglas para nginx, solo si el modo proxy está apagado |
 | `mu-plugins/medical-term-rebuild.php` | Avisa a `rebuild-hook.php` cuando cambia una marca o una categoría |
+| `mu-plugins/medical-guides-dashboard.php` | Widget "Guías del sistema" en el Escritorio de WordPress (video y PDF) |
 
 ## Qué necesitas a la mano
 
@@ -393,6 +394,17 @@ Para volver a Astro: pega de nuevo `htaccess-astro.conf` completo, reactiva el w
 | Código | PR a `staging`, luego a `main` | Cuando termina el deploy del merge |
 
 Guardar varios productos seguidos dispara varios deploys; solo el último llega a terminar, los anteriores se cancelan solos.
+
+### Guías del sistema en el Escritorio
+
+`mu-plugins/medical-guides-dashboard.php` agrega el recuadro **Guías del sistema** arriba del Escritorio de WordPress, visible para todos los usuarios del panel, con la guía en video y la guía en PDF.
+
+1. Copia el archivo a `wp-content/mu-plugins/` (se sube a mano, como el de marcas y categorías). En Plugins → **Imprescindibles** aparece "Medical Digital · Guías del sistema".
+2. Sube el video y el PDF a **Medios** (o ten a mano el enlace de YouTube o Vimeo).
+3. Escritorio → pasa el mouse sobre la cabecera del recuadro → **Configurar**. Solo lo ven los administradores.
+4. En cada campo, **Biblioteca** elige el archivo de Medios, o pega una URL. Guarda con **Enviar**.
+
+Un campo vacío oculta esa guía. Si un usuario movió los recuadros del Escritorio, conserva su orden.
 
 ### Un webhook aparece "Desactivado"
 

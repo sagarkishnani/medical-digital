@@ -152,7 +152,8 @@ export default function ProductGalleryReact({ images }: Props) {
   }
 
   return (
-    <div className="flex flex-col gap-2.5 lg:grid lg:grid-cols-[96px_minmax(0,1fr)] lg:gap-4">
+    // Sin miniaturas no hay columna de 96 px: con una sola foto, la grilla la metería en esa columna.
+    <div className={`flex flex-col gap-2.5 ${hasThumbnails ? "lg:grid lg:grid-cols-[96px_minmax(0,1fr)] lg:gap-4" : ""}`}>
       <div className="relative lg:order-2">
         <div ref={slider.viewportRef} className="overflow-hidden rounded-3xl">
           <ul className="flex touch-pan-y">

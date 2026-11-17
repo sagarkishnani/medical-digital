@@ -377,6 +377,9 @@ sitio público; WordPress queda para `/wp-admin/`, `/wp-json/` y
   mu-plugin `wordpress/mu-plugins/medical-term-rebuild.php` (tema
   `product_term.updated`, firmado con el secreto del primer webhook activo
   hacia `rebuild-hook.php`), que se sube a mano a `wp-content/mu-plugins/`.
+- **Guías:** `wordpress/mu-plugins/medical-guides-dashboard.php` (también a
+  mano) pone en el Escritorio de WordPress la guía en video y en PDF; las
+  URLs se guardan en la opción `medical_guides_dashboard` desde "Configurar".
 - **Servidor:** el `.htaccess` de `httpdocs` se edita a mano; el deploy no lo
   toca, ni `site-config.php`, ni `data/`. Su bloque está versionado en
   `wordpress/htaccess-astro.conf` (índice, redirecciones `301` de las URLs
