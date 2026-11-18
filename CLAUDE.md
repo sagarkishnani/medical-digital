@@ -14,6 +14,10 @@ No hay test runner configurado.
 
 ## Entorno
 
+**Node 22** (`.nvmrc`): la CLI de Tina 4 no corre en Node 20. TinaCMS va en
+3.12 o superior; desde octubre de 2026 TinaCloud no deja iniciar sesión en
+`/admin` con versiones anteriores.
+
 Copia `.env.example` a `.env`. Deja `TINA_CLIENT_ID`/`TINA_TOKEN` vacíos para
 trabajar en **modo local** (Tina lee y escribe los archivos de `src/content/`
 sin cuenta en la nube).
